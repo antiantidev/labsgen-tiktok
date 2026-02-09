@@ -100,11 +100,18 @@ export const Checkbox = ({ checked, onChange, label, description }) => (
   </label>
 )
 
-export const Switch = ({ checked, onChange, label, description }) => (
+export const Switch = ({ checked, onChange, label, description, icon: Icon }) => (
   <label className="flex items-center justify-between p-5 rounded-2xl bg-secondary/50 border border-border hover:border-primary/30 transition-all cursor-pointer group">
-    <div className="flex flex-col gap-0.5 pr-4">
-      <span className="text-[14px] font-bold group-hover:text-primary transition-colors">{label}</span>
-      {description && <span className="text-[12px] text-muted-foreground font-medium leading-relaxed">{description}</span>}
+    <div className="flex items-start gap-3 pr-4">
+      {Icon && (
+        <div className="p-2 rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors">
+          <Icon size={16} />
+        </div>
+      )}
+      <div className="flex flex-col gap-0.5">
+        <span className="text-[14px] font-bold group-hover:text-primary transition-colors">{label}</span>
+        {description && <span className="text-[12px] text-muted-foreground font-medium leading-relaxed">{description}</span>}
+      </div>
     </div>
     <div className="relative inline-flex items-center shrink-0">
       <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />

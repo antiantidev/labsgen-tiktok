@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Globe, Folder, RefreshCw, Cpu, Database, FileJson, HardDrive, Terminal, Heart, Layout, Bell, Save, Sun, Moon, ShieldAlert, Download, CheckCircle2, Edit3, RotateCcw } from 'lucide-react'
+import { Globe, Folder, RefreshCw, Cpu, Database, FileJson, HardDrive, Terminal, Heart, Layout, Bell, Save, Sun, Moon, ShieldAlert, Download, CheckCircle2, Edit3, RotateCcw, RefreshCcw, Inbox } from 'lucide-react'
 import { Card, Button, Input, Switch, AlertBanner } from '../components/ui'
 import { useTranslation } from 'react-i18next'
 
@@ -108,14 +108,16 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
           <Card title={t('settings.automation')}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Switch 
-                label="Auto-refresh Account"
-                description="Verify token status on application startup."
+                label={t('settings.auto_refresh')}
+                description={t('settings.auto_refresh_desc')}
+                icon={RefreshCcw}
                 checked={settings.autoRefresh}
                 onChange={(val) => setSettings({...settings, autoRefresh: val})}
               />
               <Switch 
-                label="Minimize to System Tray"
-                description="Hide to system tray instead of quitting when clicking [X]."
+                label={t('settings.minimize_tray')}
+                description={t('settings.minimize_tray_desc')}
+                icon={Inbox}
                 checked={settings.minimizeOnClose}
                 onChange={(val) => setSettings({...settings, minimizeOnClose: val})}
               />
