@@ -143,7 +143,8 @@
     "stream_key_label": "Stream Key",
     "copy_success": "đã sao chép",
     "copy_failed": "Sao chép thất bại",
-    "na": "---"
+    "na": "---",
+    "missing_metadata": "Vui lòng nhập tiêu đề và chọn danh mục trước khi phát."
   },
   "pulse": {
     "title": "Nhật ký hệ thống",

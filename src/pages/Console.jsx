@@ -15,6 +15,16 @@ const Console = ({
 }) => {
   const { t } = useTranslation()
 
+  const handleGoLive = () => {
+    const titleOk = typeof streamTitle === 'string' && streamTitle.trim().length > 0
+    const categoryOk = typeof gameCategory === 'string' && gameCategory.trim().length > 0
+    if (!titleOk || !categoryOk) {
+      if (pushToast) pushToast(t('console.missing_metadata'), 'error')
+      return
+    }
+    startStream()
+  }
+
   const copyToClipboard = async (text, label) => {
     if (!text) return
     try {
@@ -108,7 +118,7 @@ const Console = ({
           <Card title={t('console.live_action')} className="bg-primary/5">
             <div className="space-y-4">
               <Button 
-                onClick={startStream} 
+                onClick={handleGoLive} 
                 disabled={!canGoLive || streamData.isLive} 
                 className="w-full py-6 text-sm shadow-[0_10px_30px_rgba(49,251,154,0.2)]" 
                 icon={Play}
