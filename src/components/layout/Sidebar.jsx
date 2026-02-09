@@ -8,21 +8,34 @@ const NavItem = ({ id, icon: Icon, label, active, onClick, disabled }) => (
   <button
     onClick={() => !disabled && onClick(id)}
     disabled={disabled}
-    className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all relative group ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+    className={`w-full flex items-center gap-5 px-8 py-5 transition-colors relative group ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
   >
+    <AnimatePresence>
+      {active && (
+        <motion.div 
+          layoutId="activeSidebarHighlight"
+          className="absolute inset-0 bg-primary/[0.07] z-0"
+          initial={false}
+          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+        />
+      )}
+    </AnimatePresence>
+
     {active && (
       <motion.div 
-        layoutId="activeNav"
-        className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-2xl"
-        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+        layoutId="activeSidebarIndicator"
+        className="absolute right-0 top-0 bottom-0 w-1 bg-primary z-10"
+        initial={false}
+        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
       />
     )}
-    <Icon size={20} className={`relative z-10 transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
-    <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.2em]">{label}</span>
+
+    <Icon size={22} className={`relative z-10 transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
+    <span className="relative z-10 text-[12px] font-black uppercase tracking-[0.15em]">{label}</span>
   </button>
 )
 
-export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, isLoading }) => {
+const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, isLoading }) => {
   const { t } = useTranslation()
 
   const menuItems = [
@@ -35,19 +48,21 @@ export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, vers
   ]
 
   return (
-    <aside className="w-72 h-screen flex flex-col border-r border-border bg-secondary/10 light:bg-secondary/30 relative z-50">
-      <div className="p-8">
-        <div className="flex items-center gap-4 px-2 mb-12">
-          <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-            <div className="w-5 h-5 border-4 border-primary-foreground rounded-full" />
+    <aside className="w-72 h-screen flex flex-col border-r border-border bg-secondary/10 light:bg-secondary/20 relative z-50 shadow-2xl">
+      <div className="py-12 flex flex-col items-center justify-center shrink-0">
+        <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-2xl shadow-primary/40 group-hover:rotate-12 transition-transform duration-500">
+            <div className="w-6 h-6 border-4 border-primary-foreground rounded-full" />
           </div>
           <div className="flex flex-col">
-            <span className="font-black text-sm tracking-tighter leading-none text-foreground uppercase">LABGEN</span>
-            <span className="font-bold text-[10px] text-muted-foreground tracking-[0.3em]">TIKTOK</span>
+            <span className="font-black text-[18px] tracking-tighter leading-none text-foreground uppercase">LABGEN</span>
+            <span className="font-bold text-[11px] text-muted-foreground tracking-[0.4em]">TIKTOK</span>
           </div>
         </div>
+      </div>
 
-        <nav className="space-y-2">
+      <nav className="flex-1 flex flex-col justify-center py-8 relative">
+        <div className="space-y-1">
           {menuItems.map((item) => (
             <NavItem 
               key={item.id} 
@@ -57,36 +72,42 @@ export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, vers
               disabled={isLoading}
             />
           ))}
-        </nav>
-      </div>
-
-      <div className="mt-auto p-8 space-y-6">
-        <div className="p-6 rounded-2xl bg-secondary border border-border relative overflow-hidden group shadow-sm">
-          <div className="flex items-center gap-4 relative z-10">
-            <div className={`p-2.5 rounded-xl ${canGoLive ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
-              {canGoLive ? <ShieldCheck size={18} /> : <ShieldAlert size={18} />}
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('tokens.username')}</span>
-              {isLoading ? (
-                <Skeleton className="h-4 w-20 mt-1" />
-              ) : (
-                <span className="text-xs font-bold truncate">{username}</span>
-              )}
-            </div>
-          </div>
-          <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-            {canGoLive ? <ShieldCheck size={80} /> : <ShieldAlert size={80} />}
-          </div>
         </div>
+      </nav>
 
-        <div className="flex items-center justify-between px-4">
-          <div className="flex flex-col">
-            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t('dashboard.version')}</span>
-            <span className="text-[10px] font-bold opacity-40 italic">v{version}</span>
+      <div className="mt-auto shrink-0 border-t border-border/50 bg-secondary/5">
+        <div className="p-6 space-y-6">
+          <div className="p-5 rounded-xl bg-secondary/50 border border-border relative overflow-hidden group shadow-sm">
+            <div className="flex items-center gap-4 relative z-10">
+              <div className={`p-2.5 rounded-lg shadow-inner ${canGoLive ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+                {canGoLive ? <ShieldCheck size={20} /> : <ShieldAlert size={20} />}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">{t('tokens.username')}</span>
+                {isLoading ? (
+                  <Skeleton className="h-4 w-24 mt-1" />
+                ) : (
+                  <span className="text-[13px] font-black truncate text-foreground">{username}</span>
+                )}
+              </div>
+            </div>
+            <div className="absolute -right-4 -bottom-4 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-500 pointer-events-none">
+              {canGoLive ? <ShieldCheck size={90} /> : <ShieldAlert size={90} />}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between px-2">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t('dashboard.version')}</span>
+              <span className="text-[11px] font-black opacity-30 italic font-mono">v{version}</span>
+            </div>
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
           </div>
         </div>
       </div>
     </aside>
   )
 }
+
+import { AnimatePresence } from 'framer-motion'
+export { Sidebar }

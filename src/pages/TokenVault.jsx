@@ -21,13 +21,13 @@ const TokenVault = ({
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-8">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black">{t('tokens.title')}</h1>
-          <p className="text-muted-foreground font-medium">{t('tokens.desc')}</p>
+          <h1 className="text-3xl font-black tracking-tight">{t('tokens.title')}</h1>
+          <p className="text-muted-foreground font-medium text-sm">{t('tokens.desc')}</p>
         </div>
         {isLoading ? (
           <Skeleton className="h-8 w-40 rounded-full" />
         ) : (
-          <div className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-3 border ${canGoLive ? 'bg-primary/10 border-primary/20 text-primary' : 'bg-destructive/10 border-destructive/20 text-destructive'}`}>
+          <div className={`px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-widest flex items-center gap-3 border ${canGoLive ? 'bg-primary/10 border-primary/20 text-primary' : 'bg-destructive/10 border-destructive/20 text-destructive'}`}>
             {canGoLive ? <ShieldCheck size={14} /> : <ShieldAlert size={14} />}
             {canGoLive ? t('tokens.verified') : t('tokens.restricted')}
           </div>
@@ -38,9 +38,9 @@ const TokenVault = ({
         <AlertBanner 
           variant="warn"
           title="ChromeDriver Missing"
-          message="The web capture engine is currently disabled. Please go to Settings to download the required components."
+          message="The web capture engine is currently disabled. Please go to System Settings to download and install the required binary components."
           actions={
-            <Button variant="secondary" onClick={() => setCurrentPage('settings')} className="h-9 px-4 rounded-lg text-[10px]" icon={ArrowRight}>
+            <Button variant="secondary" onClick={() => setCurrentPage('settings')} className="h-10 px-5 rounded-xl text-xs" icon={ArrowRight}>
               Go to Settings
             </Button>
           }
@@ -78,20 +78,20 @@ const TokenVault = ({
                               </div>
                             </div>
                             <div className="flex flex-col min-w-0 flex-1">
-                              <span className="font-black text-[13px] leading-tight break-words pr-1 text-foreground">
+                              <span className="font-bold text-[14px] leading-tight break-words pr-1 text-foreground">
                                 {acc.name}
                               </span>
-                              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                                <span className={`text-[6px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter shrink-0 ${acc.type === 'local' ? 'bg-warning/10 text-warning' : 'bg-info/10 text-info'}`}>
+                              <div className="flex flex-wrap items-center gap-2 mt-2">
+                                <span className={`text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider shrink-0 ${acc.type === 'local' ? 'bg-warning/10 text-warning border border-warning/20' : 'bg-info/10 text-info border border-info/20'}`}>
                                   {acc.type || 'web'}
                                 </span>
-                                <span className="text-[10px] text-primary font-black break-all italic">
+                                <span className="text-[12px] text-primary font-bold break-all italic opacity-80">
                                   {acc.username ? `@${acc.username.replace('@', '')}` : '---'}
                                 </span>
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-xl border border-border/50">
+                          <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-lg border border-border/50">
                             {activeAccountId !== acc.id ? (
                               <button onClick={() => selectAccount(acc.id)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><CheckCircle2 size={14} /></button>
                             ) : (
@@ -106,7 +106,7 @@ const TokenVault = ({
                   ) : (
                     <div className="col-span-full py-10 flex flex-col items-center justify-center text-muted-foreground opacity-20 border-2 border-dashed border-border rounded-xl">
                       <User size={48} />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] mt-4">No accounts saved</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.3em] mt-4">No identities stored</span>
                     </div>
                   )}
                 </>
@@ -114,10 +114,10 @@ const TokenVault = ({
             </div>
           </Card>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div className="flex items-center gap-3 px-2">
               <PlusCircle size={16} className="text-primary" />
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Register New Identity</h3>
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Register New Identity</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -127,9 +127,9 @@ const TokenVault = ({
                 className="p-6 rounded-xl bg-secondary/30 border border-border hover:border-info/40 hover:bg-info/5 transition-all flex items-center gap-5 group text-foreground text-left"
               >
                 <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Globe size={24} /></div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xs font-black uppercase tracking-widest">{t('tokens.web_capture')}</span>
-                  <span className="text-[9px] font-bold text-muted-foreground">{t('tokens.web_desc')}</span>
+                <div className="flex flex-col items-start gap-1">
+                  <span className="text-[13px] font-bold uppercase tracking-wide">{t('tokens.web_capture')}</span>
+                  <span className="text-[12px] font-medium text-muted-foreground leading-snug">{t('tokens.web_desc')}</span>
                 </div>
               </button>
 
@@ -138,9 +138,9 @@ const TokenVault = ({
                 className="p-6 rounded-xl bg-secondary/30 border border-border hover:border-warning/40 hover:bg-warning/5 transition-all flex items-center gap-5 group text-foreground text-left"
               >
                 <div className="p-4 rounded-lg bg-warning/10 text-warning group-hover:scale-110 transition-transform"><HardDrive size={24} /></div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xs font-black uppercase tracking-widest">{t('tokens.local_fetch')}</span>
-                  <span className="text-[9px] font-bold text-muted-foreground">{t('tokens.local_desc')}</span>
+                <div className="flex flex-col items-start gap-1">
+                  <span className="text-[13px] font-bold uppercase tracking-wide">{t('tokens.local_fetch')}</span>
+                  <span className="text-[12px] font-medium text-muted-foreground leading-snug">{t('tokens.local_desc')}</span>
                 </div>
               </button>
             </div>
@@ -150,21 +150,21 @@ const TokenVault = ({
         <div className="space-y-8">
           <Card title={t('tokens.account_context')}>
             <div className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{t('tokens.username')}</span>
-                  {isLoading ? <Skeleton className="h-6 w-32 mt-1" /> : <span className="text-lg font-bold">{status.username === 'Guest' ? t('tokens.guest') : status.username}</span>}
+              <div className="space-y-5">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('tokens.username')}</span>
+                  {isLoading ? <Skeleton className="h-6 w-32 mt-1" /> : <span className="text-lg font-black tracking-tight">{status.username === 'Guest' ? t('tokens.guest') : status.username}</span>}
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{t('tokens.live_status')}</span>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('tokens.live_status')}</span>
                   {isLoading ? <Skeleton className="h-6 w-24 mt-1" /> : <span className="text-lg font-bold">{t(status.appStatus)}</span>}
                 </div>
                 <div className="pt-2">
-                  <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">{t('tokens.permission')}</span>
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3 block">{t('tokens.permission')}</span>
                   {isLoading ? (
                     <Skeleton className="h-12 w-full rounded-xl" />
                   ) : (
-                    <div className={`p-4 rounded-xl border font-black text-[10px] tracking-widest text-center ${canGoLive ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-destructive/5 border-destructive/20 text-destructive'}`}>
+                    <div className={`p-4 rounded-xl border font-black text-[11px] tracking-[0.15em] text-center ${canGoLive ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-destructive/5 border-destructive/20 text-destructive'}`}>
                       {canGoLive ? t('tokens.full_rights') : t('tokens.restricted_rights')}
                     </div>
                   )}
@@ -172,7 +172,7 @@ const TokenVault = ({
               </div>
               <div className="divider-x opacity-10" />
               <div className="grid gap-3">
-                <Button onClick={() => refreshAccountInfo()} icon={RefreshCw} className="w-full h-12 text-[10px]">{t('tokens.sync')}</Button>
+                <Button onClick={() => refreshAccountInfo()} icon={RefreshCw} className="w-full py-4 text-xs">{t('tokens.sync')}</Button>
               </div>
             </div>
           </Card>
@@ -180,7 +180,7 @@ const TokenVault = ({
           <Card title={t('tokens.security_tip_title')}>
             <div className="flex gap-4">
               <Key className="text-primary shrink-0" size={20} />
-              <p className="text-[11px] font-bold text-muted-foreground leading-relaxed">
+              <p className="text-[12px] font-medium text-muted-foreground leading-relaxed">
                 {t('tokens.security_tip')}
               </p>
             </div>

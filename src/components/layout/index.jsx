@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 
 export const Titlebar = () => (
-  <header className="h-20 flex items-center justify-end px-8 gap-3 drag z-[100] shrink-0">
+  <header className="h-20 border-b border-border flex items-center justify-end px-8 gap-3 drag z-[100] shrink-0">
     <motion.button 
       whileHover={{ scale: 1.1 }} 
       whileTap={{ scale: 0.9 }} 

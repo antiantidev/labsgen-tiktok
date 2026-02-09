@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -32,20 +32,15 @@
     /* HIGH CONTRAST LIGHT MODE */
     --background: 210 20% 98%; 
     --foreground: 224 71% 4%;
-    
-    --primary: 142 72% 29%; /* Đậm hơn để nổi bật */
+    --primary: 142 72% 29%;
     --primary-foreground: 0 0% 100%;
-    
     --secondary: 210 20% 94%; 
     --secondary-foreground: 224 71% 4%;
-    
     --muted: 210 20% 90%;
-    --muted-foreground: 215 25% 27%; /* Chữ muted đậm hơn để dễ đọc */
-    
+    --muted-foreground: 215 25% 27%;
     --accent: 210 20% 90%;
     --accent-foreground: 224 71% 4%;
-    
-    --border: 214 32% 85%; /* Viền đậm hơn */
+    --border: 214 32% 85%;
     --input: 214 32% 85%;
     --ring: 142 72% 29%;
   }
@@ -60,12 +55,13 @@
   * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     user-select: none;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Glassmorphism optimized for Light/Dark */
 .glass {
   @apply bg-secondary/40 backdrop-blur-xl border border-white/5 shadow-sm;
 }
@@ -76,7 +72,6 @@
 
 .skeleton { @apply bg-muted animate-pulse; }
 
-/* Custom Scrollbar for Light/Dark */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { @apply bg-transparent; }
 ::-webkit-scrollbar-thumb {

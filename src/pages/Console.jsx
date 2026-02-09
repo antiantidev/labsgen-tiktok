@@ -43,9 +43,9 @@ const Console = ({
           <Card title={t('console.ingest')}>
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest ml-1">{t('console.server_url')}</label>
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{t('console.server_url')}</label>
                 <div className="grid grid-cols-[1fr_auto] gap-3">
-                  <div className="bg-secondary border border-border rounded-2xl px-6 py-4 text-xs font-mono text-foreground overflow-hidden truncate flex items-center">
+                  <div className="bg-secondary border border-border rounded-xl px-6 py-4 text-[13px] font-mono font-medium text-foreground overflow-hidden truncate flex items-center">
                     {streamData.url || t('console.not_started')}
                   </div>
                   <Button variant="secondary" onClick={() => copyToClipboard(streamData.url, 'RTMP URL')} className="h-[56px] w-[56px] p-0">
@@ -55,9 +55,9 @@ const Console = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest ml-1">{t('console.stream_key')}</label>
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{t('console.stream_key')}</label>
                 <div className="grid grid-cols-[1fr_auto] gap-3">
-                  <div className="bg-secondary border border-border rounded-2xl px-6 py-4 text-xs font-mono text-foreground overflow-hidden flex items-center">
+                  <div className="bg-secondary border border-border rounded-xl px-6 py-4 text-[13px] font-mono font-medium text-foreground overflow-hidden flex items-center">
                     {streamData.key ? '••••••••••••••••••••••••••••••••••••' : t('console.not_started')}
                   </div>
                   <Button variant="secondary" onClick={() => copyToClipboard(streamData.key, 'Stream Key')} className="h-[56px] w-[56px] p-0">

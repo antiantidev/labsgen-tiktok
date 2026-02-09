@@ -1,6 +1,6 @@
 {
   "name": "labgen-tiktok",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "LABGEN TIKTOK - StreamLabs TikTok Stream Key Generator",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",

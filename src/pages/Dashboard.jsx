@@ -16,7 +16,7 @@ const StatCard = ({ label, value, icon: Icon, colorClass = "text-primary", isLoa
       <Icon size={20} />
     </div>
     <div className="flex-1">
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">{label}</div>
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">{label}</div>
       {isLoading ? (
         <Skeleton className="h-6 w-20 mt-1" />
       ) : (
@@ -58,11 +58,11 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
         <Card title={t('dashboard.quick_start')}>
           <div className="grid grid-cols-2 gap-4">
             <button onClick={() => onNavigate('console')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border hover:border-primary/20 hover:bg-primary/5 transition-all group text-foreground">
-              <div className="p-4 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
+              <div className="p-4 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
               <span className="text-sm font-bold uppercase tracking-widest">{t('console.title')}</span>
             </button>
             <button onClick={() => window.api.openExternal("https://livecenter.tiktok.com/live_monitor")} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border hover:border-info/20 hover:bg-info/5 transition-all group text-foreground">
-              <div className="p-4 rounded-xl bg-info/10 text-info group-hover:scale-110 transition-transform"><Monitor size={32} /></div>
+              <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Monitor size={32} /></div>
               <span className="text-sm font-bold uppercase tracking-widest text-center">{t('sidebar.live_center')}</span>
             </button>
           </div>
@@ -71,11 +71,11 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
         <Card title={t('tokens.account_context')}>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border">
-              <span className="text-xs text-muted-foreground font-black uppercase tracking-widest">{t('tokens.username')}</span>
+              <span className="text-[11px] text-muted-foreground font-black uppercase tracking-widest">{t('tokens.username')}</span>
               {isLoading ? <Skeleton className="h-4 w-24" /> : <span className="font-bold">{status.username}</span>}
             </div>
             <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border">
-              <span className="text-xs text-muted-foreground font-black uppercase tracking-widest">{t('tokens.permission')}</span>
+              <span className="text-[11px] text-muted-foreground font-black uppercase tracking-widest">{t('tokens.permission')}</span>
               {isLoading ? (
                 <Skeleton className="h-6 w-20 rounded-full" />
               ) : (

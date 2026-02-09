@@ -120,13 +120,13 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
         </div>
 
         {/* Log List */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar font-mono text-[11px]">
+        <div className="flex-1 overflow-y-auto custom-scrollbar font-mono text-[12px]">
           <table className="w-full border-collapse">
             <thead className="sticky top-0 z-10 bg-secondary/90 backdrop-blur text-muted-foreground border-b border-border">
               <tr>
-                <th className="px-6 py-3 text-left font-black uppercase tracking-widest w-32">Timestamp</th>
-                <th className="px-6 py-3 text-left font-black uppercase tracking-widest w-28">Level</th>
-                <th className="px-6 py-3 text-left font-black uppercase tracking-widest">Message</th>
+                <th className="px-6 py-4 text-left font-black uppercase tracking-widest w-32">Timestamp</th>
+                <th className="px-6 py-4 text-left font-black uppercase tracking-widest w-28">Level</th>
+                <th className="px-6 py-4 text-left font-black uppercase tracking-widest">Message</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -142,13 +142,13 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
                       log.level === 'success' ? 'bg-primary/5' : ''
                     }`}
                   >
-                    <td className="px-6 py-4 text-muted-foreground tabular-nums align-top">
+                    <td className="px-6 py-4 text-muted-foreground tabular-nums align-top font-medium">
                       {log.time}
                     </td>
                     <td className="px-6 py-4 align-top">
                       <LogBadge level={log.level} />
                     </td>
-                    <td className="px-6 py-4 text-foreground leading-relaxed break-all">
+                    <td className="px-6 py-4 text-foreground leading-relaxed break-all font-medium">
                       <div className="flex items-start gap-2">
                         <ChevronRight size={14} className="mt-0.5 shrink-0 opacity-20 group-hover:text-primary group-hover:opacity-100 transition-all" />
                         <span>{log.message}</span>

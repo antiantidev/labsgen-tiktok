@@ -29,7 +29,6 @@ const App = () => {
   const [defaultPath, setDefaultPath] = useState('')
   const [systemPaths, setSystemPaths] = useState({})
   
-  // Settings State
   const [settings, setSettings] = useState({
     customProfilePath: '',
     autoRefresh: true,
@@ -37,12 +36,10 @@ const App = () => {
     captureDelay: 5000
   })
 
-  // Account Management State
   const [accounts, setAccounts] = useState([])
   const [activeAccountId, setActiveAccountId] = useState(null)
   const [token, setToken] = useState('')
   
-  const [showToken, setShowToken] = useState(false)
   const [streamTitle, setStreamTitle] = useState('')
   const [gameCategory, setGameCategory] = useState('')
   const [gameMaskId, setGameMaskId] = useState('')
@@ -60,29 +57,12 @@ const App = () => {
   const latestSearch = useRef('')
   const autoSaveTimer = useRef(null)
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark'
-    setTheme(newTheme)
-  }
-
-  const toggleLanguage = () => {
-    const currentLang = i18n.language.split('-')[0]
-    const newLang = currentLang === 'vi' ? 'en' : 'vi'
-    i18n.changeLanguage(newLang)
-  }
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+  const toggleLanguage = () => i18n.changeLanguage(i18n.language.startsWith('vi') ? 'en' : 'vi')
 
   useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.add('light')
-    } else {
-      document.documentElement.classList.remove('light')
-    }
+    document.documentElement.classList.toggle('light', theme === 'light')
   }, [theme])
-
-  // Update primary color dynamically
-  useEffect(() => {
-    document.documentElement.style.setProperty('--primary', '142.1 70.6% 45.3%')
-  }, [])
 
   const pushStatus = useCallback((message, level = 'info') => {
     const entry = { message, level, time: new Date().toLocaleTimeString(), timestamp: new Date().toISOString(), id: Date.now() }
@@ -92,29 +72,20 @@ const App = () => {
   const pushToast = useCallback((message, type = 'info', duration = 4000) => {
     const id = Date.now()
     setToasts(prev => [...prev, { id, message, type }])
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id))
-    }, duration)
+    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), duration)
   }, [])
 
   const showModal = useCallback((title, body, buttons = [{ label: 'OK', value: true }]) => {
-    return new Promise((resolve) => {
-      setModal({ show: true, title, body, buttons, resolve })
-    })
+    return new Promise((resolve) => setModal({ show: true, title, body, buttons, resolve }))
   }, [])
 
   const closeModal = useCallback((value) => {
-    setModal(prev => {
-      if (prev.resolve) prev.resolve({ value })
-      return { ...prev, show: false, resolve: null }
-    })
+    setModal(prev => { if (prev.resolve) prev.resolve({ value }); return { ...prev, show: false, resolve: null } })
   }, [])
-
-  // --- Core Logic ---
 
   const refreshAccountInfo = useCallback(async (manualToken, accountId) => {
     const targetToken = manualToken || token
-    if (!targetToken) return
+    if (!targetToken) return false
     pushStatus('Refreshing account data...', 'info')
     await window.api.setToken(targetToken)
     try {
@@ -136,17 +107,39 @@ const App = () => {
     return false
   }, [token, pushStatus, t])
 
+  const saveConfig = useCallback(async (showMessage = false) => {
+    let finalCategory = gameCategory; let finalMaskId = gameMaskId;
+    if (gameCategory && !gameMaskId) {
+      const match = await window.api.getCategoryByName(gameCategory);
+      if (match) { finalCategory = match.full_name; finalMaskId = match.game_mask_id; setGameCategory(finalCategory); setGameMaskId(finalMaskId); }
+      else if (showMessage) { pushToast(t('setup.invalid_category'), 'error'); return false; }
+    }
+    const appState = { title: streamTitle, game: finalCategory, audience_type: mature ? '1' : '0', token, stream_id: streamData.id, theme, language: i18n.language, activeAccountId, settings, lastPage: currentPage, game_mask_id: finalMaskId }
+    await window.api.saveSetting('app_state', appState)
+    await window.api.saveConfig(appState)
+    if (showMessage) pushToast(t('common.save_success'), 'success')
+    return true
+  }, [streamTitle, gameCategory, gameMaskId, mature, token, streamData.id, theme, i18n.language, activeAccountId, settings, currentPage, pushToast, t])
+
+  // Immediate save for page changes
+  useEffect(() => {
+    if (!isLoading) saveConfig(false)
+  }, [currentPage])
+
+  useEffect(() => {
+    if (!isLoading) { 
+      clearTimeout(autoSaveTimer.current)
+      autoSaveTimer.current = setTimeout(() => saveConfig(false), 800)
+    }
+    return () => clearTimeout(autoSaveTimer.current)
+  }, [streamTitle, gameCategory, mature, token, theme, i18n.language, activeAccountId, settings, isLoading, saveConfig])
+
   const loadLocalToken = async () => {
     const res = await window.api.loadLocalToken()
     if (res.token) { 
-      setToken(res.token); 
-      const newId = `local_${Date.now()}`
+      setToken(res.token); const newId = `local_${Date.now()}`
       const newAccount = { id: newId, name: `${t('tokens.local_fetch')} (${new Date().toLocaleDateString()})`, type: 'local', token: res.token, username: 'Checking...', lastUsed: Date.now() }
-      await window.api.saveAccount(newAccount)
-      const updatedList = await window.api.getAccounts()
-      setAccounts(updatedList)
-      setActiveAccountId(newId)
-      await refreshAccountInfo(res.token, newId); 
+      await window.api.saveAccount(newAccount); const updatedList = await window.api.getAccounts(); setAccounts(updatedList); setActiveAccountId(newId); await refreshAccountInfo(res.token, newId); 
       pushToast('Local token loaded', 'success')
     } else if (res.error) pushToast(res.error, 'error')
   }
@@ -157,45 +150,28 @@ const App = () => {
       const choice = await showModal(t('driver.missing_title'), t('driver.missing_desc'), [{ label: t('common.cancel'), value: 'cancel', primary: false }, { label: t('driver.download_now'), value: 'download', primary: true }])
       if (choice.value === 'download') {
         setIsLoading(true); setLoadingMessage(t('driver.preparing'))
-        const res = await window.api.bootstrapDriver()
-        if (res.ok) setIsDriverMissing(false)
-        setIsLoading(false)
-      } else {
-        setIsDriverMissing(true)
-        return
-      }
+        const res = await window.api.bootstrapDriver(); if (res.ok) setIsDriverMissing(false); setIsLoading(false)
+      } else { setIsDriverMissing(true); return }
     }
-
-    setIsWebLoading(true)
-    const res = await window.api.loadWebToken({ accountId: existingAccountId })
-    setIsWebLoading(false)
-    
+    setIsWebLoading(true); const res = await window.api.loadWebToken({ accountId: existingAccountId }); setIsWebLoading(false)
     if (res.token) { 
-      setToken(res.token); 
-      let finalId = existingAccountId
+      setToken(res.token); let finalId = existingAccountId
       if (!existingAccountId) {
-        finalId = `profile_${Date.now()}`
-        const newAccount = { id: finalId, name: `${t('tokens.web_capture')} ${accounts.filter(a => a.type === 'web').length + 1}`, type: 'web', token: res.token, username: 'Authenticating...', lastUsed: Date.now() }
+        finalId = `profile_${Date.now()}`; const newAccount = { id: finalId, name: `${t('tokens.web_capture')} ${accounts.filter(a => a.type === 'web').length + 1}`, type: 'web', token: res.token, username: 'Authenticating...', lastUsed: Date.now() }
         await window.api.saveAccount(newAccount)
       } else {
-        const currentAccounts = await window.api.getAccounts()
-        const acc = currentAccounts.find(a => a.id === existingAccountId)
+        const currentAccounts = await window.api.getAccounts(); const acc = currentAccounts.find(a => a.id === existingAccountId)
         await window.api.saveAccount({ ...acc, token: res.token, lastUsed: Date.now() })
       }
-      const updatedList = await window.api.getAccounts()
-      setAccounts(updatedList)
-      setActiveAccountId(finalId)
-      await refreshAccountInfo(res.token, finalId); 
+      const updatedList = await window.api.getAccounts(); setAccounts(updatedList); setActiveAccountId(finalId); await refreshAccountInfo(res.token, finalId); 
       pushToast('Authentication successful', 'success')
     } else if (res.error) pushToast(res.error, 'error')
   }
 
   const deleteAccount = async (accountId) => {
-    const confirmed = await showModal('Delete Account', 'Are you sure you want to remove this account?', [{ label: t('common.cancel'), value: 'cancel', primary: false }, { label: 'Delete', value: 'delete', primary: true }])
+    const confirmed = await showModal('Delete Account', 'Are you sure?', [{ label: t('common.cancel'), value: 'cancel', primary: false }, { label: 'Delete', value: 'delete', primary: true }])
     if (confirmed.value === 'delete') {
-      await window.api.deleteProfile(accountId); await window.api.deleteAccount(accountId)
-      const updatedList = await window.api.getAccounts()
-      setAccounts(updatedList)
+      await window.api.deleteProfile(accountId); await window.api.deleteAccount(accountId); const updatedList = await window.api.getAccounts(); setAccounts(updatedList)
       if (activeAccountId === accountId) { setToken(''); setActiveAccountId(null); setStatus({ username: 'Guest', appStatus: 'tokens.unknown', canGoLive: false, badge: 'common.check' }) }
       pushToast('Account removed', 'info')
     }
@@ -205,25 +181,6 @@ const App = () => {
     const acc = accounts.find(a => a.id === accountId)
     if (acc) { setActiveAccountId(accountId); setToken(acc.token); refreshAccountInfo(acc.token, accountId); pushToast(`Switched to ${acc.username || acc.name}`, 'success') }
   }
-
-  const saveConfig = useCallback(async (showMessage = false) => {
-    let finalCategory = gameCategory; let finalMaskId = gameMaskId;
-    if (gameCategory && !gameMaskId) {
-      const match = await window.api.getCategoryByName(gameCategory);
-      if (match) { finalCategory = match.full_name; finalMaskId = match.game_mask_id; setGameCategory(finalCategory); setGameMaskId(finalMaskId); }
-      else if (showMessage) { pushToast(t('setup.invalid_category'), 'error'); return false; }
-    }
-    if (!gameCategory && showMessage && currentPage === 'setup') { pushToast(t('setup.invalid_category'), 'error'); return false; }
-    const appState = { title: streamTitle, game: finalCategory, audience_type: mature ? '1' : '0', token, stream_id: streamData.id, theme, language: i18n.language, activeAccountId, settings, lastPage: currentPage, game_mask_id: finalMaskId }
-    await window.api.saveSetting('app_state', appState); await window.api.saveConfig(appState)
-    if (showMessage) pushToast(t('common.save_success'), 'success')
-    return true
-  }, [streamTitle, gameCategory, gameMaskId, mature, token, streamData.id, theme, i18n.language, activeAccountId, settings, currentPage, pushToast, t])
-
-  useEffect(() => {
-    if (!isLoading) { clearTimeout(autoSaveTimer.current); autoSaveTimer.current = setTimeout(() => { saveConfig(false) }, 1500) }
-    return () => clearTimeout(autoSaveTimer.current)
-  }, [streamTitle, gameCategory, mature, token, theme, i18n.language, activeAccountId, settings, currentPage, isLoading, saveConfig])
 
   const handleSearch = (text) => {
     setGameCategory(text); setGameMaskId('') 
@@ -236,17 +193,12 @@ const App = () => {
   }
 
   const startStream = async () => {
-    let finalMaskId = gameMaskId;
-    if (!finalMaskId && gameCategory) {
-      const match = await window.api.getCategoryByName(gameCategory);
-      if (match) finalMaskId = match.game_mask_id;
-    }
+    let finalMaskId = gameMaskId; if (!finalMaskId && gameCategory) { const match = await window.api.getCategoryByName(gameCategory); if (match) finalMaskId = match.game_mask_id; }
     if (!finalMaskId) { pushToast(t('setup.invalid_category'), 'error'); return; }
     const res = await window.api.startStream({ title: streamTitle, category: finalMaskId, audienceType: mature ? '1' : '0' })
     if (res.ok) {
       const { streamUrl, streamKey, streamId } = res.result || {}
-      setStreamData({ url: streamUrl, key: streamKey, id: streamId || streamData.id, isLive: true })
-      pushToast('Broadcast is now ONLINE', 'success')
+      setStreamData({ url: streamUrl, key: streamKey, id: streamId || streamData.id, isLive: true }); pushToast('Broadcast is now ONLINE', 'success')
     } else pushToast(res.error, 'error')
   }
 
@@ -256,23 +208,14 @@ const App = () => {
     else pushToast('Could not end session', 'error')
   }
 
-  // --- Lifecycle ---
-
   useEffect(() => {
     const init = async () => {
       setIsLoading(true); setLoadProgress(5); setLoadingMessage(t('common.loading'))
-      
-      const version = await window.api.getAppVersion(); 
-      const defPath = await window.api.getDefaultPath(); 
-      const allPaths = await window.api.getAllPaths()
-      
+      const version = await window.api.getAppVersion(); const defPath = await window.api.getDefaultPath(); const allPaths = await window.api.getAllPaths()
       setAppVersion(version); setDefaultPath(defPath); setSystemPaths(allPaths)
       setLoadProgress(30); setLoadingMessage('Accessing local database...')
-      
-      let data = await window.api.getSetting('app_state')
-      if (!data) data = await window.api.loadConfig()
+      let data = await window.api.getSetting('app_state'); if (!data) data = await window.api.loadConfig()
       const dbAccounts = await window.api.getAccounts(); setAccounts(dbAccounts)
-
       if (data) {
         if (data.settings) setSettings(data.settings)
         if (data.activeAccountId) setActiveAccountId(data.activeAccountId)
@@ -285,44 +228,34 @@ const App = () => {
         if (data.audience_type) setMature(data.audience_type === '1')
         if (data.token) setToken(data.token)
       }
-
       setLoadProgress(60); setLoadingMessage('Verifying system dependencies...')
-      const driverExists = await window.api.checkDriverExists()
-      if (!driverExists) {
-        setIsDriverMissing(true)
-        setIsLoading(false) 
+      if (!(await window.api.checkDriverExists())) {
+        setIsDriverMissing(true); setIsLoading(false) 
         const choice = await showModal(t('driver.missing_title'), t('driver.missing_desc'), [{ label: t('common.cancel'), value: 'cancel', primary: false }, { label: t('driver.download_now'), value: 'download', primary: true }])
         if (choice.value === 'download') {
           setIsLoading(true); setLoadingMessage(t('driver.preparing'))
-          const res = await window.api.bootstrapDriver()
-          if (res.ok) setIsDriverMissing(false)
-          setLoadProgress(85)
+          const res = await window.api.bootstrapDriver(); if (res.ok) setIsDriverMissing(false); setLoadProgress(85)
         }
       } else { setIsDriverMissing(false); setLoadProgress(85) }
-
-      setLoadingMessage('Synchronizing account status...')
-      if (token || (data && data.token)) await refreshAccountInfo(token || data.token, activeAccountId || (data && data.activeAccountId)); 
-      
-      setLoadProgress(100); setLoadingMessage('Kernel ready.')
-      window.api.rendererReady(); setTimeout(() => setIsLoading(false), 800)
+      if (data?.settings?.autoRefresh && (token || data?.token)) {
+        setLoadingMessage('Synchronizing account status...')
+        await refreshAccountInfo(token || data.token, activeAccountId || data.activeAccountId); 
+      }
+      setLoadProgress(100); setLoadingMessage('Kernel ready.'); window.api.rendererReady(); setTimeout(() => setIsLoading(false), 800)
     }
     init()
   }, []) 
 
   useEffect(() => {
-    const cleanupUpdate = window.api.onUpdateAvailable((info) => {
-      showModal(t('update.available'), `${t('update.desc')} (${info.latest}).`, [{ label: t('update.now'), value: 'download', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(res => { if (res.value === 'download') window.api.startDownload(); })
-    })
-    const cleanupDownloaded = window.api.onUpdateDownloaded(() => {
-      showModal(t('update.ready'), t('update.ready_desc'), [{ label: t('update.restart'), value: 'install', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(res => { if (res.value === 'install') window.api.quitAndInstall() })
-    })
-    const cleanupError = window.api.onUpdateError(() => pushToast('Update failed', 'error'))
-    const cleanupToken = window.api.onTokenStatus((msg) => { setLoadingMessage(msg); pushStatus(`Web: ${msg}`, 'info'); })
-    return () => { cleanupUpdate(); cleanupDownloaded(); cleanupError(); cleanupToken(); }
+    const cu = window.api.onUpdateAvailable((i) => showModal(t('update.available'), `${t('update.desc')} (${i.latest}).`, [{ label: t('update.now'), value: 'download', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'download') window.api.startDownload(); }))
+    const cd = window.api.onUpdateDownloaded(() => showModal(t('update.ready'), t('update.ready_desc'), [{ label: t('update.restart'), value: 'install', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'install') window.api.quitAndInstall() }))
+    const ce = window.api.onUpdateError(() => pushToast('Update failed', 'error'))
+    const ct = window.api.onTokenStatus((m) => { setLoadingMessage(m); pushStatus(`Web: ${m}`, 'info'); })
+    return () => { cu(); cd(); ce(); ct(); }
   }, [pushStatus, showModal, pushToast, t])
 
   return (
-    <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Manrope']">
+    <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Plus_Jakarta_Sans']">
       <AnimatePresence>{isLoading && <LoadingOverlay message={loadingMessage} progress={loadProgress} />}</AnimatePresence>
       <ToastContainer>{toasts.map(t => <Toast key={t.id} message={t.message} type={t.type} onClose={() => setToasts(prev => prev.filter(toast => toast.id !== t.id))} />)}</ToastContainer>
       <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} username={status.username} canGoLive={status.canGoLive} version={appVersion} isLoading={isLoading} />
@@ -344,10 +277,10 @@ const App = () => {
       <AnimatePresence>
         {modal.show && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className={`fixed inset-0 z-[300] flex items-center justify-center p-8 backdrop-blur-md ${theme === 'light' ? 'bg-white/40' : 'bg-black/60'}`}>
-            <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} className="glass border border-white/10 w-full max-w-lg rounded-[40px] p-12 space-y-8 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} className="glass border border-white/10 w-full max-w-lg rounded-xl p-12 space-y-8 shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="space-y-4">
                 <h2 className="text-3xl font-black tracking-tight">{modal.title}</h2>
-                <p className="text-muted-foreground text-lg font-medium leading-relaxed">{modal.body}</p>
+                <p className="text-muted-foreground text-[14px] font-medium leading-relaxed">{modal.body}</p>
               </div>
               <div className="flex justify-end gap-4">{modal.buttons.map((btn, i) => <Button key={i} variant={btn.primary !== false ? 'primary' : 'secondary'} onClick={() => closeModal(btn.value)} className="px-8 py-4">{btn.label}</Button>)}</div>
             </motion.div>
