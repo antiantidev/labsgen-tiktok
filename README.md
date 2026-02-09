@@ -1,22 +1,30 @@
-# Labsgen Tiktok
+# Labsgen Tiktok - TikTok Live Stream Key Generator
 
 <div align="center">
   <img src="resources/logo.svg" alt="Labsgen Tiktok Logo" width="120" height="120" />
   <p><strong>TikTok Live Stream Key Generator for OBS from Streamlabs</strong></p>
+  <p><em>Labsgen Tiktok is a Windows TikTok Live Stream Key Generator that helps creators fetch RTMP URL and Stream Key for OBS quickly and safely.</em></p>
   <p>
-    <img src="https://img.shields.io/badge/Version-0.12.0-primary?style=for-the-badge&logo=electron" alt="Version" />
+    <img src="https://img.shields.io/badge/Version-0.17.2-primary?style=for-the-badge&logo=electron" alt="Version" />
     <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform" />
     <img src="https://img.shields.io/badge/Framework-React_19-61DAFB?style=for-the-badge&logo=react" alt="Framework" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=for-the-badge&logo=sqlite" alt="Database" />
+  </p>
+  <p>
+    <a href="https://ko-fi.com/chokernguyen">
+      <img src="https://img.shields.io/badge/Donate-Ko--fi-ff5f5f?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Donate on Ko-fi" />
+    </a>
   </p>
 </div>
 
 ---
 
 ## 📖 Overview
-**Labsgen Tiktok** is a desktop tool that retrieves **TikTok Live Stream Keys (RTMP URL & Stream Key)** from Streamlabs for use in OBS.
+**Labsgen Tiktok** is a desktop **TikTok Live Stream Key Generator** that retrieves **RTMP URL and Stream Key** from Streamlabs for use in OBS.
 
 The app combines the performance of **SQLite 3**, the security of **Electron safeStorage**, and a modern **Edge-to-Edge** design language to deliver a stable, premium streaming workflow.
+
+If you need a **TikTok Live Stream Key Generator** for Windows, Labsgen Tiktok focuses on fast setup, reliable account handling, and clear streaming metadata.
 
 ## ✨ Key Features
 
@@ -71,8 +79,8 @@ For deeper technical details, see:
 - [**Detailed Folder Structure**](./DOCS_STRUCTURE.md)
 - [**Feature Deep Dive**](./DOCS_FEATURES.md)
 
-## 📂 Version History (v0.12.0)
-The current application runs on stable kernel v0.12.0.
+## 📂 Version History (v0.17.2)
+The current application runs on stable kernel v0.17.2.
 
 ## 📄 License & Contact
 Developed by **Nhat Linh Nguyen**.  
@@ -80,5 +88,5 @@ License: **MIT License**.
 
 ---
 <div align="center">
-  <p>Built with ❤️ for the Streaming Community</p>
+  <p>Built with ❤️ for the Streamer</p>
 </div>
