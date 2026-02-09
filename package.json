@@ -1,6 +1,6 @@
 {
   "name": "labsgen-tiktok",
-  "version": "0.16.3",
+  "version": "0.17.0",
   "description": "TikTok Live Stream Key Generator for OBS from Streamlabs",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
@@ -50,6 +50,7 @@
       "shortcutName": "Labsgen Tiktok",
       "multiLanguageInstaller": true,
       "displayLanguageSelector": true,
+      "include": "build/installer.nsh",
       "installerLanguages": [
         "en_US",
         "vi_VN"

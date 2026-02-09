@@ -259,7 +259,7 @@ const App = () => {
         if (data.activeAccountId) setActiveAccountId(data.activeAccountId)
         if (data.lastPage) setCurrentPage(data.lastPage)
         if (data.theme) setTheme(data.theme)
-        if (data.language && i18n.exists(data.language)) {
+        if (data.language === 'vi' || data.language === 'en') {
           i18n.changeLanguage(data.language)
         } else {
           i18n.changeLanguage('en')
@@ -311,7 +311,7 @@ const App = () => {
       }
     })
     return () => { cu(); cd(); ce(); ct(); cl(); }
-  }, [pushStatus, showModal, pushToast, t, logPage, logPageSize, manualUpdateCheck])
+  }, [pushStatus, showModal, pushToast, t, logPage, logPageSize])
 
   return (
     <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Plus_Jakarta_Sans']">

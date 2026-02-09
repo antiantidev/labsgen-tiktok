@@ -2,7 +2,7 @@
 
 <div align="center">
   <img src="resources/logo.svg" alt="Labsgen Tiktok Logo" width="120" height="120" />
-  <p><strong>Professional StreamLabs TikTok Ingest & Metadata Orchestrator</strong></p>
+  <p><strong>TikTok Live Stream Key Generator for OBS from Streamlabs</strong></p>
   <p>
     <img src="https://img.shields.io/badge/Version-0.12.0-primary?style=for-the-badge&logo=electron" alt="Version" />
     <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform" />
@@ -14,7 +14,7 @@
 ---
 
 ## 📖 Overview
-**Labsgen Tiktok** is a professional desktop solution built on Electron that helps streamers optimize the extraction of **Ingest (RTMP URL & Stream Key)** from Streamlabs to broadcast live on TikTok.
+**Labsgen Tiktok** is a desktop tool that retrieves **TikTok Live Stream Keys (RTMP URL & Stream Key)** from Streamlabs for use in OBS.
 
 The app combines the performance of **SQLite 3**, the security of **Electron safeStorage**, and a modern **Edge-to-Edge** design language to deliver a stable, premium streaming workflow.
 
