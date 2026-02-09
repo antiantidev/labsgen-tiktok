@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FolderOpen, Cpu, Sparkles, Monitor, RotateCcw, Save, ExternalLink, RefreshCw, ShieldCheck, FileCode, HardDrive, Database, AppWindow } from 'lucide-react'
-import { Card, Button, Input } from '../components/ui'
+import { Globe, Folder, RefreshCw, Cpu, Database, FileJson, HardDrive, Terminal, Heart, Layout, Bell, Save, Sun, Moon, ShieldAlert, Download, CheckCircle2 } from 'lucide-react'
+import { Card, Button, Input, Switch, AlertBanner } from '../components/ui'
 import { useTranslation } from 'react-i18next'
 
 const pageVariants = {
@@ -10,223 +10,216 @@ const pageVariants = {
   exit: { opacity: 0, y: -10, filter: 'blur(10px)', transition: { duration: 0.2 } }
 }
 
-const PathRow = ({ label, path, icon: Icon, onOpen }) => (
-  <div className="space-y-2 group">
-    <div className="flex items-center justify-between ml-1">
-      <label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] group-hover:text-primary transition-colors">{label}</label>
-    </div>
-    <div className="flex gap-3 items-center">
-      <div className="flex-1 bg-secondary border border-border rounded-2xl px-5 py-3 text-[10px] font-mono text-muted-foreground break-all flex items-center min-h-[44px] leading-relaxed relative overflow-hidden">
-        <div className="absolute left-0 top-0 w-1 h-full bg-primary/10 group-hover:bg-primary/30 transition-all" />
-        {path || 'N/A'}
-      </div>
-      <button 
-        onClick={() => onOpen(path)}
-        className="p-3 rounded-xl bg-secondary border border-border text-muted-foreground hover:text-primary hover:border-primary/30 transition-all shadow-sm shrink-0"
-        title="Open Location"
-      >
-        <Icon size={16} />
-      </button>
-    </div>
-  </div>
-)
-
-const Settings = ({ settings, setSettings, saveConfig, defaultPath, systemPaths, version, showModal }) => {
-  const { t } = useTranslation()
+const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, saveConfig, defaultPath, systemPaths, version, showModal, theme, toggleTheme, pushToast }) => {
+  const { t, i18n } = useTranslation()
   const [checkingUpdate, setCheckingUpdate] = useState(false)
+  const [isInstallingDriver, setIsDriverInstalling] = useState(false)
 
-  const handleSelectFolder = async () => {
+  const handleUpdateCheck = async () => {
+    setCheckingUpdate(true)
+    const res = await window.api.checkForUpdates()
+    setCheckingUpdate(false)
+    if (res.ok && res.upToDate) {
+      await showModal(t('common.up_to_date'), `${t('common.up_to_date_desc')} LABGEN TIKTOK (v${version})`)
+    }
+  }
+
+  const handleInstallDriver = async () => {
+    setIsDriverInstalling(true)
+    const res = await window.api.bootstrapDriver()
+    setIsDriverInstalling(false)
+    if (res.ok) {
+      setIsDriverMissing(false)
+      if (pushToast) pushToast("ChromeDriver installed successfully", "success")
+    } else {
+      if (pushToast) pushToast(res.error, "error")
+    }
+  }
+
+  const handlePathChange = async () => {
     const path = await window.api.selectFolder()
     if (path) {
       setSettings({ ...settings, customProfilePath: path })
     }
   }
 
-  const handleOpenFolder = (path) => {
-    if (!path) return;
-    window.api.openPath(path);
-  }
-
-  const handleCheckUpdate = async () => {
-    setCheckingUpdate(true)
-    try {
-      const res = await window.api.checkForUpdates()
-      if (res.ok && res.devMode) {
-        await showModal(
-          'Development Mode',
-          'Automatic updates are disabled in development mode. Build the application to test this feature.',
-          [{ label: t('common.ok'), value: true }]
-        )
-      } else if (res.ok && res.upToDate) {
-        await showModal(
-          t('update.up_to_date'),
-          `${t('update.up_to_date_desc')} LabsGen TikTok (v${version}).`,
-          [{ label: t('common.ok'), value: true }]
-        )
-      } else if (!res.ok) {
-        await showModal(t('common.error'), res.error)
-      }
-    } catch (err) {
-      await showModal(t('common.error'), String(err))
-    } finally {
-      setTimeout(() => setCheckingUpdate(false), 500)
-    }
-  }
-
   return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-8 pb-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-black">{t('sidebar.settings') || 'Settings'}</h1>
-          <p className="text-muted-foreground font-medium">Customize your experience and system paths.</p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="secondary" onClick={() => setSettings({
-            customProfilePath: '',
-            autoRefresh: true,
-            captureDelay: 5000,
-            themeColor: '#31fb9a'
-          })} icon={RotateCcw}>Reset All</Button>
-          <Button onClick={() => saveConfig(true)} icon={Save}>{t('common.save')}</Button>
-        </div>
+    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-10 pb-20">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-black">{t('settings.title')}</h1>
+        <p className="text-muted-foreground font-medium">{t('settings.desc')}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="space-y-8">
-          <Card title="System Paths">
-            <div className="space-y-6">
-              {/* Profile Path with Select button */}
-              <div className="space-y-2 group">
-                <div className="flex items-center justify-between ml-1">
-                  <label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] group-hover:text-primary transition-colors">Chrome Profiles Directory</label>
-                  <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${settings.customProfilePath ? 'bg-primary/10 text-primary' : 'bg-amber-500/10 text-amber-500'}`}>
-                    {settings.customProfilePath ? 'CUSTOM' : 'DEFAULT'}
-                  </span>
-                </div>
-                <div className="flex gap-3 items-center">
-                  <div className="flex-1 bg-secondary border border-border rounded-2xl px-5 py-3 text-[10px] font-mono text-muted-foreground break-all flex items-center min-h-[44px] leading-relaxed relative overflow-hidden">
-                    <div className="absolute left-0 top-0 w-1 h-full bg-primary/10 group-hover:bg-primary/30 transition-all" />
-                    {settings.customProfilePath || defaultPath}
-                  </div>
-                  <div className="flex flex-col gap-2 shrink-0">
-                    <button 
-                      onClick={handleSelectFolder}
-                      className="p-2.5 rounded-xl bg-secondary border border-border text-muted-foreground hover:text-primary transition-all shadow-sm"
-                      title="Select New Folder"
-                    >
-                      <FolderOpen size={14} />
-                    </button>
-                    <button 
-                      onClick={() => handleOpenFolder(settings.customProfilePath || defaultPath)}
-                      className="p-2.5 rounded-xl bg-secondary border border-border text-muted-foreground hover:text-primary transition-all shadow-sm"
-                      title="Open Current Folder"
-                    >
-                      <ExternalLink size={14} />
-                    </button>
-                  </div>
-                </div>
-              </div>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
+        <div className="xl:col-span-8 space-y-10">
+          
+          {/* Driver Status - Persistence Notice */}
+          {isDriverMissing && (
+            <AlertBanner 
+              variant="error"
+              title="Action Required: ChromeDriver"
+              message="The system detected that ChromeDriver is missing. Web Capture login will not function without it."
+              actions={
+                <Button variant="primary" onClick={handleInstallDriver} loading={isInstallingDriver} className="h-9 px-6 rounded-xl text-[10px]" icon={Download}>
+                  Download & Install Now
+                </Button>
+              }
+            />
+          )}
 
-              <div className="divider-x opacity-10" />
-
-              {/* Other System Paths */}
-              <PathRow label="Application Source" path={systemPaths.app} icon={AppWindow} onOpen={handleOpenFolder} />
-              <PathRow label="User Data Folder" path={systemPaths.userData} icon={Database} onOpen={handleOpenFolder} />
-              <PathRow label="Config File" path={systemPaths.config} icon={FileCode} onOpen={(p) => window.api.openPath(require('path').dirname(p))} />
-              <PathRow label="ChromeDriver Binary" path={systemPaths.driver} icon={Cpu} onOpen={(p) => window.api.openPath(require('path').dirname(p))} />
-            </div>
-          </Card>
-
-          <Card title="Software Update">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary border border-border">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold">Version {version}</span>
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Current Release</span>
+          {/* Appearance & Personalization */}
+          <Card title={t('settings.appearance')}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  {theme === 'dark' ? <Moon className="text-primary" size={18} /> : <Sun className="text-primary" size={18} />}
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Display Mode</span>
                 </div>
-                <Button 
-                  variant="outline" 
-                  onClick={handleCheckUpdate} 
-                  loading={checkingUpdate}
-                  icon={RefreshCw}
-                  className="h-10"
-                >
-                  Check for Updates
+                <Button variant="secondary" onClick={toggleTheme} className="w-full h-12 rounded-xl">
+                  {theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
                 </Button>
               </div>
-            </div>
-          </Card>
-        </div>
 
-        <div className="space-y-8">
-          <Card title="Automation Behavior">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary border border-border">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold">Auto-refresh Account</span>
-                  <span className="text-[10px] text-muted-foreground">Verify token status on application startup.</span>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Globe className="text-primary" size={18} />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('settings.language')}</span>
                 </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.autoRefresh} 
-                  onChange={(e) => setSettings({...settings, autoRefresh: e.target.checked})}
-                  className="w-5 h-5 accent-primary cursor-pointer"
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary border border-border">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold">Minimize to System Tray</span>
-                  <span className="text-[10px] text-muted-foreground">Hide to system tray instead of quitting when clicking [X].</span>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={settings.minimizeOnClose} 
-                  onChange={(e) => setSettings({...settings, minimizeOnClose: e.target.checked})}
-                  className="w-5 h-5 accent-primary cursor-pointer"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Web Capture Delay (ms)</label>
-                <Input 
-                  type="number" 
-                  value={settings.captureDelay} 
-                  onChange={(e) => setSettings({...settings, captureDelay: parseInt(e.target.value) || 0})}
-                  placeholder="5000"
-                />
-                <p className="text-[10px] text-zinc-500 italic">Wait time for redirection. Increase if your internet is slow.</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card title="Visual Identity">
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Primary Theme Color</label>
-                <div className="flex gap-3">
-                  {['#31fb9a', '#3b82f6', '#a855f7', '#f43f5e', '#eab308'].map((color) => (
+                <div className="flex gap-2">
+                  {['vi', 'en'].map((lang) => (
                     <button
-                      key={color}
-                      onClick={() => setSettings({...settings, themeColor: color})}
-                      className={`w-10 h-10 rounded-xl border-4 transition-all ${settings.themeColor === color ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-50 hover:opacity-100'}`}
-                      style={{ backgroundColor: color }}
-                    />
+                      key={lang}
+                      onClick={() => i18n.changeLanguage(lang)}
+                      className={`flex-1 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${i18n.language.startsWith(lang) ? 'bg-primary text-primary-foreground border-primary' : 'bg-secondary border-border hover:border-primary/30'}`}
+                    >
+                      {lang.toUpperCase()}
+                    </button>
                   ))}
                 </div>
               </div>
+            </div>
+          </Card>
 
-              <div className="p-5 rounded-3xl bg-primary/5 border border-primary/20 space-y-4">
-                <div className="flex items-center gap-3 text-primary">
-                  <Sparkles size={20} />
-                  <span className="text-xs font-black uppercase tracking-widest">Personalization</span>
+          {/* Automation */}
+          <Card title={t('settings.automation')}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Switch 
+                label="Auto-refresh Account"
+                description="Verify token status on application startup."
+                checked={settings.autoRefresh}
+                onChange={(val) => setSettings({...settings, autoRefresh: val})}
+              />
+              <Switch 
+                label="Minimize to System Tray"
+                description="Hide to system tray instead of quitting when clicking [X]."
+                checked={settings.minimizeOnClose}
+                onChange={(val) => setSettings({...settings, minimizeOnClose: val})}
+              />
+            </div>
+          </Card>
+
+          {/* System Paths */}
+          <Card title={t('settings.paths')}>
+            <div className="space-y-6">
+              <div className="p-6 rounded-3xl bg-secondary/50 border border-border space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-primary/10 text-primary"><Folder size={18} /></div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-black uppercase tracking-widest">{t('settings.profiles_path')}</span>
+                      <span className="text-[10px] text-muted-foreground">{t('settings.profiles_desc')}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="h-10 text-[9px]" onClick={handlePathChange}>{t('settings.change')}</Button>
+                    <Button variant="ghost" className="h-10 text-[9px]" onClick={() => setSettings({ ...settings, customProfilePath: '' })}>{t('settings.reset')}</Button>
+                  </div>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  More UI options like background patterns and glass intensity coming soon.
-                </p>
+                <div 
+                  className="p-4 rounded-2xl bg-background border border-border text-[10px] font-mono text-muted-foreground break-all cursor-pointer hover:text-primary transition-colors"
+                  onClick={() => window.api.openPath(settings.customProfilePath || defaultPath)}
+                >
+                  {settings.customProfilePath || defaultPath}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { label: 'AppData', path: systemPaths.userData, icon: Database },
+                  { label: 'Config', path: systemPaths.config, icon: FileJson },
+                  { label: 'Temp', path: systemPaths.temp, icon: HardDrive },
+                  { label: 'ChromeDriver', path: systemPaths.driver, icon: Terminal }
+                ].map((item) => (
+                  <div 
+                    key={item.label}
+                    onClick={() => window.api.openPath(item.path)}
+                    className="flex items-center gap-4 p-4 rounded-2xl bg-secondary/30 border border-border hover:border-primary/20 hover:bg-secondary/50 transition-all cursor-pointer group"
+                  >
+                    <div className="p-2 rounded-xl bg-secondary text-muted-foreground group-hover:text-primary transition-colors"><item.icon size={16} /></div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">{item.label}</span>
+                      <span className="text-[10px] font-bold truncate opacity-60">{item.path}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </Card>
+        </div>
+
+        <div className="xl:col-span-4 space-y-10">
+          {/* Driver Info */}
+          {!isDriverMissing && (
+            <Card title="Driver Status">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                  <CheckCircle2 size={24} />
+                </div>
+                <div>
+                  <h4 className="font-black text-xs uppercase">ChromeDriver Ready</h4>
+                  <p className="text-[10px] text-muted-foreground">System version is healthy.</p>
+                </div>
+              </div>
+              <Button variant="outline" onClick={handleInstallDriver} loading={isInstallingDriver} className="w-full mt-6 h-10 text-[9px]">Reinstall Driver</Button>
+            </Card>
+          )}
+
+          {/* Update */}
+          <Card title={t('settings.update_check')}>
+            <div className="space-y-6 text-center">
+              <div className="w-20 h-20 bg-primary/10 rounded-[32px] flex items-center justify-center mx-auto text-primary animate-pulse">
+                <RefreshCw size={32} />
+              </div>
+              <div>
+                <h4 className="font-black text-sm uppercase tracking-widest">v{version}</h4>
+                <p className="text-[10px] text-muted-foreground mt-1">LABGEN TIKTOK for Windows</p>
+              </div>
+              <Button className="w-full h-14" loading={checkingUpdate} onClick={handleUpdateCheck}>{t('settings.check_now')}</Button>
+            </div>
+          </Card>
+
+          {/* Info */}
+          <Card title={t('settings.app_info')}>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-2 border-b border-white/5">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Kernel</span>
+                <span className="text-[10px] font-bold font-mono">v0.6.0-stable</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-white/5">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Database</span>
+                <span className="text-[10px] font-bold font-mono text-primary">SQLite 3</span>
+              </div>
+              <Button variant="outline" className="w-full mt-4 h-12" onClick={() => window.api.openExternal("https://github.com/antiantidev/labs-gen-tik")}>
+                <Cpu size={14} className="mr-2" />
+                GitHub Repository
+              </Button>
+            </div>
+          </Card>
+
+          <Button className="w-full py-4 h-auto flex-col gap-1 rounded-[32px] shadow-xl" onClick={() => saveConfig(true)}>
+            <Save size={20} />
+            <span className="text-[10px] font-black uppercase">{t('setup.save_settings')}</span>
+          </Button>
         </div>
       </div>
     </motion.div>

@@ -37,19 +37,22 @@ class StreamService {
     return res.json();
   }
 
-  async search(query) {
-    if (!this.token || !query) return [];
+  async search(query = "") {
+    if (!this.token) return [];
     const trimmed = query.slice(0, 25);
-    const url = `https://streamlabs.com/api/v5/slobs/tiktok/info?category=${encodeURIComponent(
-      trimmed
-    )}`;
+    const url = trimmed 
+      ? `https://streamlabs.com/api/v5/slobs/tiktok/info?category=${encodeURIComponent(trimmed)}`
+      : `https://streamlabs.com/api/v5/slobs/tiktok/info`;
+    
     const res = await this.fetchImpl(url, { method: "GET", headers: this.headers() });
     if (!res.ok) {
       throw new Error(`Game search failed (${res.status})`);
     }
     const info = await res.json();
     const categories = Array.isArray(info.categories) ? info.categories : [];
-    categories.push({ full_name: "Other", game_mask_id: "" });
+    if (categories.length > 0 && !categories.find(c => c.full_name === "Other")) {
+      categories.push({ full_name: "Other", game_mask_id: "" });
+    }
     return categories;
   }
 

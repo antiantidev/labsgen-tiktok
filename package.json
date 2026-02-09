@@ -1,7 +1,7 @@
 {
-  "name": "labs-gen-tik",
-  "version": "0.6.0",
-  "description": "StreamLabs TikTok Stream Key Generator (Windows optimized)",
+  "name": "labgen-tiktok",
+  "version": "0.7.0",
+  "description": "LABGEN TIKTOK - StreamLabs TikTok Stream Key Generator",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
   "license": "MIT",
@@ -19,8 +19,8 @@
     "test": "node --test"
   },
   "build": {
-    "appId": "com.labs-gen-tik.app",
-    "productName": "labs-gen-tik",
+    "appId": "com.labgen-tiktok.app",
+    "productName": "LABGEN TIKTOK",
     "directories": {
       "output": "dist/installers"
     },
@@ -44,8 +44,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "runAfterFinish": true,
-      "uninstallDisplayName": "LabsGen TikTok",
-      "shortcutName": "LabsGen TikTok",
+      "uninstallDisplayName": "LABGEN TIKTOK",
+      "shortcutName": "LABGEN TIKTOK",
       "multiLanguageInstaller": true,
       "displayLanguageSelector": true,
       "installerLanguages": [

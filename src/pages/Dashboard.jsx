@@ -11,7 +11,7 @@ const pageVariants = {
 }
 
 const StatCard = ({ label, value, icon: Icon, colorClass = "text-primary", isLoading }) => (
-  <Card className="flex items-center gap-4 relative overflow-hidden group">
+  <Card className="flex items-center gap-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-shadow">
     <div className={`p-3 rounded-xl bg-secondary ${colorClass} group-hover:scale-110 transition-transform`}>
       <Icon size={20} />
     </div>
@@ -49,9 +49,9 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard label={t('tokens.live_status')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-primary" : "text-amber-500"} isLoading={isLoading} />
-        <StatCard label={t('dashboard.live_status')} value={streamData.isLive ? t('dashboard.on_air') : t('dashboard.offline')} icon={Activity} colorClass={streamData.isLive ? "text-rose-500" : "text-muted-foreground"} isLoading={isLoading} />
-        <StatCard label={t('dashboard.system_health')} value={t('dashboard.optimal')} icon={CheckCircle2} colorClass="text-blue-400" isLoading={isLoading} />
+        <StatCard label={t('tokens.live_status')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-primary" : "text-warning"} isLoading={isLoading} />
+        <StatCard label={t('dashboard.live_status')} value={streamData.isLive ? t('dashboard.on_air') : t('dashboard.offline')} icon={Activity} colorClass={streamData.isLive ? "text-destructive" : "text-muted-foreground"} isLoading={isLoading} />
+        <StatCard label={t('dashboard.system_health')} value={t('dashboard.optimal')} icon={CheckCircle2} colorClass="text-info" isLoading={isLoading} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -61,8 +61,8 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
               <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
               <span className="text-sm font-bold uppercase tracking-widest">{t('console.title')}</span>
             </button>
-            <button onClick={() => window.api.openExternal("https://livecenter.tiktok.com/live_monitor")} className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl bg-secondary border border-border hover:border-blue-500/20 hover:bg-blue-500/5 transition-all group">
-              <div className="p-4 rounded-2xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform"><Monitor size={32} /></div>
+            <button onClick={() => window.api.openExternal("https://livecenter.tiktok.com/live_monitor")} className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl bg-secondary border border-border hover:border-info/20 hover:bg-info/5 transition-all group">
+              <div className="p-4 rounded-2xl bg-info/10 text-info group-hover:scale-110 transition-transform"><Monitor size={32} /></div>
               <span className="text-sm font-bold uppercase tracking-widest">{t('sidebar.live_center')}</span>
             </button>
           </div>
@@ -79,12 +79,12 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
               {isLoading ? (
                 <Skeleton className="h-6 w-20 rounded-full" />
               ) : (
-                <span className={`text-[10px] px-3 py-1 rounded-full font-black ${status.canGoLive ? 'bg-primary text-primary-foreground' : 'bg-rose-500/20 text-rose-500'}`}>
+                <span className={`text-[10px] px-3 py-1 rounded-full font-black ${status.canGoLive ? 'bg-primary text-primary-foreground' : 'bg-destructive/20 text-destructive'}`}>
                   {status.canGoLive ? t('dashboard.authorized') : t('dashboard.restricted_caps')}
                 </span>
               )}
             </div>
-            <Button onClick={() => window.api.openExternal("https://buymeacoffee.com/loukious")} className="w-full py-4 bg-gradient-to-r from-primary to-emerald-400" icon={Heart}>
+            <Button onClick={() => window.api.openExternal("https://buymeacoffee.com/loukious")} className="w-full py-4 bg-gradient-to-r from-primary to-success" icon={Heart}>
               {t('dashboard.support_project')}
             </Button>
           </div>

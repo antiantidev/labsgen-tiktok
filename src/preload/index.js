@@ -28,7 +28,13 @@ contextBridge.exposeInMainWorld("api", {
   // Database APIs
   getAccounts: () => ipcRenderer.invoke("db-get-accounts"),
   saveAccount: (acc) => ipcRenderer.invoke("db-save-account", acc),
+  updateUsername: (id, username) => ipcRenderer.invoke("db-update-username", { id, username }),
   deleteAccount: (id) => ipcRenderer.invoke("db-delete-account", id),
+  getSetting: (key, defaultValue) => ipcRenderer.invoke("db-get-setting", key, defaultValue),
+  saveSetting: (key, value) => ipcRenderer.invoke("db-save-setting", key, value),
+  syncCategories: () => ipcRenderer.invoke("sync-categories"),
+  getCategoryCount: () => ipcRenderer.invoke("get-category-count"),
+  getCategoryByName: (name) => ipcRenderer.invoke("get-category-by-name", name),
   
   onTokenStatus: (callback) => {
     const subscription = (_, status) => callback(status);

@@ -1,148 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    /* DARK MODE */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
     --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.7% 4.6%;
+    --primary-foreground: 144.1 80% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    --info: 217 91% 60%;
+    --warning: 38 92% 50%;
+    --success: 142 70% 45%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 142.1 70.6% 45.3%;
-    --radius: 0.75rem;
+    --radius: 1.5rem;
   }
 
   .light {
-    --background: 0 0% 98%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.7% 4.6%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 90%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142.1 70.6% 45.3%;
+    /* HIGH CONTRAST LIGHT MODE */
+    --background: 210 20% 98%; 
+    --foreground: 224 71% 4%;
+    
+    --primary: 142 72% 29%; /* Đậm hơn để nổi bật */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 210 20% 94%; 
+    --secondary-foreground: 224 71% 4%;
+    
+    --muted: 210 20% 90%;
+    --muted-foreground: 215 25% 27%; /* Chữ muted đậm hơn để dễ đọc */
+    
+    --accent: 210 20% 90%;
+    --accent-foreground: 224 71% 4%;
+    
+    --border: 214 32% 85%; /* Viền đậm hơn */
+    --input: 214 32% 85%;
+    --ring: 142 72% 29%;
   }
+}
 
-  * {
-    @apply border-border;
-  }
+@layer utilities {
+  .drag { -webkit-app-region: drag; }
+  .no-drag { -webkit-app-region: no-drag; }
+}
 
+@layer base {
+  * { @apply border-border; }
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Manrope', sans-serif;
-    overflow: hidden;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    user-select: none;
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full;
-}
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground;
-}
-
-/* Glassmorphism */
+/* Glassmorphism optimized for Light/Dark */
 .glass {
-  @apply bg-card/60 backdrop-blur-xl border-border;
+  @apply bg-secondary/40 backdrop-blur-xl border border-white/5 shadow-sm;
 }
 
 .light .glass {
-  @apply bg-white/70;
+  @apply bg-white/80 border-black/[0.08] shadow-lg shadow-black/[0.03];
 }
 
-.drag {
-  -webkit-app-region: drag;
+.skeleton { @apply bg-muted animate-pulse; }
+
+/* Custom Scrollbar for Light/Dark */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { @apply bg-transparent; }
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
 }
 
-.nodrag {
-  -webkit-app-region: no-drag;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes skeleton-loading {
-  0% { background-color: hsl(var(--muted)); }
-  50% { background-color: hsl(var(--secondary)); }
-  100% { background-color: hsl(var(--muted)); }
+.light ::-webkit-scrollbar-thumb {
+  @apply bg-black/10 hover:bg-black/20;
 }
 
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
-
-.animate-in {
-  animation: fadeIn 0.4s ease-out forwards;
-}
-
-.skeleton {
-  animation: skeleton-loading 1.5s infinite ease-in-out;
-  @apply rounded-lg relative overflow-hidden;
-}
-
-.skeleton::after {
-  content: "";
-  @apply absolute inset-0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.05),
-    transparent
-  );
-  animation: shimmer 2s infinite;
-}
-
-.light .skeleton::after {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 0, 0, 0.03),
-    transparent
-  );
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground;
-}
+.animate-shimmer { animation: shimmer 2s infinite; }

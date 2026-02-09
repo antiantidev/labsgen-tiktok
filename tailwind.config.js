@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,jsx,css}"],
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   darkMode: 'class',
   theme: {
     extend: {
@@ -30,14 +33,9 @@ module.exports = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
+        info: "hsl(var(--info))",
+        warning: "hsl(var(--warning))",
+        success: "hsl(var(--success))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -47,4 +45,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+}

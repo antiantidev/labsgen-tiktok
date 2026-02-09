@@ -9,6 +9,7 @@ const { TokenService } = require("../../services/tokenService");
 const { DriverService } = require("../../services/driverService");
 const { DBService } = require("../../services/dbService");
 const seleniumToken = require("../../services/seleniumToken");
+const EncryptionService = require("../../services/encryptionService");
 
 const CONFIG_PATH = join(app.getPath("userData"), "config.json");
 const DEFAULT_PROFILES_DIR = join(app.getPath("userData"), "profiles");
@@ -46,8 +47,6 @@ const streamService = new StreamService();
 const tokenService = new TokenService();
 const driverService = new DriverService(app.getAppPath(), app.getPath("userData"));
 
-// ... (CreateTray, CreateWindow - Assume unchanged)
-
 function createTray(win) {
   const possiblePaths = [
     join(__dirname, "../../resources/icon.png"),
@@ -70,7 +69,7 @@ function createTray(win) {
 
   tray = new Tray(icon);
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'LabsGen TikTok', enabled: false },
+    { label: 'LABGEN TIKTOK', enabled: false },
     { type: 'separator' },
     { label: 'Show Application', click: () => { win.show(); } },
     { label: 'Quit', click: () => { 
@@ -79,7 +78,7 @@ function createTray(win) {
     } }
   ]);
 
-  tray.setToolTip('LabsGen TikTok');
+  tray.setToolTip('LABGEN TIKTOK');
   tray.setContextMenu(contextMenu);
 
   tray.on('double-click', () => {
@@ -138,7 +137,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  app.setAppUserModelId("com.labs-gen-tik.app");
+  app.setAppUserModelId("com.labgen-tiktok.app");
 
   app.on("browser-window-created", (_, window) => {
     optimizer.watchWindowShortcuts(window);
@@ -156,159 +155,126 @@ app.on("window-all-closed", () => {
   app.quit();
 });
 
-// IPC Handlers
+// --- IPC Handlers ---
+
 ipcMain.handle("load-config", () => configService.loadConfig(CONFIG_PATH));
 ipcMain.handle("save-config", (_, data) => {
   const result = configService.saveConfig(CONFIG_PATH, data);
   ensureProfilesDir();
   return result;
 });
-
-// SQLite Handlers
-ipcMain.handle("db-get-accounts", () => dbService.getAllAccounts());
-ipcMain.handle("db-save-account", (_, acc) => dbService.saveAccount(acc));
-ipcMain.handle("db-delete-account", (_, id) => dbService.deleteAccount(id));
-
 ipcMain.handle("select-folder", async () => {
   const { dialog } = require("electron");
-  const result = await dialog.showOpenDialog({
-    properties: ["openDirectory", "createDirectory"]
-  });
-  if (!result.canceled && result.filePaths.length > 0) {
-    return result.filePaths[0];
-  }
-  return null;
+  const result = await dialog.showOpenDialog({ properties: ["openDirectory", "createDirectory"] });
+  return (!result.canceled && result.filePaths.length > 0) ? result.filePaths[0] : null;
 });
-
-ipcMain.handle("open-path", async (_, path) => {
-  if (!path) return false;
-  return await shell.openPath(path);
-});
-
+ipcMain.handle("open-path", async (_, path) => (path ? await shell.openPath(path) : false));
 ipcMain.handle("get-default-path", () => DEFAULT_PROFILES_DIR);
+ipcMain.handle("get-all-paths", () => ({
+  app: app.getAppPath(),
+  userData: app.getPath("userData"),
+  config: CONFIG_PATH,
+  temp: app.getPath("temp"),
+  exe: app.getPath("exe"),
+  driver: driverService.getExecutablePath()
+}));
 
-ipcMain.handle("get-all-paths", () => {
-  return {
-    app: app.getAppPath(),
-    userData: app.getPath("userData"),
-    config: CONFIG_PATH,
-    temp: app.getPath("temp"),
-    exe: app.getPath("exe"),
-    driver: driverService.getExecutablePath()
-  };
+ipcMain.handle("db-get-accounts", () => {
+  const accounts = dbService.getAllAccounts();
+  return accounts.map(acc => ({ ...acc, token: EncryptionService.decrypt(acc.token) }));
 });
+ipcMain.handle("db-save-account", (_, acc) => dbService.saveAccount({ ...acc, token: EncryptionService.encrypt(acc.token) }));
+ipcMain.handle("db-update-username", (_, { id, username }) => dbService.db.prepare('UPDATE accounts SET username = ?, lastUsed = ? WHERE id = ?').run(username, Date.now(), id));
+ipcMain.handle("db-delete-account", (_, id) => dbService.deleteAccount(id));
+ipcMain.handle("db-get-setting", (_, key, defaultValue) => dbService.getSetting(key, defaultValue));
+ipcMain.handle("db-save-setting", (_, key, value) => dbService.saveSetting(key, value));
 
-ipcMain.handle("bootstrap-driver", async (event) => {
+ipcMain.handle("sync-categories", async () => {
   try {
-    const exists = await driverService.checkDriver();
-    if (exists) return { ok: true, alreadyExists: true };
-
-    await driverService.setupDriver((status) => {
-      event.sender.send("token-status", status);
-    });
-    return { ok: true };
-  } catch (err) {
-    return { ok: false, error: err.message };
-  }
+    dbService.clearCategories();
+    const popularKeywords = ["", "a", "e", "i", "o", "u", "live", "game", "music", "talk", "movie", "sport"];
+    let totalSynced = 0;
+    for (const kw of popularKeywords) {
+      const list = await streamService.search(kw);
+      if (list && list.length > 0) {
+        dbService.saveCategories(list);
+        totalSynced += list.length;
+      }
+      await new Promise(r => setTimeout(r, 200));
+    }
+    return { ok: true, count: dbService.getCategoryCount(), added: totalSynced };
+  } catch (err) { return { ok: false, error: err.message }; }
 });
-
-ipcMain.handle("check-driver-exists", () => driverService.checkDriver());
+ipcMain.handle("get-category-count", () => dbService.getCategoryCount());
+ipcMain.handle("get-category-by-name", (_, name) => dbService.getCategoryByName(name));
+ipcMain.handle("search-games", async (_, text) => {
+  const localResults = dbService.searchLocalCategories(text);
+  if (text.length > 2 && localResults.length < 5) {
+    try {
+      const apiResults = await streamService.search(text);
+      if (apiResults && apiResults.length > 0) {
+        dbService.saveCategories(apiResults);
+        return { ok: true, categories: apiResults };
+      }
+    } catch (e) {}
+  }
+  return { ok: true, categories: localResults };
+});
 
 ipcMain.handle("set-token", (_, token) => streamService.setToken(token));
 ipcMain.handle("refresh-account", () => streamService.getInfo().then(info => ({ ok: true, info })).catch(err => ({ ok: false, error: err.message })));
-ipcMain.handle("search-games", (_, text) => streamService.search(text).then(categories => ({ ok: true, categories })).catch(err => ({ ok: false, error: err.message })));
 ipcMain.handle("start-stream", (_, data) => streamService.start(data.title, data.category, data.audienceType).then(result => ({ ok: true, result })).catch(err => ({ ok: false, error: err.message })));
 ipcMain.handle("end-stream", () => streamService.end().then(ok => ({ ok })).catch(err => ({ ok: false, error: err.message })));
 ipcMain.handle("set-stream-id", (_, id) => streamService.setStreamId(id));
 
+ipcMain.handle("bootstrap-driver", async (event) => {
+  try {
+    if (await driverService.checkDriver()) return { ok: true, alreadyExists: true };
+    await driverService.setupDriver((status) => event.sender.send("token-status", status));
+    return { ok: true };
+  } catch (err) { return { ok: false, error: err.message }; }
+});
+ipcMain.handle("check-driver-exists", () => driverService.checkDriver());
 ipcMain.handle("load-local-token", () => tokenService.loadLocalToken());
 ipcMain.handle("load-web-token", (event, options = {}) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   const profilesDir = getProfilesDir();
-  
-  let profilePath = null;
-  if (options.accountId) {
-    profilePath = join(profilesDir, options.accountId);
-  } else {
-    const newId = `profile_${Date.now()}`;
-    profilePath = join(profilesDir, newId);
-  }
-
-  return seleniumToken.loadWebToken(win, (status) => {
-    event.sender.send("token-status", status);
-  }, { 
-    profilePath,
-    binaryPath: driverService.getExecutablePath()
+  const profilePath = options.accountId ? join(profilesDir, options.accountId) : join(profilesDir, `profile_${Date.now()}`);
+  return seleniumToken.loadWebToken(win, (status) => event.sender.send("token-status", status), { 
+    profilePath, binaryPath: driverService.getExecutablePath() 
   });
 });
-
 ipcMain.handle("delete-profile", (_, accountId) => {
   if (!accountId) return false;
-  const profilesDir = getProfilesDir();
-  const profilePath = join(profilesDir, accountId);
-  try {
-    if (fs.existsSync(profilePath)) {
-      fs.rmSync(profilePath, { recursive: true, force: true });
-    }
-    return true;
-  } catch (err) {
-    console.error("Failed to delete profile:", err);
-    return false;
-  }
+  const profilePath = join(getProfilesDir(), accountId);
+  try { if (fs.existsSync(profilePath)) fs.rmSync(profilePath, { recursive: true, force: true }); return true; } 
+  catch (err) { return false; }
 });
 
-ipcMain.on("window-minimize", (event) => {
-  BrowserWindow.fromWebContents(event.sender).minimize();
-});
+ipcMain.on("window-minimize", (event) => BrowserWindow.fromWebContents(event.sender).minimize());
 ipcMain.on("window-maximize", (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
-  if (win.isMaximized()) win.unmaximize();
-  else win.maximize();
+  win.isMaximized() ? win.unmaximize() : win.maximize();
 });
-
 ipcMain.on("window-close", (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   const config = configService.loadConfig(CONFIG_PATH);
-  
-  if (config.settings && config.settings.minimizeOnClose) {
-    win.hide();
-  } else {
-    app.isQuitting = true;
-    win.close();
-  }
+  if (config.settings && config.settings.minimizeOnClose) win.hide();
+  else { app.isQuitting = true; win.close(); }
 });
 
-ipcMain.on("open-external", (_, url) => {
-  shell.openExternal(url);
-});
-
+ipcMain.on("open-external", (_, url) => shell.openExternal(url));
 ipcMain.on("renderer-ready", () => {});
-
-ipcMain.on("start-download", () => {
-  autoUpdater.downloadUpdate();
-});
-
-ipcMain.on("quit-and-install", () => {
-  app.isQuitting = true;
-  autoUpdater.quitAndInstall();
-});
-
+ipcMain.on("start-download", () => autoUpdater.downloadUpdate());
+ipcMain.on("quit-and-install", () => { app.isQuitting = true; autoUpdater.quitAndInstall(); });
+ipcMain.handle("get-app-version", () => app.getVersion());
 ipcMain.handle("check-for-updates", async () => {
-  if (!app.isPackaged) {
-    return { ok: true, devMode: true };
-  }
+  if (!app.isPackaged) return { ok: true, devMode: true };
   try {
     const result = await autoUpdater.checkForUpdates();
-    if (result && result.updateInfo.version === app.getVersion()) {
-      return { ok: true, upToDate: true };
-    }
+    if (result && result.updateInfo.version === app.getVersion()) return { ok: true, upToDate: true };
     return { ok: true, upToDate: false, updateInfo: result ? result.updateInfo : null };
   } catch (err) {
-    if (err.message.includes("No published versions")) {
-      return { ok: true, upToDate: true };
-    }
-    return { ok: false, error: err.message };
+    return err.message.includes("No published versions") ? { ok: true, upToDate: true } : { ok: false, error: err.message };
   }
 });
-
-ipcMain.handle("get-app-version", () => app.getVersion());
