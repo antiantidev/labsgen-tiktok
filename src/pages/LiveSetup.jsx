@@ -131,7 +131,7 @@ const LiveSetup = ({
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute z-[200] w-full bg-secondary/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden max-h-[320px] overflow-y-auto custom-scrollbar p-2 mt-6"
+                        className="absolute z-[200] w-full bg-secondary/95 backdrop-blur-xl border border-white/10 light:border-black/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden max-h-[320px] overflow-y-auto custom-scrollbar p-2 mt-6"
                       >
                         {suggestions.map((cat) => (
                           <div key={cat.game_mask_id} className="relative group/item">

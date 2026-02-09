@@ -137,7 +137,7 @@ export const LoadingOverlay = ({ message, progress }) => (
         </div>
       </div>
       <div className="w-64 space-y-4">
-        <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden border border-white/5 relative">
+        <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden border border-white/5 light:border-black/5 relative">
           <motion.div initial={{ width: 0 }} animate={{ width: `${progress || 0}%` }} className="h-full bg-primary shadow-[0_0_20px_hsl(var(--glow))]" />
         </div>
         <div className="flex flex-col items-center gap-1">
@@ -164,9 +164,9 @@ export const Toast = ({ message, type = 'info', onClose }) => {
   }
   return (
     <motion.div layout initial={{ opacity: 0, y: -50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, y: -20, transition: { duration: 0.2 } }}
-      className={`flex items-center gap-4 p-4 rounded-2xl backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.35)] min-w-[320px] max-w-md pointer-events-auto group mx-auto ${bgColors[type]}`}
+      className={`flex items-center gap-4 p-4 rounded-2xl backdrop-blur-2xl border border-white/10 light:border-black/10 shadow-[0_16px_40px_rgba(0,0,0,0.35)] min-w-[320px] max-w-md pointer-events-auto group mx-auto ${bgColors[type]}`}
     >
-      <div className={`p-2 rounded-lg bg-background/20 border border-white/10 shadow-sm`}>{icons[type]}</div>
+      <div className={`p-2 rounded-lg bg-background/20 border border-white/10 light:border-black/10 shadow-sm`}>{icons[type]}</div>
       <div className="flex-1 min-w-0"><p className={`text-[13px] font-bold leading-snug text-center px-2 ${type === 'error' ? 'text-destructive-foreground' : 'text-foreground'}`}>{message}</p></div>
       <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-2 -mr-1 rounded-lg hover:bg-white/10 light:hover:bg-black/5 text-muted-foreground hover:text-foreground transition-all shrink-0" aria-label="Close"><X size={16} /></button>
     </motion.div>

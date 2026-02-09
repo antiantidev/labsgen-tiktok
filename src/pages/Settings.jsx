@@ -135,7 +135,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" className="h-10 w-10 p-0 rounded-lg" onClick={handlePathChange} title={t('settings.change')} icon={Edit3} />
-                    <Button variant="secondary" className="h-10 w-10 p-0 rounded-lg border border-white/5" onClick={() => setSettings({ ...settings, customProfilePath: '' })} title={t('settings.reset')} icon={RotateCcw} />
+                    <Button variant="secondary" className="h-10 w-10 p-0 rounded-lg border border-white/5 light:border-black/5" onClick={() => setSettings({ ...settings, customProfilePath: '' })} title={t('settings.reset')} icon={RotateCcw} />
                   </div>
                 </div>
                 <div 
@@ -211,11 +211,11 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
 
           <Card title={t('settings.app_info')}>
             <div className="space-y-4">
-              <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <div className="flex items-center justify-between py-2 border-b border-white/5 light:border-black/5">
                 <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Kernel</span>
                 <span className="text-[12px] font-bold font-mono">v{version}-stable</span>
               </div>
-              <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <div className="flex items-center justify-between py-2 border-b border-white/5 light:border-black/5">
                 <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Database</span>
                 <span className="text-[12px] font-bold font-mono text-primary">SQLite 3</span>
               </div>
