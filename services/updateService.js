@@ -5,7 +5,7 @@ async function checkUpdate(repo, currentVersion) {
     const res = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
       method: "GET",
       headers: {
-        "user-agent": "slgtsk"
+        "user-agent": "Labsgen Tiktok"
       }
     });
     if (!res.ok) return null;

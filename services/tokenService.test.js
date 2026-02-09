@@ -12,7 +12,7 @@ function makeWinDir(root) {
 }
 
 test("loadLocalToken returns token from latest log", () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "slgtsk-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "labsgen-tiktok-"));
   const dir = makeWinDir(tmp);
   const file1 = path.join(dir, "0001.log");
   const file2 = path.join(dir, "0002.log");
@@ -38,7 +38,7 @@ test("loadLocalToken returns error when unsupported OS", () => {
 });
 
 test("loadLocalToken returns error when no files", () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "slgtsk-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "labsgen-tiktok-"));
   makeWinDir(tmp);
   const svc = new TokenService({
     platform: "win32",

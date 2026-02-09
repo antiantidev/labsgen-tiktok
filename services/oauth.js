@@ -27,7 +27,7 @@ async function exchangeCode(code, codeVerifier, fetchImpl = fetch, options = {})
       const res = await fetchImpl(`${url}?${params.toString()}`, {
         method: "GET",
         headers: {
-          "user-agent": "slgtsk",
+          "user-agent": "Labsgen Tiktok",
           accept: "application/json, text/plain, */*",
           "accept-language": "en-US,en;q=0.9",
           referer: "https://streamlabs.com/slobs/login",
