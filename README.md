@@ -5,7 +5,7 @@
   <p><strong>TikTok Live Stream Key Generator for OBS from Streamlabs</strong></p>
   <p><em>Labsgen Tiktok is a Windows TikTok Live Stream Key Generator that helps creators fetch RTMP URL and Stream Key for OBS quickly and safely.</em></p>
   <p>
-    <img src="https://img.shields.io/badge/Version-0.17.2-primary?style=for-the-badge&logo=electron" alt="Version" />
+    <img src="https://img.shields.io/badge/Version-0.17.8-primary?style=for-the-badge&logo=electron" alt="Version" />
     <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform" />
     <img src="https://img.shields.io/badge/Framework-React_19-61DAFB?style=for-the-badge&logo=react" alt="Framework" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=for-the-badge&logo=sqlite" alt="Database" />
@@ -20,11 +20,15 @@
 ---
 
 ## 📖 Overview
-**Labsgen Tiktok** is a desktop **TikTok Live Stream Key Generator** that retrieves **RTMP URL and Stream Key** from Streamlabs for use in OBS.
+**Labsgen Tiktok** is a Windows desktop tool that helps creators obtain **TikTok Live Stream Keys (RTMP URL + Stream Key)** from Streamlabs and use them in OBS or other encoders.
 
-The app combines the performance of **SQLite 3**, the security of **Electron safeStorage**, and a modern **Edge-to-Edge** design language to deliver a stable, premium streaming workflow.
+It centralizes the full live setup flow:
+- Capture or import tokens safely (local extraction or browser-based capture).
+- Manage multiple accounts in an encrypted vault.
+- Configure metadata (title, category, audience).
+- Initialize ingest and copy RTMP details quickly.
 
-If you need a **TikTok Live Stream Key Generator** for Windows, Labsgen Tiktok focuses on fast setup, reliable account handling, and clear streaming metadata.
+Under the hood, it uses **SQLite 3** for fast local storage, **Electron safeStorage** for encryption, and a clean edge-to-edge UI for an efficient streaming workflow.
 
 ## ✨ Key Features
 
@@ -54,11 +58,22 @@ If you need a **TikTok Live Stream Key Generator** for Windows, Labsgen Tiktok f
 
 ## 🚀 Getting Started
 
-### System Requirements
+### For Users
+
+**System Requirements**
 - Windows 10/11 (x64)
 - Google Chrome (latest version)
 
-### Development Setup
+**Download**
+Get the latest installer from GitHub Releases:
+```
+https://github.com/antiantidev/labsgen-tiktok/releases
+```
+
+**Important Note**
+This app is not code‑signed yet, so Windows SmartScreen may warn that it is unrecognized. You can still proceed if you trust the source (this repo).
+
+### For Developers
 ```bash
 # Clone the repository
 git clone https://github.com/antiantidev/labsgen-tiktok.git
@@ -73,7 +88,7 @@ npx electron-rebuild -f -w better-sqlite3
 npm run dev
 ```
 
-### Build for Release
+### Build for Release (Developers)
 ```bash
 # Build a professional Windows installer (.exe)
 npm run build
