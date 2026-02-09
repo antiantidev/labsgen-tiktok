@@ -1,54 +1,41 @@
-# GEMINI.md - Tài liệu Dự án labs-gen-tik
+# GEMINI.md - Tài liệu Tổng quan LABGEN TIKTOK
 
-Tài liệu này cung cấp thông tin chi tiết về cấu trúc, công nghệ và quy trình hoạt động của ứng dụng `labs-gen-tik`.
+Tài liệu này cung cấp thông tin chi tiết về cấu trúc kỹ thuật, công nghệ lõi và quy trình vận hành của ứng dụng **LABGEN TIKTOK**.
 
 ## 1. Tổng quan
-**labs-gen-tik** là ứng dụng desktop (Electron) giúp người dùng lấy **RTMP URL** và **Stream Key** từ Streamlabs để livestream lên TikTok. Ứng dụng này đã được viết lại hoàn toàn để tối ưu hóa hiệu năng và trải nghiệm người dùng.
+**LABGEN TIKTOK** là một giải pháp desktop chuyên nghiệp (Electron) giúp các Streamer trích xuất thông số kỹ thuật **Ingest (RTMP URL & Stream Key)** từ Streamlabs để phát sóng trực tiếp lên nền tảng TikTok. Ứng dụng tập trung vào tính ổn định của hệ thống, bảo mật danh tính và trải nghiệm người dùng tối giản.
 
-## 2. Công nghệ sử dụng
-- **Cốt lõi:** Electron (v30+)
-- **Build Tool:** electron-vite
-- **Frontend:** React 19, Tailwind CSS, Framer Motion (cho hiệu ứng UI)
-- **Tự động hóa:** Selenium WebDriver (để lấy Token qua trình duyệt)
-- **Tiện ích:** Lucide React (Icons), SemVer (Quản lý phiên bản)
+## 2. Công nghệ lõi (Tech Stack)
 
-## 3. Cấu trúc thư mục (Cập nhật)
+### ⚙️ Core Framework
+- **Electron (v40+):** Môi trường runtime tối ưu hóa sâu cho hệ điều hành Windows.
+- **Node.js:** Xử lý logic Main Process và tương tác hệ thống tệp tin.
 
-### Backend & Logic (Main Process & Services)
-- `src/main/`: Quản lý vòng đời Electron, cửa sổ ứng dụng và IPC Handlers.
-- `services/`: Chứa toàn bộ logic nghiệp vụ (Business Logic):
-    - `streamlabs.js`: Tương tác trực tiếp với API v5 của Streamlabs để lấy key TikTok.
-    - `tokenService.js`: Tìm và trích xuất token từ bản cài đặt **Streamlabs Desktop** cục bộ.
-    - `seleniumToken.js` & `oauth.js`: Xử lý đăng nhập TikTok qua Selenium và trao đổi mã OAuth PKCE.
-    - `configService.js`: Lưu trữ và quản lý cấu hình người dùng cục bộ.
-    - `updateService.js`: Kiểm tra phiên bản mới từ GitHub.
+### 🎨 Frontend & UI/UX
+- **React 19:** Thư viện xây dựng giao diện người dùng hiện đại.
+- **Tailwind CSS:** Quản lý Design System qua biến HSL.
+- **Framer Motion:** Xử lý hiệu ứng chuyển cảnh và hoạt họa mượt mà.
+- **Plus Jakarta Sans:** Phông chữ chủ đạo tối ưu hiển thị tiếng Việt.
 
-### Bridge (Preload Script)
-- `src/preload/`: Sử dụng `contextBridge` để phơi bày các API bảo mật (`window.api`) từ backend cho frontend.
+### 💾 Data & Security
+- **SQLite 3 (via `better-sqlite3`):** Cơ sở dữ liệu quan hệ cục bộ hiệu năng cao.
+- **Electron `safeStorage` API:** Mã hóa Token bằng khóa phần cứng (AES-256).
 
-### Frontend (Renderer Process)
-- `src/`: Sử dụng React với kiến trúc hiện đại:
-    - `App.jsx`: Root component quản lý Layout và Routing.
-    - `pages/`: Chứa các trang chính (Dashboard, TokenVault, LiveSetup, Console, Pulse).
-    - `components/`: UI components dùng chung (Sidebar, Layout, UI Elements).
-    - `hooks/`, `store/`, `utils/`: Các logic phụ trợ cho frontend.
+### 🤖 Automation & infrastructure
+- **Selenium WebDriver:** Điều khiển trình duyệt tự động để Capture Token.
+- **electron-builder:** Trình đóng gói Windows Installer (NSIS MUI2).
 
-## 4. Quy trình hoạt động chính
+## 3. Kiến trúc dự án
+Để đảm bảo tính tra cứu nhanh chóng, tài liệu chi tiết đã được tách nhỏ:
 
-1. **Lấy mã xác thực (Authentication):**
-    - **Cách 1 (Local):** Ứng dụng quét các file log của Streamlabs Desktop trong `%AppData%` để tìm `apiToken`.
-    - **Cách 2 (Web):** Khởi động trình duyệt Selenium, người dùng đăng nhập TikTok, ứng dụng bắt mã `code` và đổi lấy token.
-2. **Cấu hình Live:** Người dùng chọn danh mục (game), tiêu đề và các thiết lập khác.
-3. **Lấy Key:** Gửi yêu cầu `startStream` tới Streamlabs API. Kết quả trả về gồm `stream_url` và `stream_key`.
-4. **Cập nhật:** Ứng dụng tự động kiểm tra phiên bản mới qua `electron-updater` khi khởi động.
+- 📂 [**Cấu trúc thư mục chi tiết (v0.10.0)**](./DOCS_STRUCTURE.md): Liệt kê và giải thích vai trò của từng tệp tin trong dự án.
+- ✨ [**Chi tiết các tính năng**](./DOCS_FEATURES.md): Phân tích sâu các chức năng Identity, Ingest, Kernel và Diagnostics.
 
-## 5. Quy tắc phát triển (Versioning)
-Dự án tuân thủ nghiêm ngặt **Semantic Versioning (SemVer)**:
-- **PATCH**: Sửa lỗi.
-- **MINOR**: Tính năng mới.
-- **MAJOR**: Thay đổi lớn, phá vỡ tính tương thích.
+## 4. Quy trình Phát triển & Đóng gói
 
-Sử dụng lệnh `npm version <patch|minor|major>` để cập nhật phiên bản.
+- **Phát triển:** `npm run dev`
+- **Biên dịch Driver (Native):** `npx electron-rebuild -f -w better-sqlite3`
+- **Đóng gói Windows:** `npx electron-builder --win nsis --x64`
 
 ---
-*Tài liệu này được duy trì bởi Gemini CLI.*
+*Tài liệu này được duy trì và cập nhật bởi LABGEN TIKTOK Core Team.*
