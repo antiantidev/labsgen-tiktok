@@ -356,7 +356,8 @@ ipcMain.handle("load-web-token", (event, options = {}) => {
   const profilesDir = getProfilesDir();
   const profilePath = options.accountId ? join(profilesDir, options.accountId) : join(profilesDir, `profile_${Date.now()}`);
   return seleniumToken.loadWebToken(win, (status) => event.sender.send("token-status", status), { 
-    profilePath, binaryPath: driverService.getExecutablePath() 
+    profilePath,
+    driverPath: driverService.getExecutablePath()
   });
 });
 ipcMain.handle("delete-profile", (_, accountId) => {

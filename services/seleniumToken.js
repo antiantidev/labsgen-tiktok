@@ -40,9 +40,10 @@ async function retrieveCodeWithSelenium(authUrl, binaryPath, options = {}) {
     "chromedriver-win64",
     "chromedriver.exe"
   );
+  const driverPath = options.driverPath || localDriver;
   const service =
-    fs.existsSync(localDriver)
-      ? new chrome.ServiceBuilder(localDriver)
+    driverPath && fs.existsSync(driverPath)
+      ? new chrome.ServiceBuilder(driverPath)
       : new chrome.ServiceBuilder();
   const driver = await new Builder()
     .forBrowser("chrome")
@@ -102,7 +103,8 @@ async function loadWebToken(win, onStatus, options = {}) {
     if (onStatus) onStatus("Launching browser...");
     const code = await retrieveCodeWithSelenium(authUrl, null, { 
       keepOpenOnError: true,
-      profilePath: options.profilePath
+      profilePath: options.profilePath,
+      driverPath: options.driverPath
     });
 
     if (!code) {
