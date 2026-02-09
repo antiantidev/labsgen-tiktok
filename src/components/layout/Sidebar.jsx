@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../ui'
 
+const logoUrl = new URL('../../../resources/logo.svg', import.meta.url).href
+
 const NavItem = ({ id, icon: Icon, label, active, onClick, disabled }) => (
   <button
     onClick={() => !disabled && onClick(id)}
@@ -51,8 +53,8 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
     <aside className="w-72 h-screen flex flex-col border-r border-border bg-secondary/10 light:bg-secondary/20 relative z-50 shadow-2xl">
       <div className="py-12 flex flex-col items-center justify-center shrink-0">
         <div className="flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-2xl shadow-primary/40 group-hover:rotate-12 transition-transform duration-500">
-            <div className="w-6 h-6 border-4 border-primary-foreground rounded-full" />
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-2xl shadow-primary/40 group-hover:rotate-6 transition-transform duration-500">
+            <img src={logoUrl} alt="LABGEN TIKTOK" className="w-12 h-12 rounded-xl" />
           </div>
           <div className="flex flex-col">
             <span className="font-black text-[18px] tracking-tighter leading-none text-foreground uppercase">LABGEN</span>
