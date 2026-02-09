@@ -127,12 +127,8 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" className="h-10 w-10 p-0 rounded-lg" onClick={handlePathChange} title={t('settings.change')}>
-                      <Edit3 size={16} />
-                    </Button>
-                    <Button variant="secondary" className="h-10 w-10 p-0 rounded-lg border border-white/5" onClick={() => setSettings({ ...settings, customProfilePath: '' })} title={t('settings.reset')}>
-                      <RotateCcw size={16} />
-                    </Button>
+                    <Button variant="outline" className="h-10 w-10 p-0 rounded-lg" onClick={handlePathChange} title={t('settings.change')} icon={Edit3} />
+                    <Button variant="secondary" className="h-10 w-10 p-0 rounded-lg border border-white/5" onClick={() => setSettings({ ...settings, customProfilePath: '' })} title={t('settings.reset')} icon={RotateCcw} />
                   </div>
                 </div>
                 <div 
@@ -217,8 +213,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
             </div>
           </Card>
 
-          <Button className="w-full py-4 h-auto flex-col gap-1 rounded-xl shadow-xl" onClick={() => saveConfig(true)}>
-            <Save size={20} />
+          <Button className="w-full py-4 h-auto flex-col gap-1 rounded-xl shadow-xl" onClick={() => saveConfig(true)} icon={Save}>
             <span className="text-[11px] font-black uppercase tracking-widest">{t('setup.save_settings')}</span>
           </Button>
         </div>

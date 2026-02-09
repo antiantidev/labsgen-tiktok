@@ -17,12 +17,16 @@ export const Button = ({ children, onClick, disabled, variant = 'primary', class
       whileTap={!disabled ? { scale: 0.98 } : {}}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-bold text-[13px] uppercase tracking-wider transition-all disabled:opacity-30 ${variants[variant]} ${className}`}
+      className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-bold text-[13px] uppercase tracking-wider transition-all disabled:opacity-30 ${variants[variant]} ${className}`}
     >
       {loading ? (
         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-      ) : Icon && <Icon size={16} />}
-      {children}
+      ) : (
+        <>
+          {Icon && <Icon size={16} className="shrink-0" />}
+          {children}
+        </>
+      )}
     </motion.button>
   )
 }

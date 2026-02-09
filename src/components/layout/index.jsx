@@ -32,7 +32,7 @@ export const Titlebar = () => (
 
 export const PageContainer = ({ children }) => (
   <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0">
-    <div className="max-w-6xl mx-auto px-12 pt-4 pb-32">
+    <div className="max-w-6xl mx-auto px-12 pt-8 pb-8">
       {children}
     </div>
   </div>
