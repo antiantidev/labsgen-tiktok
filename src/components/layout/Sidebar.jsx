@@ -79,7 +79,7 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
 
       <div className="mt-auto shrink-0 border-t border-border/50 bg-secondary/10">
         <div className="p-6 space-y-6">
-          <div className="p-5 rounded-2xl bg-secondary/60 border border-white/10 light:border-black/10 relative overflow-hidden group shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+          <div className="p-5 rounded-2xl bg-secondary/60 border border-white/10 light:border-black/10 relative overflow-hidden group shadow-[0_12px_30px_rgba(0,0,0,0.35)] light:shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
             <div className="flex items-center gap-4 relative z-10">
               <div className={`p-2.5 rounded-lg shadow-inner ${canGoLive ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
                 {canGoLive ? <ShieldCheck size={20} /> : <ShieldAlert size={20} />}
