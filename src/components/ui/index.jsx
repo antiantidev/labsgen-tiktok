@@ -32,15 +32,13 @@ export const Button = ({ children, onClick, disabled, variant = 'primary', class
 }
 
 export const Card = ({ children, title, className = "", onClick }) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
+  <div 
     onClick={onClick}
     className={`glass border rounded-2xl p-6 transition-all group relative overflow-hidden ${onClick ? 'cursor-pointer hover:border-primary/30' : ''} ${className}`}
   >
     {title && <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 mb-5 group-hover:text-primary transition-colors">{title}</h3>}
     {children}
-  </motion.div>
+  </div>
 )
 
 export const AlertBanner = ({ title, message, variant = 'warn', actions }) => {
