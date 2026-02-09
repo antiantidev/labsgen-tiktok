@@ -19,7 +19,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   </motion.button>
 )
 
-export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive }) => {
+export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version }) => {
   return (
     <aside className="w-72 border-r border-white/5 flex flex-col glass z-20 relative">
       <div className="h-20 flex items-center gap-4 px-8 drag">
@@ -49,7 +49,7 @@ export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive }) =>
         <SidebarItem icon={Heart} label="Support" onClick={() => window.api.openExternal("https://buymeacoffee.com/loukious")} />
       </nav>
 
-      <div className="p-6">
+      <div className="p-6 space-y-4">
         <div className="p-5 rounded-3xl bg-white/5 border border-white/5 flex items-center gap-4 group">
           <div className="relative">
             <div className="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center font-black text-white shadow-xl italic">
@@ -61,6 +61,9 @@ export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive }) =>
             <span className="text-sm font-black truncate">{username}</span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{canGoLive ? 'Pro Streamer' : 'Basic User'}</span>
           </div>
+        </div>
+        <div className="text-center">
+          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-30 italic">Version {version}</span>
         </div>
       </div>
     </aside>

@@ -3,8 +3,21 @@
   "version": "0.1.0",
   "description": "StreamLabs TikTok Stream Key Generator (Electron rewrite)",
   "main": "dist/main/index.js",
-  "author": "",
+  "author": "Nhat Linh Nguyen",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antiantidev/labs-gen-tik.git"
+  },
+  "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "antiantidev",
+        "repo": "labs-gen-tik"
+      }
+    ]
+  },
   "scripts": {
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
@@ -16,6 +29,7 @@
   "dependencies": {
     "adm-zip": "^0.5.10",
     "chromedriver": "^122.0.0",
+    "electron-updater": "^6.7.3",
     "framer-motion": "^12.33.0",
     "lucide-react": "^0.563.0",
     "react": "^19.2.4",

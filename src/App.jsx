@@ -15,6 +15,7 @@ import Pulse from './pages/Pulse'
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home')
+  const [appVersion, setAppVersion] = useState('0.0.0')
   const [token, setToken] = useState('')
   const [showToken, setShowToken] = useState(false)
   const [streamTitle, setStreamTitle] = useState('')
@@ -55,22 +56,13 @@ const App = () => {
   const refreshAccountInfo = useCallback(async (manualToken) => {
     const targetToken = manualToken || token
     if (!targetToken) return
-    
     pushStatus('Refreshing account data...')
     await window.api.setToken(targetToken)
     const res = await window.api.refreshAccount()
-    
     if (res.ok) {
       const { user, application_status, can_be_live } = res.info || {}
-      setStatus({ 
-        username: user?.username || 'Unknown', 
-        appStatus: application_status?.status || 'Unknown', 
-        canGoLive: !!can_be_live, 
-        badge: can_be_live ? 'Ready' : 'Check' 
-      })
+      setStatus({ username: user?.username || 'Unknown', appStatus: application_status?.status || 'Unknown', canGoLive: !!can_be_live, badge: can_be_live ? 'Ready' : 'Check' })
       pushStatus(`Account verified: ${user?.username}`)
-      
-      // If we have a game category but no ID, try to find it
       if (gameCategory && !gameMaskId) {
         const searchRes = await window.api.searchGames(gameCategory)
         if (searchRes.ok) {
@@ -85,13 +77,8 @@ const App = () => {
 
   const loadLocalToken = async () => {
     const res = await window.api.loadLocalToken()
-    if (res.token) { 
-      setToken(res.token)
-      pushStatus('Token imported from local storage.')
-      refreshAccountInfo(res.token) 
-    } else if (res.error) {
-      await showModal('Token Error', res.error)
-    }
+    if (res.token) { setToken(res.token); refreshAccountInfo(res.token); pushStatus('Token imported from local storage.'); }
+    else if (res.error) { await showModal('Token Error', res.error); }
   }
 
   const loadWebToken = async () => {
@@ -99,52 +86,31 @@ const App = () => {
     pushStatus('Waiting for web authentication...')
     const res = await window.api.loadWebToken()
     setIsWebLoading(false)
-    if (res.token) { 
-      setToken(res.token)
-      pushStatus('Token captured from web session.')
-      refreshAccountInfo(res.token) 
-    } else if (res.error) {
-      await showModal('Login Failed', res.error)
-    }
+    if (res.token) { setToken(res.token); refreshAccountInfo(res.token); pushStatus('Token captured from web session.'); }
+    else if (res.error) { await showModal('Login Failed', res.error); }
   }
 
   const saveConfig = useCallback(async (showMessage = false) => {
-    await window.api.saveConfig({ 
-      title: streamTitle, 
-      game: gameCategory, 
-      audience_type: mature ? '1' : '0', 
-      token, 
-      stream_id: streamData.id, 
-      theme: 'dark' 
-    })
+    await window.api.saveConfig({ title: streamTitle, game: gameCategory, audience_type: mature ? '1' : '0', token, stream_id: streamData.id, theme: 'dark' })
     if (showMessage) await showModal('Success', 'Configuration saved safely.')
     pushStatus('System configuration synchronized.')
   }, [streamTitle, gameCategory, mature, token, streamData.id, pushStatus, showModal])
 
-  // Debounced Auto-save
   useEffect(() => {
     if (!token && !streamTitle) return
     clearTimeout(autoSaveTimer.current)
-    autoSaveTimer.current = setTimeout(() => {
-      saveConfig(false)
-    }, 1000)
+    autoSaveTimer.current = setTimeout(() => { saveConfig(false) }, 1000)
     return () => clearTimeout(autoSaveTimer.current)
   }, [streamTitle, gameCategory, mature, token, saveConfig])
 
   const handleSearch = (text) => {
     setGameCategory(text)
     if (!text || !token) { setSuggestions([]); return; }
-    
     clearTimeout(searchTimer.current)
     latestSearch.current = text
     searchTimer.current = setTimeout(async () => {
       const cached = searchCache.current.get(text)
-      if (cached && Date.now() - cached.ts < 60000) {
-        setSuggestions(cached.data)
-        setShowSuggestions(true)
-        return
-      }
-      
+      if (cached && Date.now() - cached.ts < 60000) { setSuggestions(cached.data); setShowSuggestions(true); return; }
       const res = await window.api.searchGames(text)
       if (res.ok) {
         const categories = res.categories || []
@@ -158,21 +124,14 @@ const App = () => {
 
   const startStream = async () => {
     if (!gameMaskId && gameCategory) {
-      pushStatus('Fetching category ID before start...')
       const searchRes = await window.api.searchGames(gameCategory)
       if (searchRes.ok) {
         const match = (searchRes.categories || []).find(c => c.full_name === gameCategory)
         if (match) setGameMaskId(match.game_mask_id || '')
       }
     }
-
     pushStatus('Starting TikTok LIVE session...')
-    const res = await window.api.startStream({ 
-      title: streamTitle, 
-      category: gameMaskId, 
-      audienceType: mature ? '1' : '0' 
-    })
-    
+    const res = await window.api.startStream({ title: streamTitle, category: gameMaskId, audienceType: mature ? '1' : '0' })
     if (res.ok) {
       const { streamUrl, streamKey, streamId } = res.result || {}
       setStreamData({ url: streamUrl, key: streamKey, id: streamId || streamData.id, isLive: true })
@@ -201,43 +160,55 @@ const App = () => {
   useEffect(() => {
     const init = async () => {
       pushStatus('Initializing system...')
-      const data = await window.api.loadConfig()
-      if (data.token) { 
-        setToken(data.token)
-        // Manual refresh after setToken to ensure we use latest
-        setTimeout(() => refreshAccountInfo(data.token), 100)
-      }
-      setStreamTitle(data.title || '')
-      setGameCategory(data.game || '')
-      setMature(data.audience_type === '1')
+      const version = await window.api.getAppVersion()
+      setAppVersion(version)
       
-      if (data.stream_id) {
-        setStreamData(prev => ({ ...prev, id: data.stream_id }))
-      }
-
+      const data = await window.api.loadConfig()
+      if (data.token) { setToken(data.token); setTimeout(() => refreshAccountInfo(data.token), 100); }
+      setStreamTitle(data.title || ''); setGameCategory(data.game || ''); setMature(data.audience_type === '1');
+      if (data.stream_id) setStreamData(prev => ({ ...prev, id: data.stream_id }))
       window.api.rendererReady()
     }
 
     init()
 
-    // IPC Listeners
+    // Auto-update Listeners
     window.api.onUpdateAvailable((info) => {
-      showModal('Update Available', `A new version (${info.latest}) is available. Current: ${info.current}. Download now?`, [
-        { label: 'Download', value: true },
-        { label: 'Later', value: false }
+      pushStatus(`Update found: ${info.latest}`)
+      showModal('Update Available', `A new version (${info.latest}) is available. Current version is ${info.current}. Would you like to download it now?`, [
+        { label: 'Update Now', value: 'download', primary: true },
+        { label: 'Later', value: 'cancel', primary: false }
       ]).then(res => {
-        if (res.value) window.api.openExternal(info.url)
+        if (res.value === 'download') {
+          pushStatus('Downloading update...')
+          window.api.startDownload()
+          showModal('Downloading', 'The update is being downloaded in the background. We will notify you when it is ready.', [{ label: 'OK', value: true }])
+        }
       })
+    })
+
+    window.api.onUpdateDownloaded(() => {
+      pushStatus('Update ready to install.')
+      showModal('Update Ready', 'The update has been downloaded. Restart the application now to apply the update?', [
+        { label: 'Restart Now', value: 'install', primary: true },
+        { label: 'Later', value: 'cancel', primary: false }
+      ]).then(res => {
+        if (res.value === 'install') window.api.quitAndInstall()
+      })
+    })
+
+    window.api.onUpdateError((err) => {
+      pushStatus(`Update error: ${err}`)
     })
 
     window.api.onTokenStatus((msg) => {
       pushStatus(`System: ${msg}`)
     })
-  }, []) // Empty dependency array for mount only
+  }, [refreshAccountInfo, pushStatus, showModal])
 
   return (
     <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Manrope']">
-      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} username={status.username} canGoLive={status.canGoLive} />
+      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} username={status.username} canGoLive={status.canGoLive} version={appVersion} />
       
       <main className="flex-1 flex flex-col min-w-0 relative bg-[radial-gradient(circle_at_top_right,rgba(49,251,154,0.03),transparent_40%)]">
         <Titlebar />
@@ -245,7 +216,7 @@ const App = () => {
         <PageContainer>
           <AnimatePresence mode="wait">
             {currentPage === 'home' && (
-              <Dashboard key="home" status={status} streamData={streamData} onNavigate={setCurrentPage} />
+              <Dashboard key="home" status={status} streamData={streamData} onNavigate={setCurrentPage} version={appVersion} />
             )}
             {currentPage === 'console' && (
               <Console 

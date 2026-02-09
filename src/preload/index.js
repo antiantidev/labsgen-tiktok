@@ -1,23 +1,30 @@
-import { contextBridge, ipcRenderer } from "electron";
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("api", {
-  loadConfig: () => ipcRenderer.invoke("config:load"),
-  saveConfig: (data) => ipcRenderer.invoke("config:save", data),
-  loadLocalToken: () => ipcRenderer.invoke("token:loadLocal"),
-  loadWebToken: () => ipcRenderer.invoke("token:loadWeb"),
-  setToken: (token) => ipcRenderer.invoke("stream:setToken", token),
-  refreshAccount: () => ipcRenderer.invoke("stream:info"),
-  searchGames: (query) => ipcRenderer.invoke("stream:search", query),
-  startStream: (payload) => ipcRenderer.invoke("stream:start", payload),
-  endStream: () => ipcRenderer.invoke("stream:end"),
-  openExternal: (url) => ipcRenderer.invoke("shell:openExternal", url),
-  windowMinimize: () => ipcRenderer.invoke("window:minimize"),
-  windowMaximize: () => ipcRenderer.invoke("window:maximize"),
-  windowClose: () => ipcRenderer.invoke("window:close"),
-  setStreamId: (id) => ipcRenderer.invoke("stream:setStreamId", id),
-  rendererReady: () => ipcRenderer.invoke("renderer:ready"),
-  onTokenStatus: (cb) =>
-    ipcRenderer.on("token:status", (_event, status) => cb(status)),
-  onUpdateAvailable: (cb) =>
-    ipcRenderer.on("update:available", (_event, info) => cb(info))
+  loadConfig: () => ipcRenderer.invoke("load-config"),
+  saveConfig: (data) => ipcRenderer.invoke("save-config", data),
+  setToken: (token) => ipcRenderer.invoke("set-token", token),
+  refreshAccount: () => ipcRenderer.invoke("refresh-account"),
+  searchGames: (text) => ipcRenderer.invoke("search-games", text),
+  startStream: (data) => ipcRenderer.invoke("start-stream", data),
+  endStream: () => ipcRenderer.invoke("end-stream"),
+  setStreamId: (id) => ipcRenderer.invoke("set-stream-id", id),
+  loadLocalToken: () => ipcRenderer.invoke("load-local-token"),
+  loadWebToken: () => ipcRenderer.invoke("load-web-token"),
+  
+  windowMinimize: () => ipcRenderer.send("window-minimize"),
+  windowMaximize: () => ipcRenderer.send("window-maximize"),
+  windowClose: () => ipcRenderer.send("window-close"),
+  openExternal: (url) => ipcRenderer.send("open-external", url),
+  rendererReady: () => ipcRenderer.send("renderer-ready"),
+  
+  onTokenStatus: (callback) => ipcRenderer.on("token-status", (_, status) => callback(status)),
+  
+  // Update APIs
+  getAppVersion: () => ipcRenderer.invoke("get-app-version"),
+  onUpdateAvailable: (callback) => ipcRenderer.on("update-available", (_, info) => callback(info)),
+  onUpdateDownloaded: (callback) => ipcRenderer.on("update-downloaded", () => callback()),
+  onUpdateError: (callback) => ipcRenderer.on("update-error", (_, err) => callback(err)),
+  startDownload: () => ipcRenderer.send("start-download"),
+  quitAndInstall: () => ipcRenderer.send("quit-and-install")
 });
