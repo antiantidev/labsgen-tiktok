@@ -32,7 +32,7 @@ const StatCard = ({ label, value, icon: Icon, colorClass = "text-primary", isLoa
 const PerformanceCard = ({ label, percent, valueLabel, icon: Icon, colorClass = "text-primary", barClass = "bg-primary", isLoading }) => {
   const percentText = useMemo(() => {
     if (percent === null || percent === undefined || Number.isNaN(percent)) return "--";
-    return `${percent.toFixed(0)}%`;
+    return `${percent.toFixed(1)}%`;
   }, [percent]);
 
   return (

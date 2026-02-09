@@ -190,9 +190,9 @@ ipcMain.handle("get-performance", () => {
       cpuPercent += m.cpu.percentCPUUsage;
     }
     if (m.memory && typeof m.memory.privateBytes === "number") {
-      memUsedBytes += m.memory.privateBytes;
+      memUsedBytes += m.memory.privateBytes * 1024;
     } else if (m.memory && typeof m.memory.workingSetSize === "number") {
-      memUsedBytes += m.memory.workingSetSize;
+      memUsedBytes += m.memory.workingSetSize * 1024;
     }
   }
 
