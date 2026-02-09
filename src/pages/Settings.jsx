@@ -196,7 +196,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
             <div className="space-y-4">
               <div className="flex items-center justify-between py-2 border-b border-white/5">
                 <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Kernel</span>
-                <span className="text-[12px] font-bold font-mono">v0.7.0-stable</span>
+                <span className="text-[12px] font-bold font-mono">v{version}-stable</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-white/5">
                 <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Database</span>

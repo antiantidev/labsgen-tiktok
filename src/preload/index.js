@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld("api", {
   checkDriverExists: () => ipcRenderer.invoke("check-driver-exists"),
   bootstrapDriver: () => ipcRenderer.invoke("bootstrap-driver"),
   deleteProfile: (accountId) => ipcRenderer.invoke("delete-profile", accountId),
+  getPerformance: () => ipcRenderer.invoke("get-performance"),
 
   // Database APIs
   getAccounts: () => ipcRenderer.invoke("db-get-accounts"),

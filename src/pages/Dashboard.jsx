@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ShieldCheck, Activity, CheckCircle2, Terminal, Monitor, Heart } from 'lucide-react'
+import { ShieldCheck, Activity, CheckCircle2, Terminal, Monitor, Heart, Cpu, MemoryStick } from 'lucide-react'
 import { Card, Button, Skeleton } from '../components/ui'
 import { useTranslation } from 'react-i18next'
 
@@ -29,8 +29,84 @@ const StatCard = ({ label, value, icon: Icon, colorClass = "text-primary", isLoa
   </Card>
 )
 
+const PerformanceCard = ({ label, percent, valueLabel, icon: Icon, colorClass = "text-primary", barClass = "bg-primary", isLoading }) => {
+  const percentText = useMemo(() => {
+    if (percent === null || percent === undefined || Number.isNaN(percent)) return "--";
+    return `${percent.toFixed(0)}%`;
+  }, [percent]);
+
+  return (
+    <Card className="flex items-center gap-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-shadow">
+      <div className={`p-3 rounded-lg bg-secondary ${colorClass} group-hover:scale-110 transition-transform`}>
+        <Icon size={20} />
+      </div>
+      <div className="flex-1 space-y-2">
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">{label}</div>
+        {isLoading ? (
+          <Skeleton className="h-6 w-24" />
+        ) : (
+          <div className="flex items-baseline gap-2">
+            <div className="text-lg font-bold">{percentText}</div>
+            <div className="text-[11px] text-muted-foreground font-semibold">{valueLabel}</div>
+          </div>
+        )}
+        <div className="h-2 rounded-full bg-secondary/60 overflow-hidden">
+          <div
+            className={`h-full ${barClass} opacity-80`}
+            style={{ width: percent ? `${Math.max(0, Math.min(100, percent))}%` : "0%" }}
+          />
+        </div>
+      </div>
+      <div className={`absolute -right-2 -bottom-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity ${colorClass}`}>
+        <Icon size={64} />
+      </div>
+    </Card>
+  );
+};
+
 const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
   const { t } = useTranslation()
+  const [performance, setPerformance] = useState({
+    cpuPercent: null,
+    memPercent: null,
+    memUsedMB: 0,
+    memTotalMB: 0
+  })
+  const [perfLoading, setPerfLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    let intervalId = null
+
+    const fetchPerformance = async () => {
+      try {
+        const res = await window.api.getPerformance()
+        if (!isMounted || !res || !res.ok) return
+        setPerformance({
+          cpuPercent: res.cpuPercent,
+          memPercent: res.memPercent,
+          memUsedMB: res.memUsedMB,
+          memTotalMB: res.memTotalMB
+        })
+        setPerfLoading(false)
+      } catch (err) {}
+    }
+
+    fetchPerformance()
+    intervalId = setInterval(fetchPerformance, 2000)
+
+    return () => {
+      isMounted = false
+      if (intervalId) clearInterval(intervalId)
+    }
+  }, [])
+
+  const memLabel = useMemo(() => {
+    if (!performance.memTotalMB) return "--"
+    const used = performance.memUsedMB.toFixed(0)
+    const total = performance.memTotalMB.toFixed(0)
+    return `${used} / ${total} MB`
+  }, [performance.memUsedMB, performance.memTotalMB])
 
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-8">
@@ -52,6 +128,27 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
         <StatCard label={t('tokens.live_status')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-primary" : "text-warning"} isLoading={isLoading} />
         <StatCard label={t('dashboard.live_status')} value={streamData.isLive ? t('dashboard.on_air') : t('dashboard.offline')} icon={Activity} colorClass={streamData.isLive ? "text-destructive" : "text-muted-foreground"} isLoading={isLoading} />
         <StatCard label={t('dashboard.system_health')} value={t('dashboard.optimal')} icon={CheckCircle2} colorClass="text-info" isLoading={isLoading} />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PerformanceCard
+          label={t('dashboard.cpu_usage')}
+          percent={performance.cpuPercent}
+          valueLabel={t('dashboard.realtime')}
+          icon={Cpu}
+          colorClass="text-warning"
+          barClass="bg-warning"
+          isLoading={isLoading || perfLoading}
+        />
+        <PerformanceCard
+          label={t('dashboard.ram_usage')}
+          percent={performance.memPercent}
+          valueLabel={memLabel}
+          icon={MemoryStick}
+          colorClass="text-info"
+          barClass="bg-info"
+          isLoading={isLoading || perfLoading}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

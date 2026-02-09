@@ -1,4 +1,4 @@
-# Cấu trúc thư mục chi tiết - LABGEN TIKTOK (v0.10.0)
+# Cấu trúc thư mục chi tiết - LABGEN TIKTOK (v0.12.0)
 
 Tài liệu này liệt kê chi tiết vai trò của từng thư mục và tệp tin trọng yếu trong kiến trúc của ứng dụng.
 
