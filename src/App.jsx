@@ -51,6 +51,7 @@ const App = () => {
   const [logPage, setLogPage] = useState(1)
   const [logPageSize] = useState(50)
   const [logTotal, setLogTotal] = useState(0)
+  const [updateProgress, setUpdateProgress] = useState(null)
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [modal, setModal] = useState({ show: false, title: '', body: '', buttons: [], resolve: null })
@@ -292,9 +293,16 @@ const App = () => {
 
   useEffect(() => {
     const cu = window.api.onUpdateAvailable((i) => showModal(t('update.available'), `${t('update.desc')} (${i.latest}).`, [{ label: t('update.now'), value: 'download', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'download') window.api.startDownload(); }))
-    const cd = window.api.onUpdateDownloaded(() => showModal(t('update.ready'), t('update.ready_desc'), [{ label: t('update.restart'), value: 'install', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'install') window.api.quitAndInstall() }))
+    const cd = window.api.onUpdateDownloaded(() => {
+      setUpdateProgress(null)
+      showModal(t('update.ready'), t('update.ready_desc'), [{ label: t('update.restart'), value: 'install', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'install') window.api.quitAndInstall() })
+    })
     const ce = window.api.onUpdateError(() => {
+      setUpdateProgress(null)
       pushToast(t('update.fetch_failed'), 'error')
+    })
+    const cp = window.api.onUpdateProgress((info) => {
+      setUpdateProgress(info)
     })
     const ct = window.api.onTokenStatus((m) => { setLoadingMessage(m); pushStatus(`Web: ${m}`, 'info'); })
     const cl = window.api.onSystemLog((entry) => {
@@ -310,7 +318,7 @@ const App = () => {
         }, ...prev].slice(0, logPageSize))
       }
     })
-    return () => { cu(); cd(); ce(); ct(); cl(); }
+    return () => { cu(); cd(); ce(); cp(); ct(); cl(); }
   }, [pushStatus, showModal, pushToast, t, logPage, logPageSize])
 
   return (
@@ -337,7 +345,7 @@ const App = () => {
                 clearLogs={clearLogs}
               />
             )}
-            {currentPage === 'settings' && <Settings isDriverMissing={isDriverMissing} setIsDriverMissing={setIsDriverMissing} settings={settings} setSettings={setSettings} saveConfig={saveConfig} defaultPath={defaultPath} systemPaths={systemPaths} version={appVersion} showModal={showModal} theme={theme} toggleTheme={toggleTheme} pushToast={pushToast} />}
+            {currentPage === 'settings' && <Settings isDriverMissing={isDriverMissing} setIsDriverMissing={setIsDriverMissing} settings={settings} setSettings={setSettings} saveConfig={saveConfig} defaultPath={defaultPath} systemPaths={systemPaths} version={appVersion} showModal={showModal} theme={theme} toggleTheme={toggleTheme} pushToast={pushToast} updateProgress={updateProgress} />}
           </AnimatePresence>
         </PageContainer>
         <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-primary/5 light:bg-primary/10 blur-[150px] rounded-full -mr-96 -mt-96 pointer-events-none z-[-1]" />

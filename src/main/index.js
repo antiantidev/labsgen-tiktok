@@ -170,6 +170,16 @@ function createWindow() {
     mainWindow.webContents.send("update-downloaded");
   });
 
+  autoUpdater.on("download-progress", (progress) => {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    mainWindow.webContents.send("update-progress", {
+      percent: progress.percent || 0,
+      transferred: progress.transferred || 0,
+      total: progress.total || 0,
+      bytesPerSecond: progress.bytesPerSecond || 0
+    });
+  });
+
   autoUpdater.on("error", (err) => {
     console.error("Update error:", err);
     addSystemLog("error", `Update error: ${err.message}`);

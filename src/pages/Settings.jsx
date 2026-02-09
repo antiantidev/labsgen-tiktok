@@ -10,7 +10,7 @@ const pageVariants = {
   exit: { opacity: 0, y: -10, filter: 'blur(10px)', transition: { duration: 0.2 } }
 }
 
-const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, saveConfig, defaultPath, systemPaths, version, showModal, theme, toggleTheme, pushToast }) => {
+const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, saveConfig, defaultPath, systemPaths, version, showModal, theme, toggleTheme, pushToast, updateProgress }) => {
   const { t, i18n } = useTranslation()
   const [checkingUpdate, setCheckingUpdate] = useState(false)
   const [isInstallingDriver, setIsDriverInstalling] = useState(false)
@@ -210,6 +210,20 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-success/10 text-success border border-success/20 mx-auto">
                   <CheckCircle2 size={12} />
                   {t('common.up_to_date')}
+                </div>
+              )}
+              {updateProgress && updateProgress.percent > 0 && (
+                <div className="space-y-2">
+                  <div className="h-2 w-full bg-secondary rounded-full overflow-hidden border border-white/10 light:border-black/10">
+                    <div
+                      className="h-full bg-primary transition-all"
+                      style={{ width: `${Math.min(100, Math.max(0, updateProgress.percent))}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <span>{t('update.downloading')}</span>
+                    <span className="tabular-nums">{Math.round(updateProgress.percent)}%</span>
+                  </div>
                 </div>
               )}
               <Button className="w-full h-14 text-xs" loading={checkingUpdate} onClick={handleUpdateCheck}>{t('settings.check_now')}</Button>
