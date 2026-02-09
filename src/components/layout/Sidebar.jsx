@@ -50,7 +50,7 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
   ]
 
   return (
-    <aside className="sidebar-shell w-72 h-screen flex flex-col border-r border-border/60 relative z-50 shadow-[0_25px_60px_rgba(0,0,0,0.45)] light:shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
+    <aside className="sidebar-shell w-72 h-screen flex flex-col border-r border-border/60 relative z-50 shadow-[0_18px_40px_rgba(0,0,0,0.35)] light:shadow-[0_14px_30px_rgba(0,0,0,0.10)]">
       <div className="py-12 flex flex-col items-center justify-center shrink-0">
         <div className="flex items-center gap-4 group cursor-pointer">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-[0_12px_30px_rgba(34,197,94,0.35)] group-hover:rotate-6 transition-transform duration-500 ring-1 ring-primary/20">
