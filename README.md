@@ -13,70 +13,70 @@
 
 ---
 
-## 📖 Giới thiệu
-**LABGEN TIKTOK** là giải pháp Desktop chuyên nghiệp được xây dựng trên nền tảng Electron, giúp các Streamer tối ưu hóa quy trình trích xuất thông số **Ingest (RTMP URL & Stream Key)** từ hệ thống Streamlabs để phát sóng trực tiếp lên TikTok. 
+## 📖 Overview
+**LABGEN TIKTOK** is a professional desktop solution built on Electron that helps streamers optimize the extraction of **Ingest (RTMP URL & Stream Key)** from Streamlabs to broadcast live on TikTok.
 
-Ứng dụng kết hợp giữa hiệu năng mạnh mẽ của **SQLite 3**, tính bảo mật tuyệt đối của **Electron safeStorage** và ngôn ngữ thiết kế **Edge-to-Edge** hiện đại, mang lại trải nghiệm vận hành luồng phát ổn định và đẳng cấp.
+The app combines the performance of **SQLite 3**, the security of **Electron safeStorage**, and a modern **Edge-to-Edge** design language to deliver a stable, premium streaming workflow.
 
-## ✨ Tính năng nổi bật
+## ✨ Key Features
 
-*   🔑 **Identity Vault:** Quản lý đa tài khoản với cơ chế mã hóa AES-256 cấp độ hệ điều hành. Hỗ trợ bắt giữ Token qua trình duyệt tự động (Selenium) và truy xuất cục bộ.
-*   🛰️ **Broadcast Hub:** Khởi tạo và điều khiển Endpoint phát sóng thời gian thực. Giao diện trực quan cho việc sao chép RTMP URL và Stream Key.
-*   📑 **Metadata Config:** Hệ thống thiết lập tiêu đề và danh mục Live thông minh. Tự động khớp **Game Mask ID** từ kho dữ liệu SQLite nội bộ với tốc độ phản hồi tức thì.
-*   🖥️ **Professional UI:** Giao diện tràn lề hiện đại, hỗ trợ **Dark/Light Mode** độ tương phản cao, sử dụng phông chữ **Plus Jakarta Sans** tối ưu cho tiếng Việt.
-*   🛡️ **Kernel Diagnostics:** Hệ thống nhật ký Kernel chi tiết, giám sát mọi giao thức mạng và trạng thái Database để đảm bảo vận hành không lỗi.
-*   🤖 **Auto-Bootstrap:** Tự động nhận diện môi trường và thiết lập Driver hệ thống (ChromeDriver) một cách thông minh.
+*   🔑 **Identity Vault:** Multi-account management with OS-level AES-256 encryption. Supports automated browser token capture (Selenium) and local extraction.
+*   🛰️ **Broadcast Hub:** Initialize and control live ingest endpoints in real time. UI optimized for copying RTMP URL and Stream Key.
+*   📑 **Metadata Config:** Smart title and category setup with fast **Game Mask ID** matching from the internal SQLite cache.
+*   🖥️ **Professional UI:** Modern edge-to-edge interface with high-contrast **Dark/Light Mode** and **Plus Jakarta Sans** typography.
+*   🛡️ **Kernel Diagnostics:** Detailed kernel logs and monitoring of network and database status for reliable operations.
+*   🤖 **Auto-Bootstrap:** Smart environment detection and automated ChromeDriver setup.
 
-## 🛠️ Công nghệ cốt lõi
+## 🛠️ Core Stack
 
-- **Core:** Electron v40+ (Windows Optimized)
+- **Core:** Electron v40+ (Windows optimized)
 - **Frontend:** React 19, Tailwind CSS, Framer Motion
 - **Database:** SQLite 3 (via `better-sqlite3`)
 - **Security:** Windows safeStorage API
 - **Automation:** Selenium WebDriver
 - **Infrastructure:** electron-vite, electron-builder (NSIS MUI2)
 
-## 🚀 Bắt đầu sử dụng
+## 🚀 Getting Started
 
-### Yêu cầu hệ thống
+### System Requirements
 - Windows 10/11 (x64)
-- Google Chrome (phiên bản mới nhất)
+- Google Chrome (latest version)
 
-### Cài đặt phát triển
+### Development Setup
 ```bash
-# Clone dự án
+# Clone the repository
 git clone https://github.com/antiantidev/labs-gen-tik.git
 
-# Cài đặt dependencies
+# Install dependencies
 npm install
 
-# Biên dịch các module Native (SQLite)
+# Rebuild native modules (SQLite)
 npx electron-rebuild -f -w better-sqlite3
 
-# Khởi chạy chế độ Development
+# Start in Development mode
 npm run dev
 ```
 
-### Đóng gói ứng dụng
+### Build for Release
 ```bash
-# Tạo bản cài đặt Windows chuyên nghiệp (.exe)
+# Build a professional Windows installer (.exe)
 npm run build
 npx electron-builder --win nsis --x64
 ```
 
-## 📂 Tài liệu chi tiết
+## 📂 Documentation
 
-Để hiểu sâu hơn về kiến trúc và cách thức vận hành, vui lòng tham khảo:
-- [**Kiến trúc tổng quan (GEMINI.md)**](./GEMINI.md)
-- [**Cấu trúc thư mục chi tiết**](./DOCS_STRUCTURE.md)
-- [**Phân tích sâu tính năng**](./DOCS_FEATURES.md)
+For deeper technical details, see:
+- [**Architecture Overview (GEMINI.md)**](./GEMINI.md)
+- [**Detailed Folder Structure**](./DOCS_STRUCTURE.md)
+- [**Feature Deep Dive**](./DOCS_FEATURES.md)
 
 ## 📂 Version History (v0.12.0)
-Ứng dụng hiện tại đang hoạt động trên nhân Kernel ổn định v0.12.0.
+The current application runs on stable kernel v0.12.0.
 
-## 📄 Bản quyền & Liên hệ
-Dự án được phát triển bởi **Nhat Linh Nguyen**. 
-Giấy phép: **MIT License**.
+## 📄 License & Contact
+Developed by **Nhat Linh Nguyen**.  
+License: **MIT License**.
 
 ---
 <div align="center">
