@@ -76,39 +76,6 @@ function ensureProfilesDir() {
   }
 }
 
-function applyInstallerConfig() {
-  const installerPath = join(app.getPath("userData"), "installer.json");
-  if (!fs.existsSync(installerPath)) return;
-  try {
-    const raw = fs.readFileSync(installerPath, "utf8");
-    const data = JSON.parse(raw);
-    const state = dbService.getSetting("app_state", {});
-    let changed = false;
-
-    if (data.language && state.language !== data.language) {
-      state.language = data.language;
-      changed = true;
-    }
-
-    if (data.profilePath) {
-      const normalized = data.profilePath.replace(/\//g, path.sep);
-      state.settings = state.settings || {};
-      if (!state.settings.customProfilePath) {
-        state.settings.customProfilePath = normalized;
-        changed = true;
-      }
-    }
-
-    if (changed) {
-      dbService.saveSetting("app_state", state);
-      addSystemLog("success", "Installer config applied");
-    }
-  } catch (err) {
-    addSystemLog("error", `Installer config read failed: ${err.message}`);
-  }
-  try { fs.unlinkSync(installerPath); } catch (_) {}
-}
-
 // Instantiate services
 const streamService = new StreamService();
 const tokenService = new TokenService();
@@ -217,7 +184,6 @@ app.whenReady().then(() => {
   addSystemLog(dbReady ? "success" : "error", dbReady ? "Database initialized" : "Database init failed");
   addSystemLog("info", `App ready v${app.getVersion()}`);
 
-  applyInstallerConfig();
   ensureProfilesDir();
 
   app.on("browser-window-created", (_, window) => {
