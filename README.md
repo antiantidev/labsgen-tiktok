@@ -72,16 +72,6 @@ npm run build
 npx electron-builder --win nsis --x64
 ```
 
-## 📂 Documentation
-
-For deeper technical details, see:
-- [**Architecture Overview (GEMINI.md)**](./GEMINI.md)
-- [**Detailed Folder Structure**](./DOCS_STRUCTURE.md)
-- [**Feature Deep Dive**](./DOCS_FEATURES.md)
-
-## 📂 Version History (v0.17.2)
-The current application runs on stable kernel v0.17.2.
-
 ## 📄 License & Contact
 Developed by **Nhat Linh Nguyen**.  
 License: **MIT License**.
