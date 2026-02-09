@@ -47,8 +47,8 @@
     "optimal": "Optimal",
     "on_air": "On air",
     "offline": "Offline",
-    "cpu_usage": "CPU usage",
-    "ram_usage": "Memory usage",
+    "cpu_usage": "App CPU usage",
+    "ram_usage": "App memory usage",
     "realtime": "Realtime"
   },
   "tokens": {

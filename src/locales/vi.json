@@ -47,8 +47,8 @@
     "optimal": "Tối ưu",
     "on_air": "Đang phát",
     "offline": "Ngoại tuyến",
-    "cpu_usage": "Mức sử dụng CPU",
-    "ram_usage": "Mức sử dụng RAM",
+    "cpu_usage": "CPU của ứng dụng",
+    "ram_usage": "RAM của ứng dụng",
     "realtime": "Thời gian thực"
   },
   "tokens": {

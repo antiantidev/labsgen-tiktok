@@ -19,7 +19,6 @@ const fs = require("fs");
 
 let tray = null;
 let mainWindow = null;
-let lastCpuSample = null;
 
 // Initialize Database
 const dbService = new DBService(app.getPath("userData"));
@@ -182,35 +181,29 @@ ipcMain.handle("get-all-paths", () => ({
 }));
 
 ipcMain.handle("get-performance", () => {
-  const cpus = os.cpus();
-  let idle = 0;
-  let total = 0;
-  for (const cpu of cpus) {
-    const times = cpu.times;
-    idle += times.idle;
-    total += times.user + times.nice + times.sys + times.idle + times.irq;
-  }
+  const metrics = app.getAppMetrics();
+  let cpuPercent = 0;
+  let memUsedBytes = 0;
 
-  let cpuPercent = null;
-  if (lastCpuSample) {
-    const idleDelta = idle - lastCpuSample.idle;
-    const totalDelta = total - lastCpuSample.total;
-    if (totalDelta > 0) {
-      const usage = 100 - (idleDelta / totalDelta) * 100;
-      cpuPercent = Math.max(0, Math.min(100, usage));
+  for (const m of metrics) {
+    if (m.cpu && typeof m.cpu.percentCPUUsage === "number") {
+      cpuPercent += m.cpu.percentCPUUsage;
+    }
+    if (m.memory && typeof m.memory.privateBytes === "number") {
+      memUsedBytes += m.memory.privateBytes;
+    } else if (m.memory && typeof m.memory.workingSetSize === "number") {
+      memUsedBytes += m.memory.workingSetSize;
     }
   }
-  lastCpuSample = { idle, total };
 
   const totalMem = os.totalmem();
-  const freeMem = os.freemem();
-  const usedMem = totalMem - freeMem;
+  const memPercent = totalMem > 0 ? (memUsedBytes / totalMem) * 100 : 0;
 
   return {
     ok: true,
-    cpuPercent,
-    memPercent: totalMem > 0 ? (usedMem / totalMem) * 100 : 0,
-    memUsedMB: usedMem / (1024 * 1024),
+    cpuPercent: Math.max(0, Math.min(100, cpuPercent)),
+    memPercent: Math.max(0, Math.min(100, memPercent)),
+    memUsedMB: memUsedBytes / (1024 * 1024),
     memTotalMB: totalMem / (1024 * 1024)
   };
 });
