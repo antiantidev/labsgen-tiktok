@@ -1,0 +1,75 @@
+import React from 'react'
+import { motion } from 'framer-motion'
+import { ShieldCheck, Activity, CheckCircle2, Terminal, Monitor, Heart } from 'lucide-react'
+import { Card, Button } from '../components/ui'
+
+const pageVariants = {
+  initial: { opacity: 0, y: 10, filter: 'blur(10px)' },
+  animate: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.4 } },
+  exit: { opacity: 0, y: -10, filter: 'blur(10px)', transition: { duration: 0.2 } }
+}
+
+const StatCard = ({ label, value, icon: Icon, colorClass = "text-primary" }) => (
+  <Card className="flex items-center gap-4 relative overflow-hidden group">
+    <div className={`p-3 rounded-xl bg-white/5 ${colorClass} group-hover:scale-110 transition-transform`}>
+      <Icon size={20} />
+    </div>
+    <div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">{label}</div>
+      <div className="text-lg font-bold">{value}</div>
+    </div>
+    <div className={`absolute -right-2 -bottom-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity ${colorClass}`}>
+      <Icon size={64} />
+    </div>
+  </Card>
+)
+
+const Dashboard = ({ status, streamData, onNavigate }) => (
+  <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-8">
+    <div className="flex flex-col gap-2">
+      <h1 className="text-4xl font-black tracking-tight">Welcome, <span className="text-primary">{status.username}</span></h1>
+      <p className="text-muted-foreground text-lg font-medium">Your streaming command center is ready.</p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <StatCard label="Account Status" value={status.badge} icon={ShieldCheck} colorClass={status.canGoLive ? "text-primary" : "text-amber-500"} />
+      <StatCard label="Live State" value={streamData.isLive ? "LIVE" : "Standby"} icon={Activity} colorClass={streamData.isLive ? "text-rose-500" : "text-muted-foreground"} />
+      <StatCard label="System Health" value="Optimal" icon={CheckCircle2} colorClass="text-blue-400" />
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <Card title="Quick Navigation">
+        <div className="grid grid-cols-2 gap-4">
+          <button onClick={() => onNavigate('console')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-primary/5 transition-all group">
+            <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
+            <span className="text-sm font-bold uppercase tracking-widest">Console</span>
+          </button>
+          <button onClick={() => window.api.openExternal("https://livecenter.tiktok.com/live_monitor")} className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/20 hover:bg-blue-500/5 transition-all group">
+            <div className="p-4 rounded-2xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform"><Monitor size={32} /></div>
+            <span className="text-sm font-bold uppercase tracking-widest">Monitor</span>
+          </button>
+        </div>
+      </Card>
+
+      <Card title="Account Insights">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+            <span className="text-xs text-muted-foreground font-black uppercase tracking-widest">Username</span>
+            <span className="font-bold">{status.username}</span>
+          </div>
+          <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+            <span className="text-xs text-muted-foreground font-black uppercase tracking-widest">Capability</span>
+            <span className={`text-[10px] px-3 py-1 rounded-full font-black ${status.canGoLive ? 'bg-primary text-primary-foreground' : 'bg-rose-500/20 text-rose-500'}`}>
+              {status.canGoLive ? 'AUTHORIZED' : 'RESTRICTED'}
+            </span>
+          </div>
+          <Button onClick={() => window.api.openExternal("https://buymeacoffee.com/loukious")} className="w-full py-4 bg-gradient-to-r from-primary to-emerald-400" icon={Heart}>
+            Support Project
+          </Button>
+        </div>
+      </Card>
+    </div>
+  </motion.div>
+)
+
+export default Dashboard
