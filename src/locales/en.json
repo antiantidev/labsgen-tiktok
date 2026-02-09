@@ -160,7 +160,10 @@
     "export": "Export logs",
     "clear": "Clear logs",
     "no_logs": "No events yet.",
-    "success": "Success"
+    "success": "Success",
+    "page": "Page",
+    "prev": "Prev",
+    "next": "Next"
   },
   "update": {
     "available": "Update available",

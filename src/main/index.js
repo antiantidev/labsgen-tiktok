@@ -20,6 +20,7 @@ const fs = require("fs");
 let tray = null;
 let mainWindow = null;
 let logSender = null;
+const LOG_RETENTION = 5000;
 
 // Initialize Database
 const dbService = new DBService(app.getPath("userData"));
@@ -29,6 +30,7 @@ function addSystemLog(level, message) {
   try {
     const timestamp = new Date().toISOString();
     const result = dbService.addSystemLog(level, message, timestamp);
+    dbService.pruneSystemLogs(LOG_RETENTION);
     const entry = {
       id: result.lastInsertRowid,
       level,
@@ -396,5 +398,10 @@ ipcMain.handle("check-for-updates", async () => {
 });
 
 ipcMain.handle("system-log-add", (_, { level, message }) => addSystemLog(level, message));
-ipcMain.handle("system-log-get", (_, limit = 500) => dbService.getSystemLogs(limit));
+ipcMain.handle("system-log-get", (_, params = {}) => {
+  const limit = params.limit ?? 100;
+  const offset = params.offset ?? 0;
+  return dbService.getSystemLogs(limit, offset);
+});
+ipcMain.handle("system-log-count", () => dbService.getSystemLogCount());
 ipcMain.handle("system-log-clear", () => dbService.clearSystemLogs());

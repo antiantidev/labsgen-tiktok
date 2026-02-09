@@ -48,6 +48,9 @@ const App = () => {
   const [status, setStatus] = useState({ username: 'Guest', appStatus: 'tokens.unknown', canGoLive: false, badge: 'common.check' })
   const [streamData, setStreamData] = useState({ url: '', key: '', id: null, isLive: false })
   const [statusLog, setStatusLog] = useState([])
+  const [logPage, setLogPage] = useState(1)
+  const [logPageSize] = useState(100)
+  const [logTotal, setLogTotal] = useState(0)
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [modal, setModal] = useState({ show: false, title: '', body: '', buttons: [], resolve: null })
@@ -68,6 +71,28 @@ const App = () => {
     if (window.api && window.api.addSystemLog) {
       window.api.addSystemLog({ level, message });
     }
+  }, [])
+
+  const loadLogs = useCallback(async (page = 1) => {
+    const offset = (page - 1) * logPageSize
+    const logs = await window.api.getSystemLogs({ limit: logPageSize, offset })
+    const total = await window.api.getSystemLogCount()
+    setLogTotal(total || 0)
+    setLogPage(page)
+    setStatusLog((logs || []).map(l => ({
+      id: l.id,
+      level: l.level,
+      message: l.message,
+      timestamp: l.timestamp,
+      time: new Date(l.timestamp).toLocaleTimeString()
+    })))
+  }, [logPageSize])
+
+  const clearLogs = useCallback(async () => {
+    await window.api.clearSystemLogs()
+    setStatusLog([])
+    setLogTotal(0)
+    setLogPage(1)
   }, [])
 
   const pushToast = useCallback((message, type = 'info', duration = 4000) => {
@@ -228,16 +253,7 @@ const App = () => {
       setAppVersion(version); setDefaultPath(defPath); setSystemPaths(allPaths)
       setLoadProgress(30); setLoadingMessage('Accessing local database...')
       let data = await window.api.getSetting('app_state'); if (!data) data = await window.api.loadConfig()
-      const logs = await window.api.getSystemLogs(500)
-      if (logs && logs.length) {
-        setStatusLog(logs.map(l => ({
-          id: l.id,
-          level: l.level,
-          message: l.message,
-          timestamp: l.timestamp,
-          time: new Date(l.timestamp).toLocaleTimeString()
-        })))
-      }
+      await loadLogs(1)
       const dbAccounts = await window.api.getAccounts(); setAccounts(dbAccounts)
       if (data) {
         if (data.settings) setSettings(data.settings)
@@ -276,16 +292,19 @@ const App = () => {
     const ct = window.api.onTokenStatus((m) => { setLoadingMessage(m); pushStatus(`Web: ${m}`, 'info'); })
     const cl = window.api.onSystemLog((entry) => {
       if (!entry) return;
-      setStatusLog(prev => [{
-        id: entry.id || Date.now(),
-        level: entry.level || 'info',
-        message: entry.message || '',
-        timestamp: entry.timestamp || new Date().toISOString(),
-        time: new Date(entry.timestamp || Date.now()).toLocaleTimeString()
-      }, ...prev].slice(0, 500))
+      setLogTotal(prev => prev + 1)
+      if (logPage === 1) {
+        setStatusLog(prev => [{
+          id: entry.id || Date.now(),
+          level: entry.level || 'info',
+          message: entry.message || '',
+          timestamp: entry.timestamp || new Date().toISOString(),
+          time: new Date(entry.timestamp || Date.now()).toLocaleTimeString()
+        }, ...prev].slice(0, logPageSize))
+      }
     })
     return () => { cu(); cd(); ce(); ct(); cl(); }
-  }, [pushStatus, showModal, pushToast, t])
+  }, [pushStatus, showModal, pushToast, t, logPage, logPageSize])
 
   return (
     <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Plus_Jakarta_Sans']">
@@ -300,7 +319,17 @@ const App = () => {
             {currentPage === 'console' && <Console streamData={streamData} startStream={startStream} endStream={endStream} canGoLive={status.canGoLive} streamTitle={streamTitle} gameCategory={gameCategory} pushToast={pushToast} />}
             {currentPage === 'setup' && <LiveSetup streamTitle={streamTitle} setStreamTitle={setStreamTitle} gameCategory={gameCategory} handleSearch={handleSearch} suggestions={suggestions} showSuggestions={showSuggestions} setShowSuggestions={setShowSuggestions} setGameCategory={setGameCategory} setGameMaskId={setGameMaskId} mature={mature} setMature={setMature} saveConfig={saveConfig} gameMaskId={gameMaskId} pushToast={pushToast} />}
             {currentPage === 'tokens' && <TokenVault isDriverMissing={isDriverMissing} loadLocalToken={loadLocalToken} loadWebToken={loadWebToken} isWebLoading={isWebLoading} refreshAccountInfo={refreshAccountInfo} canGoLive={status.canGoLive} status={status} accounts={accounts} selectAccount={selectAccount} deleteAccount={deleteAccount} activeAccountId={activeAccountId} isLoading={isLoading} setCurrentPage={setCurrentPage} />}
-            {currentPage === 'status' && <Pulse statusLog={statusLog} setStatusLog={setStatusLog} />}
+            {currentPage === 'status' && (
+              <Pulse
+                statusLog={statusLog}
+                setStatusLog={setStatusLog}
+                logPage={logPage}
+                logPageSize={logPageSize}
+                logTotal={logTotal}
+                loadLogs={loadLogs}
+                clearLogs={clearLogs}
+              />
+            )}
             {currentPage === 'settings' && <Settings isDriverMissing={isDriverMissing} setIsDriverMissing={setIsDriverMissing} settings={settings} setSettings={setSettings} saveConfig={saveConfig} defaultPath={defaultPath} systemPaths={systemPaths} version={appVersion} showModal={showModal} theme={theme} toggleTheme={toggleTheme} pushToast={pushToast} />}
           </AnimatePresence>
         </PageContainer>

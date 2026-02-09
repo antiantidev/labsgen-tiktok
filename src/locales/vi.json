@@ -160,7 +160,10 @@
     "export": "Xuất nhật ký",
     "clear": "Xóa nhật ký",
     "no_logs": "Chưa có sự kiện.",
-    "success": "Thành công"
+    "success": "Thành công",
+    "page": "Trang",
+    "prev": "Trước",
+    "next": "Sau"
   },
   "update": {
     "available": "Có bản cập nhật mới",

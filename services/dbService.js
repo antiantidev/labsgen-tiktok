@@ -62,12 +62,22 @@ class DBService {
     return stmt.run(level, message, timestamp);
   }
 
-  getSystemLogs(limit = 500) {
-    return this.db.prepare('SELECT * FROM system_logs ORDER BY id DESC LIMIT ?').all(limit);
+  getSystemLogs(limit = 500, offset = 0) {
+    return this.db.prepare('SELECT * FROM system_logs ORDER BY id DESC LIMIT ? OFFSET ?').all(limit, offset);
+  }
+
+  getSystemLogCount() {
+    const row = this.db.prepare('SELECT COUNT(*) as count FROM system_logs').get();
+    return row ? row.count : 0;
   }
 
   clearSystemLogs() {
     return this.db.prepare('DELETE FROM system_logs').run();
+  }
+
+  pruneSystemLogs(limit) {
+    if (!limit || limit <= 0) return;
+    this.db.prepare('DELETE FROM system_logs WHERE id IN (SELECT id FROM system_logs ORDER BY id DESC LIMIT -1 OFFSET ?)').run(limit);
   }
 
   saveAccount(acc) {

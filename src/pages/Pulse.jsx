@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Terminal, Search, Trash2, Download, Filter, 
   Info, AlertTriangle, XCircle, CheckCircle2,
-  BarChart3, Clock, ChevronRight
+  BarChart3, Clock, ChevronRight, ChevronLeft
 } from 'lucide-react'
 import { Card, Button, Input } from '../components/ui'
 import { useTranslation } from 'react-i18next'
@@ -33,7 +33,7 @@ const LogBadge = ({ level }) => {
   )
 }
 
-const Pulse = ({ statusLog = [], setStatusLog }) => {
+const Pulse = ({ statusLog = [], setStatusLog, logPage = 1, logPageSize = 100, logTotal = 0, loadLogs, clearLogs }) => {
   const { t } = useTranslation()
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
@@ -72,7 +72,7 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={exportLogs} icon={Download}>{t('pulse.export')}</Button>
-          <Button variant="danger" onClick={() => { window.api.clearSystemLogs(); setStatusLog([]); }} icon={Trash2}>{t('pulse.clear')}</Button>
+          <Button variant="danger" onClick={clearLogs} icon={Trash2}>{t('pulse.clear')}</Button>
         </div>
       </div>
 
@@ -116,6 +116,32 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
               onChange={(e) => setSearch(e.target.value)}
               className="h-10 text-xs"
             />
+          </div>
+        </div>
+
+        <div className="px-4 py-3 border-b border-border light:border-black/5 bg-secondary/10 light:bg-white/60 flex items-center justify-between">
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+            {t('pulse.page')} {logPage} / {Math.max(1, Math.ceil(logTotal / logPageSize))}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => loadLogs(Math.max(1, logPage - 1))}
+              disabled={logPage <= 1}
+              className="h-9 px-4 text-[10px]"
+              icon={ChevronLeft}
+            >
+              {t('pulse.prev')}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => loadLogs(Math.min(Math.max(1, Math.ceil(logTotal / logPageSize)), logPage + 1))}
+              disabled={logPage >= Math.max(1, Math.ceil(logTotal / logPageSize))}
+              className="h-9 px-4 text-[10px]"
+              icon={ChevronRight}
+            >
+              {t('pulse.next')}
+            </Button>
           </div>
         </div>
 

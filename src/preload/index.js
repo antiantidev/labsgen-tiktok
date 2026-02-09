@@ -65,7 +65,8 @@ contextBridge.exposeInMainWorld("api", {
   checkForUpdates: () => ipcRenderer.invoke("check-for-updates")
   ,
   addSystemLog: (entry) => ipcRenderer.invoke("system-log-add", entry),
-  getSystemLogs: (limit) => ipcRenderer.invoke("system-log-get", limit),
+  getSystemLogs: (params) => ipcRenderer.invoke("system-log-get", params),
+  getSystemLogCount: () => ipcRenderer.invoke("system-log-count"),
   clearSystemLogs: () => ipcRenderer.invoke("system-log-clear"),
   onSystemLog: (callback) => {
     const subscription = (_, entry) => callback(entry);
