@@ -15,10 +15,14 @@ const Console = ({
 }) => {
   const { t } = useTranslation()
 
-  const copyToClipboard = (text, label) => {
+  const copyToClipboard = async (text, label) => {
     if (!text) return
-    navigator.clipboard.writeText(text)
-    if (pushToast) pushToast(`${label} copied to clipboard`, 'success')
+    try {
+      await navigator.clipboard.writeText(text)
+      if (pushToast) pushToast(`${label} ${t('console.copy_success')}`, 'success')
+    } catch (err) {
+      if (pushToast) pushToast(t('console.copy_failed'), 'error')
+    }
   }
 
   return (
@@ -48,7 +52,7 @@ const Console = ({
                   <div className="bg-secondary border border-border rounded-xl px-6 py-4 text-[13px] font-mono font-medium text-foreground overflow-hidden truncate flex items-center">
                     {streamData.url || t('console.not_started')}
                   </div>
-                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.url, 'RTMP URL')} className="h-[56px] w-[56px] p-0">
+                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.url, t('console.rtmp_url'))} className="h-[56px] w-[56px] p-0" disabled={!streamData.url}>
                     <Copy size={20} />
                   </Button>
                 </div>
@@ -60,7 +64,7 @@ const Console = ({
                   <div className="bg-secondary border border-border rounded-xl px-6 py-4 text-[13px] font-mono font-medium text-foreground overflow-hidden flex items-center">
                     {streamData.key ? '••••••••••••••••••••••••••••••••••••' : t('console.not_started')}
                   </div>
-                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.key, 'Stream Key')} className="h-[56px] w-[56px] p-0">
+                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.key, t('console.stream_key_label'))} className="h-[56px] w-[56px] p-0" disabled={!streamData.key}>
                     <Copy size={20} />
                   </Button>
                 </div>
@@ -76,7 +80,7 @@ const Console = ({
                 </div>
                 <div className="text-center">
                   <div className="text-xs font-black uppercase tracking-widest mb-1">{t('console.health')}</div>
-                  <div className="text-xl font-bold">{streamData.isLive ? t('console.excellent') : '---'}</div>
+                  <div className="text-xl font-bold">{streamData.isLive ? t('console.excellent') : t('console.na')}</div>
                 </div>
               </div>
             </Card>
@@ -85,7 +89,7 @@ const Console = ({
               <div className="space-y-4">
                 <div className="flex flex-col gap-1">
                   <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{t('console.platform')}</span>
-                  <span className="text-sm font-bold">TikTok LIVE</span>
+                  <span className="text-sm font-bold">{t('console.platform_value')}</span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{t('console.active_setup')}</span>

@@ -118,6 +118,7 @@
     "excellent": "Excellent",
     "quick_info": "Session info",
     "platform": "Platform",
+    "platform_value": "TikTok LIVE",
     "active_setup": "Current metadata",
     "default_title": "No title",
     "category": "Category",
@@ -137,7 +138,12 @@
     "live_started_desc": "Ingest details are ready for your encoder.",
     "live_ended": "Session ended",
     "live_ended_desc": "The endpoint was revoked by TikTok.",
-    "end_error": "Failed to revoke access."
+    "end_error": "Failed to revoke access.",
+    "rtmp_url": "RTMP URL",
+    "stream_key_label": "Stream Key",
+    "copy_success": "copied to clipboard",
+    "copy_failed": "Copy failed",
+    "na": "---"
   },
   "pulse": {
     "title": "System Logs",

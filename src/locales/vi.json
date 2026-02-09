@@ -118,6 +118,7 @@
     "excellent": "Rất tốt",
     "quick_info": "Thông tin phiên",
     "platform": "Nền tảng",
+    "platform_value": "TikTok LIVE",
     "active_setup": "Metadata hiện tại",
     "default_title": "Chưa đặt tiêu đề",
     "category": "Danh mục",
@@ -137,7 +138,12 @@
     "live_started_desc": "Thông số Ingest đã sẵn sàng cho phần mềm mã hóa.",
     "live_ended": "Đã kết thúc phiên",
     "live_ended_desc": "Endpoint đã được thu hồi trên máy chủ TikTok.",
-    "end_error": "Không thể thu hồi quyền truy cập."
+    "end_error": "Không thể thu hồi quyền truy cập.",
+    "rtmp_url": "RTMP URL",
+    "stream_key_label": "Stream Key",
+    "copy_success": "đã sao chép",
+    "copy_failed": "Sao chép thất bại",
+    "na": "---"
   },
   "pulse": {
     "title": "Nhật ký hệ thống",
