@@ -85,7 +85,7 @@ function applyInstallerConfig() {
     const state = dbService.getSetting("app_state", {});
     let changed = false;
 
-    if (data.language && !state.language) {
+    if (data.language && state.language !== data.language) {
       state.language = data.language;
       changed = true;
     }
