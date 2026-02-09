@@ -5,7 +5,7 @@ import { Check, X, Info, AlertTriangle, XCircle, ChevronRight, AlertCircle } fro
 export const Button = ({ children, onClick, disabled, variant = 'primary', className = '', icon: Icon, loading }) => {
   const variants = {
     primary: 'bg-[linear-gradient(135deg,hsl(var(--primary)),hsl(var(--primary))_55%,rgba(255,255,255,0.08))] text-primary-foreground shadow-[0_12px_32px_rgba(34,197,94,0.25)] hover:shadow-[0_18px_40px_rgba(34,197,94,0.35)] ring-1 ring-primary/30',
-    secondary: 'bg-secondary/70 text-secondary-foreground border border-white/5 hover:bg-secondary transition-colors',
+    secondary: 'bg-secondary/70 text-secondary-foreground border border-white/5 light:border-black/5 hover:bg-secondary transition-colors',
     outline: 'bg-transparent border border-border hover:border-primary/50 hover:text-primary',
     ghost: 'bg-transparent hover:bg-secondary/70 text-muted-foreground hover:text-foreground',
     danger: 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-destructive-foreground',
@@ -168,7 +168,7 @@ export const Toast = ({ message, type = 'info', onClose }) => {
     >
       <div className={`p-2 rounded-lg bg-background/20 border border-white/10 shadow-sm`}>{icons[type]}</div>
       <div className="flex-1 min-w-0"><p className={`text-[13px] font-bold leading-snug text-center px-2 ${type === 'error' ? 'text-destructive-foreground' : 'text-foreground'}`}>{message}</p></div>
-      <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-2 -mr-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-all shrink-0" aria-label="Close"><X size={16} /></button>
+      <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-2 -mr-1 rounded-lg hover:bg-white/10 light:hover:bg-black/5 text-muted-foreground hover:text-foreground transition-all shrink-0" aria-label="Close"><X size={16} /></button>
     </motion.div>
   )
 }
