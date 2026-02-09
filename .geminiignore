@@ -23,8 +23,6 @@ yarn-error.log*
 .gemini/tmp/
 
 # Sensitive Info
-.env
-.env.*
 *.key
 *.pem
 *.pfx
