@@ -50,7 +50,7 @@
       "shortcutName": "Labsgen Tiktok",
       "multiLanguageInstaller": true,
       "displayLanguageSelector": true,
-      "include": "build/installer.nsh",
+      "include": "resources/installer.nsh",
       "installerLanguages": [
         "en_US",
         "vi_VN"
