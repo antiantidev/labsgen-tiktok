@@ -152,7 +152,7 @@ export const LoadingOverlay = ({ message, progress }) => (
 export const Toast = ({ message, type = 'info', onClose }) => {
   const icons = {
     success: <Check size={16} className="text-primary" />,
-    error: <XCircle size={16} className="text-white" />,
+    error: <XCircle size={16} className="text-destructive-foreground light:text-destructive" />,
     warn: <AlertTriangle size={16} className="text-warning" />,
     info: <Info size={16} className="text-info" />
   }

@@ -42,11 +42,11 @@ const Console = ({
           <h1 className="text-3xl font-black">{t('console.title')}</h1>
           <p className="text-muted-foreground font-medium">{t('console.desc')}</p>
         </div>
-        <div className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 border transition-all duration-500 ${streamData.isLive ? 'bg-rose-500/10 border-rose-500/20 text-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.15)]' : 'bg-secondary border-border text-muted-foreground'}`}>
+        <div className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 border transition-all duration-500 ${streamData.isLive ? 'bg-rose-500/10 border-rose-500/20 text-rose-600 shadow-[0_0_20px_rgba(244,63,94,0.15)] light:shadow-[0_0_12px_rgba(244,63,94,0.2)]' : 'bg-secondary border-border text-muted-foreground'}`}>
           <motion.div 
             animate={streamData.isLive ? { scale: [1, 1.5, 1], opacity: [1, 0.5, 1] } : {}}
             transition={{ repeat: Infinity, duration: 1.5 }}
-            className={`w-2 h-2 rounded-full ${streamData.isLive ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e]' : 'bg-muted-foreground'}`} 
+            className={`w-2 h-2 rounded-full ${streamData.isLive ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e] light:shadow-[0_0_6px_rgba(244,63,94,0.6)]' : 'bg-muted-foreground'}`} 
           />
           {streamData.isLive ? t('console.on_air') : t('console.offline')}
         </div>
@@ -136,7 +136,7 @@ const Console = ({
               </Button>
             </div>
             
-            <div className="mt-8 p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 space-y-4">
+            <div className="mt-8 p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 light:border-amber-500/30 space-y-4">
               <div className="flex items-center gap-3">
                 <AlertCircle className="text-amber-500" size={20} />
                 <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">{t('console.checklist')}</span>
