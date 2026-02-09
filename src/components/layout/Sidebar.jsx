@@ -108,7 +108,7 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
 
           <button
             onClick={() => window.api.openExternal("https://ko-fi.com/chokernguyen")}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-primary/15 text-primary border border-primary/25 hover:bg-primary/25 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary/15 text-primary border border-primary/25 hover:bg-primary/25 transition-all text-[10px] font-black uppercase tracking-[0.2em]"
           >
             <Heart size={14} />
             {t('dashboard.support_project')}
