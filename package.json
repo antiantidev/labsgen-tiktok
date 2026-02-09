@@ -1,7 +1,7 @@
 {
   "name": "labsgen-tiktok",
-  "version": "0.15.9",
-  "description": "Labsgen Tiktok - StreamLabs TikTok Stream Key Generator",
+  "version": "0.16.3",
+  "description": "TikTok Live Stream Key Generator for OBS from Streamlabs",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
   "license": "MIT",
@@ -21,6 +21,7 @@
   "build": {
     "appId": "com.labsgen-tiktok.app",
     "productName": "Labsgen Tiktok",
+    "icon": "resources/icon.ico",
     "directories": {
       "output": "dist/installers"
     },
@@ -37,7 +38,8 @@
       "target": [
         "nsis"
       ],
-      "artifactName": "${productName}-Setup-${version}.${ext}"
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "icon": "resources/icon.ico"
     },
     "nsis": {
       "oneClick": false,
