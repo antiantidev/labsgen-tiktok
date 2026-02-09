@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ShieldCheck, Activity, CheckCircle2, Terminal, Monitor, Heart, Cpu, MemoryStick } from 'lucide-react'
+import { ShieldCheck, Activity, CheckCircle2, Heart, Cpu, MemoryStick, Users, Sliders, Terminal } from 'lucide-react'
 import { Card, Button, Skeleton } from '../components/ui'
 import { useTranslation } from 'react-i18next'
 
@@ -153,14 +153,18 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card title={t('dashboard.quick_start')}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button onClick={() => onNavigate('tokens')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-primary/20 hover:bg-primary/5 transition-all group text-foreground">
+              <div className="p-4 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Users size={32} /></div>
+              <span className="text-sm font-bold uppercase tracking-widest">{t('tokens.title')}</span>
+            </button>
+            <button onClick={() => onNavigate('setup')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-info/20 hover:bg-info/5 transition-all group text-foreground">
+              <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Sliders size={32} /></div>
+              <span className="text-sm font-bold uppercase tracking-widest text-center">{t('setup.title')}</span>
+            </button>
             <button onClick={() => onNavigate('console')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-primary/20 hover:bg-primary/5 transition-all group text-foreground">
               <div className="p-4 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
               <span className="text-sm font-bold uppercase tracking-widest">{t('console.title')}</span>
-            </button>
-            <button onClick={() => window.api.openExternal("https://livecenter.tiktok.com/live_monitor")} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-info/20 hover:bg-info/5 transition-all group text-foreground">
-              <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Monitor size={32} /></div>
-              <span className="text-sm font-bold uppercase tracking-widest text-center">{t('sidebar.live_center')}</span>
             </button>
           </div>
         </Card>
