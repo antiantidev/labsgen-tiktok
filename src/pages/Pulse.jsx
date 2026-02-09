@@ -84,7 +84,7 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
           { label: 'Warnings', value: stats.warn, color: 'text-warning', icon: AlertTriangle },
           { label: 'Errors', value: stats.error, color: 'text-destructive', icon: XCircle },
         ].map((s, i) => (
-          <div key={i} className="p-4 rounded-3xl bg-secondary/30 border border-border flex items-center gap-4">
+          <div key={i} className="p-4 rounded-3xl bg-secondary/30 border border-border light:bg-white/70 light:border-black/5 flex items-center gap-4">
             <div className={`p-2.5 rounded-xl bg-secondary ${s.color}`}><s.icon size={18} /></div>
             <div>
               <div className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{s.label}</div>
@@ -96,8 +96,8 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
 
       <Card className="flex-1 flex flex-col min-h-0 p-0 overflow-hidden border-border/60">
         {/* Toolbar */}
-        <div className="p-4 border-b border-border bg-secondary/20 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
-          <div className="flex gap-1.5 p-1 bg-background/50 rounded-2xl border border-border">
+        <div className="p-4 border-b border-border light:border-black/5 bg-secondary/20 light:bg-white/70 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
+          <div className="flex gap-1.5 p-1 bg-background/50 light:bg-white/70 rounded-2xl border border-border light:border-black/5">
             {['all', 'info', 'success', 'warn', 'error'].map((f) => (
               <button
                 key={f}
@@ -122,14 +122,14 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
         {/* Log List */}
         <div className="flex-1 overflow-y-auto custom-scrollbar font-mono text-[12px]">
           <table className="w-full border-collapse">
-            <thead className="sticky top-0 z-10 bg-secondary/90 backdrop-blur text-muted-foreground border-b border-border">
+            <thead className="sticky top-0 z-10 bg-secondary/90 light:bg-white/90 backdrop-blur text-muted-foreground border-b border-border light:border-black/5">
               <tr>
                 <th className="px-6 py-4 text-left font-black uppercase tracking-widest w-32">Timestamp</th>
                 <th className="px-6 py-4 text-left font-black uppercase tracking-widest w-28">Level</th>
                 <th className="px-6 py-4 text-left font-black uppercase tracking-widest">Message</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-white/5 light:divide-black/5">
               {filteredLogs.length > 0 ? (
                 filteredLogs.map((log) => (
                   <motion.tr 

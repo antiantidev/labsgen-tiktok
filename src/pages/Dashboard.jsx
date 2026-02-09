@@ -12,7 +12,7 @@ const pageVariants = {
 
 const StatCard = ({ label, value, icon: Icon, colorClass = "text-primary", isLoading }) => (
   <Card className="flex items-center gap-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-shadow">
-    <div className={`p-3 rounded-lg bg-secondary ${colorClass} group-hover:scale-110 transition-transform`}>
+    <div className={`p-3 rounded-lg bg-secondary/80 light:bg-white/70 ${colorClass} group-hover:scale-110 transition-transform`}>
       <Icon size={20} />
     </div>
     <div className="flex-1">
@@ -37,7 +37,7 @@ const PerformanceCard = ({ label, percent, valueLabel, icon: Icon, colorClass = 
 
   return (
     <Card className="flex items-center gap-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-shadow">
-      <div className={`p-3 rounded-lg bg-secondary ${colorClass} group-hover:scale-110 transition-transform`}>
+      <div className={`p-3 rounded-lg bg-secondary/80 light:bg-white/70 ${colorClass} group-hover:scale-110 transition-transform`}>
         <Icon size={20} />
       </div>
       <div className="flex-1 space-y-2">
@@ -50,7 +50,7 @@ const PerformanceCard = ({ label, percent, valueLabel, icon: Icon, colorClass = 
             <div className="text-[11px] text-muted-foreground font-semibold">{valueLabel}</div>
           </div>
         )}
-        <div className="h-2 rounded-full bg-secondary/60 overflow-hidden">
+        <div className="h-2 rounded-full bg-secondary/60 light:bg-black/5 overflow-hidden">
           <div
             className={`h-full ${barClass} opacity-80`}
             style={{ width: percent ? `${Math.max(0, Math.min(100, percent))}%` : "0%" }}
@@ -154,11 +154,11 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card title={t('dashboard.quick_start')}>
           <div className="grid grid-cols-2 gap-4">
-            <button onClick={() => onNavigate('console')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border hover:border-primary/20 hover:bg-primary/5 transition-all group text-foreground">
+            <button onClick={() => onNavigate('console')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-primary/20 hover:bg-primary/5 transition-all group text-foreground">
               <div className="p-4 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
               <span className="text-sm font-bold uppercase tracking-widest">{t('console.title')}</span>
             </button>
-            <button onClick={() => window.api.openExternal("https://livecenter.tiktok.com/live_monitor")} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border hover:border-info/20 hover:bg-info/5 transition-all group text-foreground">
+            <button onClick={() => window.api.openExternal("https://livecenter.tiktok.com/live_monitor")} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-info/20 hover:bg-info/5 transition-all group text-foreground">
               <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Monitor size={32} /></div>
               <span className="text-sm font-bold uppercase tracking-widest text-center">{t('sidebar.live_center')}</span>
             </button>
@@ -167,11 +167,11 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
 
         <Card title={t('tokens.account_context')}>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5">
               <span className="text-[11px] text-muted-foreground font-black uppercase tracking-widest">{t('tokens.username')}</span>
               {isLoading ? <Skeleton className="h-4 w-24" /> : <span className="font-bold">{status.username}</span>}
             </div>
-            <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5">
               <span className="text-[11px] text-muted-foreground font-black uppercase tracking-widest">{t('tokens.permission')}</span>
               {isLoading ? (
                 <Skeleton className="h-6 w-20 rounded-full" />

@@ -59,7 +59,7 @@ const TokenVault = ({
                     [...accounts].sort((a, b) => (a.type === 'web' ? -1 : 1)).map((acc) => (
                       <div 
                         key={acc.id} 
-                        className={`p-5 rounded-xl border transition-all group relative overflow-hidden flex items-center gap-4 min-h-[96px] ${activeAccountId === acc.id ? 'bg-primary/5 border-primary/30' : 'bg-secondary border-border hover:border-primary/20'}`}
+                        className={`p-5 rounded-xl border transition-all group relative overflow-hidden flex items-center gap-4 min-h-[96px] ${activeAccountId === acc.id ? 'bg-primary/5 border-primary/30' : 'bg-secondary border-border light:bg-white/70 light:border-black/5 hover:border-primary/20'}`}
                       >
                         <div className="flex items-start justify-between relative z-10 gap-3 w-full">
                           <div className="flex items-start gap-3 min-w-0 flex-1 cursor-pointer" onClick={() => selectAccount(acc.id)}>
@@ -91,7 +91,7 @@ const TokenVault = ({
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-lg border border-border/50">
+                          <div className="flex items-center gap-1 shrink-0 bg-background/50 light:bg-white/70 p-1 rounded-lg border border-border/50 light:border-black/5">
                             {activeAccountId !== acc.id ? (
                               <button onClick={() => selectAccount(acc.id)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><CheckCircle2 size={14} /></button>
                             ) : (
@@ -124,7 +124,7 @@ const TokenVault = ({
               <button 
                 onClick={() => loadWebToken()}
                 disabled={isWebLoading}
-                className="p-6 rounded-xl bg-secondary/30 border border-border hover:border-info/40 hover:bg-info/5 transition-all flex items-center gap-5 group text-foreground text-left"
+                className="p-6 rounded-xl bg-secondary/30 border border-border light:bg-white/70 light:border-black/5 hover:border-info/40 hover:bg-info/5 transition-all flex items-center gap-5 group text-foreground text-left"
               >
                 <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Globe size={24} /></div>
                 <div className="flex flex-col items-start gap-1">
@@ -135,7 +135,7 @@ const TokenVault = ({
 
               <button 
                 onClick={() => loadLocalToken()}
-                className="p-6 rounded-xl bg-secondary/30 border border-border hover:border-warning/40 hover:bg-warning/5 transition-all flex items-center gap-5 group text-foreground text-left"
+                className="p-6 rounded-xl bg-secondary/30 border border-border light:bg-white/70 light:border-black/5 hover:border-warning/40 hover:bg-warning/5 transition-all flex items-center gap-5 group text-foreground text-left"
               >
                 <div className="p-4 rounded-lg bg-warning/10 text-warning group-hover:scale-110 transition-transform"><HardDrive size={24} /></div>
                 <div className="flex flex-col items-start gap-1">
