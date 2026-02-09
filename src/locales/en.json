@@ -94,7 +94,10 @@
     "save_settings": "Save",
     "invalid_category": "Invalid category. Please select from TikTok's official list.",
     "tips": "Optimization",
-    "tips_desc": "Choosing the correct Game Mask ID helps TikTok route your stream accurately."
+    "tips_desc": "Choosing the correct Game Mask ID helps TikTok route your stream accurately.",
+    "sync_database": "Sync database",
+    "syncing": "Syncing...",
+    "select": "Select"
   },
   "console": {
     "title": "Broadcast Hub",

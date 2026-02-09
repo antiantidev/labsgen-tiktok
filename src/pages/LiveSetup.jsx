@@ -45,6 +45,8 @@ const LiveSetup = ({
     if (res.ok) {
       setLocalCount(res.count)
       if (pushToast) pushToast(`Synced ${res.added} new categories`, 'success')
+    } else {
+      if (pushToast) pushToast(res.error || t('common.error'), 'error')
     }
     setIsSyncing(false)
   }
@@ -139,7 +141,7 @@ const LiveSetup = ({
                             >
                               <span className="truncate pr-4">{cat.full_name}</span>
                               <span className="opacity-0 group-hover/item:opacity-100 transition-all duration-200 text-[9px] font-black uppercase tracking-widest bg-primary text-primary-foreground px-3 py-1.5 rounded-xl shadow-lg shadow-primary/20 pointer-events-none">
-                                Select
+                                {t('setup.select')}
                               </span>
                             </button>
                           </div>
@@ -162,7 +164,7 @@ const LiveSetup = ({
                     className={`flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-all ${isSyncing ? 'opacity-50' : ''}`}
                   >
                     <RefreshCw size={12} className={isSyncing ? 'animate-spin' : ''} />
-                    {isSyncing ? 'Syncing...' : 'Sync Database'}
+                    {isSyncing ? t('setup.syncing') : t('setup.sync_database')}
                   </button>
                 </div>
               </div>

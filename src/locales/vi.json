@@ -94,7 +94,10 @@
     "save_settings": "Lưu",
     "invalid_category": "Danh mục không hợp lệ. Vui lòng chọn từ danh sách TikTok.",
     "tips": "Gợi ý tối ưu",
-    "tips_desc": "Chọn đúng Game Mask ID giúp TikTok phân phối chính xác hơn."
+    "tips_desc": "Chọn đúng Game Mask ID giúp TikTok phân phối chính xác hơn.",
+    "sync_database": "Đồng bộ dữ liệu",
+    "syncing": "Đang đồng bộ...",
+    "select": "Chọn"
   },
   "console": {
     "title": "Trạm phát sóng",
