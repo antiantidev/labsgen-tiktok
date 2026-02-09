@@ -1,6 +1,6 @@
 import React from 'react'
 import { LayoutDashboard, Terminal, Settings, Database, Key, Activity, ShieldCheck, ShieldAlert } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../ui'
 
@@ -109,5 +109,4 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
   )
 }
 
-import { AnimatePresence } from 'framer-motion'
 export { Sidebar }
