@@ -1,5 +1,6 @@
 const { app, shell, BrowserWindow, ipcMain, Menu, Tray, nativeImage } = require("electron");
-const { join } = require("path");
+const path = require("path");
+const { join } = path;
 const { optimizer, is } = require("@electron-toolkit/utils");
 const { autoUpdater } = require("electron-updater");
 const os = require("os");
@@ -11,6 +12,7 @@ const { DBService } = require("../../services/dbService");
 const seleniumToken = require("../../services/seleniumToken");
 const EncryptionService = require("../../services/encryptionService");
 
+app.setPath("userData", join(app.getPath("appData"), "Labsgen Tiktok"));
 const DEFAULT_PROFILES_DIR = join(app.getPath("userData"), "profiles");
 
 const fs = require("fs");
