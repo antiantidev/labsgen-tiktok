@@ -29,3 +29,11 @@ drivers/
 release
 build
 dist/installers
+
+# Project docs & agent files
+GEMINI.md
+VERSION.md
+app-versioning-rules.skill
+DOCS_FEATURES.md
+DOCS_STRUCTURE.md
+.gemini/
