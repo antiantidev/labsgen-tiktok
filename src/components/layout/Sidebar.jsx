@@ -1,5 +1,5 @@
 import React from 'react'
-import { LayoutDashboard, Radio, Settings, FileText, Users, Sliders, ShieldCheck, ShieldAlert } from 'lucide-react'
+import { LayoutDashboard, Radio, Settings, FileText, Users, Sliders, ShieldCheck, ShieldAlert, Heart } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../ui'
@@ -78,7 +78,7 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
       </nav>
 
       <div className="mt-auto shrink-0 border-t border-border/50 bg-secondary/10">
-        <div className="p-6 space-y-6">
+        <div className="p-4 space-y-3">
           <div className="p-5 rounded-2xl bg-secondary/60 border border-white/10 light:border-black/10 relative overflow-hidden group shadow-[0_12px_30px_rgba(0,0,0,0.35)] light:shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
             <div className="flex items-center gap-4 relative z-10">
               <div className={`p-2.5 rounded-lg shadow-inner ${canGoLive ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
@@ -105,6 +105,14 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
             </div>
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
           </div>
+
+          <button
+            onClick={() => window.api.openExternal("https://ko-fi.com/chokernguyen")}
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-primary/15 text-primary border border-primary/25 hover:bg-primary/25 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
+          >
+            <Heart size={14} />
+            {t('dashboard.support_project')}
+          </button>
         </div>
       </div>
     </aside>
