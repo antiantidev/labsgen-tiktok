@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Terminal, Home, Activity, Monitor, Heart, Sliders, Key, Radio, Sun, Moon, Languages, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Skeleton } from '../ui'
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <motion.button
@@ -20,7 +21,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   </motion.button>
 )
 
-export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, theme, toggleTheme, language, toggleLanguage }) => {
+export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, theme, toggleTheme, language, toggleLanguage, isLoading }) => {
   const { t } = useTranslation()
 
   return (
@@ -76,15 +77,30 @@ export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, vers
 
       <div className="p-6 space-y-4">
         <div className="p-5 rounded-3xl bg-secondary border border-border flex items-center gap-4 group">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center font-black text-foreground shadow-xl italic">
-              {username ? username[0].toUpperCase() : 'G'}
-            </div>
-            <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${canGoLive ? 'bg-primary' : 'bg-rose-500'}`} />
+          <div className="relative shrink-0">
+            {isLoading ? (
+              <Skeleton className="w-12 h-12 rounded-2xl" />
+            ) : (
+              <>
+                <div className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center font-black text-foreground shadow-xl italic">
+                  {username ? username[0].toUpperCase() : 'G'}
+                </div>
+                <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${canGoLive ? 'bg-primary' : 'bg-rose-500'}`} />
+              </>
+            )}
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-black truncate">{username}</span>
-            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{canGoLive ? t('common.pro_streamer') : t('common.basic_user')}</span>
+          <div className="flex flex-col min-w-0 flex-1">
+            {isLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+            ) : (
+              <>
+                <span className="text-sm font-black truncate">{username === 'Guest' ? t('tokens.guest') : username}</span>
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{canGoLive ? t('common.pro_streamer') : t('common.basic_user')}</span>
+              </>
+            )}
           </div>
         </div>
         <div className="text-center">

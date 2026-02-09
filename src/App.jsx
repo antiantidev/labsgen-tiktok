@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 // Layout & UI
 import { Sidebar } from './components/layout/Sidebar'
 import { Titlebar, PageContainer } from './components/layout'
-import { Button } from './components/ui'
+import { Button, LoadingOverlay, Toast, ToastContainer } from './components/ui'
 
 // Pages
 import Dashboard from './pages/Dashboard'
@@ -17,15 +17,22 @@ import Settings from './pages/Settings'
 
 const App = () => {
   const { t, i18n } = useTranslation()
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadingMessage, setLoadingMessage] = useState('')
+  const [loadProgress, setLoadProgress] = useState(0)
+  const [toasts, setToasts] = useState([])
+  
   const [currentPage, setCurrentPage] = useState('home')
   const [theme, setTheme] = useState('dark')
   const [appVersion, setAppVersion] = useState('0.0.0')
   const [defaultPath, setDefaultPath] = useState('')
+  const [systemPaths, setSystemPaths] = useState({})
   
   // Settings State
   const [settings, setSettings] = useState({
     customProfilePath: '',
     autoRefresh: true,
+    minimizeOnClose: false,
     captureDelay: 5000,
     themeColor: '#31fb9a'
   })
@@ -81,9 +88,23 @@ const App = () => {
     }
   }, [settings.themeColor])
 
-  const pushStatus = useCallback((message) => {
-    const entry = { message, time: new Date().toLocaleTimeString(), id: Date.now() }
-    setStatusLog(prev => [entry, ...prev].slice(0, 50))
+  const pushStatus = useCallback((message, level = 'info') => {
+    const entry = { 
+      message, 
+      level,
+      time: new Date().toLocaleTimeString(), 
+      timestamp: new Date().toISOString(),
+      id: Date.now() 
+    }
+    setStatusLog(prev => [entry, ...prev].slice(0, 500))
+  }, [])
+
+  const pushToast = useCallback((message, type = 'info', duration = 4000) => {
+    const id = Date.now()
+    setToasts(prev => [...prev, { id, message, type }])
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id))
+    }, duration)
   }, [])
 
   const showModal = useCallback((title, body, buttons = [{ label: 'OK', value: true }]) => {
@@ -92,58 +113,66 @@ const App = () => {
     })
   }, [])
 
-  const closeModal = (value) => {
-    if (modal.resolve) modal.resolve({ value })
-    setModal(prev => ({ ...prev, show: false, resolve: null }))
-  }
+  const closeModal = useCallback((value) => {
+    setModal(prev => {
+      if (prev.resolve) prev.resolve({ value })
+      return { ...prev, show: false, resolve: null }
+    })
+  }, [])
 
   // --- Core Logic ---
 
   const refreshAccountInfo = useCallback(async (manualToken, accountId) => {
     const targetToken = manualToken || token
     if (!targetToken) return
-    pushStatus('Refreshing account data...')
+    pushStatus('Refreshing account data...', 'info')
     await window.api.setToken(targetToken)
-    const res = await window.api.refreshAccount()
-    if (res.ok) {
-      const { user, application_status, can_be_live } = res.info || {}
-      
-      const statusMap = {
-        'approved': 'common.approved',
-        'pending': 'common.pending',
-        'rejected': 'common.rejected',
-        'not_applied': 'common.not_applied',
-        'restricted': 'common.restricted_status',
-        'forbidden': 'common.restricted_status'
-      }
-      
-      const rawStatus = application_status?.status || 'Unknown'
-      const appStatusKey = statusMap[rawStatus] || rawStatus
-
-      setStatus({ 
-        username: user?.username || t('tokens.unknown'), 
-        appStatus: appStatusKey, 
-        canGoLive: !!can_be_live, 
-        badge: can_be_live ? 'common.ready' : 'common.check' 
-      })
-      pushStatus(`Account verified: ${user?.username}`)
-
-      if (accountId) {
-        setAccounts(prev => prev.map(acc => 
-          acc.id === accountId ? { ...acc, username: user?.username, lastUsed: Date.now() } : acc
-        ))
-      }
-
-      if (gameCategory && !gameMaskId) {
-        const searchRes = await window.api.searchGames(gameCategory)
-        if (searchRes.ok) {
-          const match = (searchRes.categories || []).find(c => c.full_name === gameCategory)
-          if (match) setGameMaskId(match.game_mask_id || '')
+    try {
+      const res = await window.api.refreshAccount()
+      if (res.ok) {
+        const { user, application_status, can_be_live } = res.info || {}
+        
+        const statusMap = {
+          'approved': 'common.approved',
+          'pending': 'common.pending',
+          'rejected': 'common.rejected',
+          'not_applied': 'common.not_applied',
+          'restricted': 'common.restricted_status',
+          'forbidden': 'common.restricted_status'
         }
+        
+        const rawStatus = application_status?.status || 'Unknown'
+        const appStatusKey = statusMap[rawStatus] || rawStatus
+
+        setStatus({ 
+          username: user?.username || t('tokens.unknown'), 
+          appStatus: appStatusKey, 
+          canGoLive: !!can_be_live, 
+          badge: can_be_live ? 'common.ready' : 'common.check' 
+        })
+        pushStatus(`Account verified: ${user?.username}`, 'success')
+
+        if (accountId) {
+          setAccounts(prev => prev.map(acc => 
+            acc.id === accountId ? { ...acc, username: user?.username, lastUsed: Date.now() } : acc
+          ))
+        }
+
+        if (gameCategory && !gameMaskId) {
+          const searchRes = await window.api.searchGames(gameCategory)
+          if (searchRes.ok) {
+            const match = (searchRes.categories || []).find(c => c.full_name === gameCategory)
+            if (match) setGameMaskId(match.game_mask_id || '')
+          }
+        }
+        return true
+      } else {
+        pushStatus(`API error: ${res.error}`, 'error')
       }
-    } else {
-      pushStatus(`Auth error: ${res.error}`)
+    } catch (err) {
+      pushStatus(`Auth exception: ${err.message}`, 'error')
     }
+    return false
   }, [token, gameCategory, gameMaskId, pushStatus, t])
 
   const loadLocalToken = async () => {
@@ -162,14 +191,18 @@ const App = () => {
       setAccounts(prev => [...prev, newAccount])
       setActiveAccountId(newId)
       refreshAccountInfo(res.token, newId); 
-      pushStatus('Token imported from local storage.'); 
+      pushStatus('Token imported from local storage.', 'success');
+      pushToast(t('pulse.success') + ': Local token loaded', 'success')
     }
-    else if (res.error) { await showModal(t('common.error'), res.error); }
+    else if (res.error) { 
+      pushStatus(`Local fetch failed: ${res.error}`, 'error');
+      pushToast(res.error, 'error')
+    }
   }
 
   const loadWebToken = async (existingAccountId = null) => {
     setIsWebLoading(true)
-    pushStatus('Waiting for web authentication...')
+    pushStatus('Launching browser for web capture...', 'info')
     
     const res = await window.api.loadWebToken({ accountId: existingAccountId })
     setIsWebLoading(false)
@@ -194,9 +227,13 @@ const App = () => {
       
       setActiveAccountId(finalId)
       refreshAccountInfo(res.token, finalId); 
-      pushStatus('Token captured from web session.'); 
+      pushStatus('Token captured from web session.', 'success'); 
+      pushToast('Authentication successful', 'success')
     }
-    else if (res.error) { await showModal(t('common.error'), res.error); }
+    else if (res.error) { 
+      pushStatus(`Web capture failed: ${res.error}`, 'error');
+      pushToast(res.error, 'error')
+    }
   }
 
   const deleteAccount = async (accountId) => {
@@ -213,7 +250,8 @@ const App = () => {
         setActiveAccountId(null)
         setStatus({ username: 'Guest', appStatus: 'tokens.unknown', canGoLive: false, badge: 'common.check' })
       }
-      pushStatus('Account removed.')
+      pushStatus(`Account ${accountId} removed.`, 'warn')
+      pushToast('Account removed', 'info')
     }
   }
 
@@ -223,6 +261,8 @@ const App = () => {
       setActiveAccountId(accountId)
       setToken(acc.token)
       refreshAccountInfo(acc.token, accountId)
+      pushStatus(`Switched to account: ${acc.name}`, 'info')
+      pushToast(`Switched to ${acc.username || acc.name}`, 'success')
     }
   }
 
@@ -237,18 +277,19 @@ const App = () => {
       language: i18n.language,
       accounts,
       activeAccountId,
-      settings
+      settings,
+      lastPage: currentPage
     })
-    if (showMessage) await showModal(t('common.success'), t('common.save_success'))
-    pushStatus('System configuration synchronized.')
-  }, [streamTitle, gameCategory, mature, token, streamData.id, theme, i18n.language, accounts, activeAccountId, settings, pushStatus, showModal, t])
+    pushStatus('Configuration synchronized to disk.', 'info')
+    if (showMessage) pushToast(t('common.save_success'), 'success')
+  }, [streamTitle, gameCategory, mature, token, streamData.id, theme, i18n.language, accounts, activeAccountId, settings, currentPage, pushStatus, pushToast, t])
 
   useEffect(() => {
-    if (!token && !streamTitle && accounts.length === 0) return
+    if (!token && !streamTitle && accounts.length === 0 && currentPage === 'home') return
     clearTimeout(autoSaveTimer.current)
     autoSaveTimer.current = setTimeout(() => { saveConfig(false) }, 1000)
     return () => clearTimeout(autoSaveTimer.current)
-  }, [streamTitle, gameCategory, mature, token, theme, i18n.language, accounts, activeAccountId, settings, saveConfig])
+  }, [streamTitle, gameCategory, mature, token, theme, i18n.language, accounts, activeAccountId, settings, currentPage, saveConfig])
 
   const handleSearch = (text) => {
     setGameCategory(text)
@@ -277,28 +318,29 @@ const App = () => {
         if (match) setGameMaskId(match.game_mask_id || '')
       }
     }
-    pushStatus('Starting TikTok LIVE session...')
+    pushStatus('Requesting TikTok LIVE stream endpoints...', 'info')
     const res = await window.api.startStream({ title: streamTitle, category: gameMaskId, audienceType: mature ? '1' : '0' })
     if (res.ok) {
       const { streamUrl, streamKey, streamId } = res.result || {}
       setStreamData({ url: streamUrl, key: streamKey, id: streamId || streamData.id, isLive: true })
-      pushStatus('Stream is now ON AIR.')
-      await showModal(t('console.live_started'), t('console.live_started_desc'))
+      pushStatus('TikTok LIVE session started successfully.', 'success')
+      pushToast('Broadcast is now ONLINE', 'success')
     } else {
-      pushStatus(`Failed to start: ${res.error}`)
-      await showModal(t('common.error'), res.error)
+      pushStatus(`Failed to start stream: ${res.error}`, 'error')
+      pushToast(res.error, 'error')
     }
   }
 
   const endStream = async () => {
-    pushStatus('Ending session...')
+    pushStatus('Ending TikTok LIVE session...', 'info')
     const res = await window.api.endStream()
     if (res.ok) {
       setStreamData({ url: '', key: '', id: null, isLive: false })
-      pushStatus('Stream session terminated.')
-      await showModal(t('console.live_ended'), t('console.live_ended_desc'))
+      pushStatus('TikTok LIVE session terminated.', 'info')
+      pushToast('Broadcast ended', 'info')
     } else {
-      await showModal(t('common.error'), t('console.end_error'))
+      pushStatus('Error while ending stream.', 'error')
+      pushToast('Could not end session', 'error')
     }
   }
 
@@ -306,26 +348,63 @@ const App = () => {
 
   useEffect(() => {
     const init = async () => {
-      pushStatus('Initializing system...')
+      setIsLoading(true)
+      setLoadProgress(5)
+      setLoadingMessage(t('common.loading'))
+      pushStatus('System kernel initialized.', 'info')
+      
       const version = await window.api.getAppVersion()
+      setLoadProgress(25)
       const defPath = await window.api.getDefaultPath()
+      setLoadProgress(35)
+      const allPaths = await window.api.getAllPaths()
+      
       setAppVersion(version)
       setDefaultPath(defPath)
+      setSystemPaths(allPaths)
       
       const data = await window.api.loadConfig()
-      
       if (data.settings) setSettings(data.settings)
       if (data.accounts) setAccounts(data.accounts)
       if (data.activeAccountId) setActiveAccountId(data.activeAccountId)
-
-      if (data.token) { setToken(data.token); setTimeout(() => refreshAccountInfo(data.token, data.activeAccountId), 100); }
-      setStreamTitle(data.title || ''); setGameCategory(data.game || ''); setMature(data.audience_type === '1');
-      if (data.stream_id) setStreamData(prev => ({ ...prev, id: data.stream_id }))
+      if (data.lastPage) setCurrentPage(data.lastPage)
       if (data.theme) setTheme(data.theme)
       if (data.language) {
         i18n.changeLanguage(data.language)
       }
+
+      setLoadProgress(60)
+      const driverExists = await window.api.checkDriverExists()
+      if (!driverExists) {
+        setIsLoading(false) 
+        const choice = await showModal(
+          t('driver.missing_title'),
+          t('driver.missing_desc'),
+          [
+            { label: t('common.cancel'), value: 'cancel', primary: false },
+            { label: t('driver.download_now'), value: 'download', primary: true }
+          ]
+        )
+
+        if (choice.value === 'download') {
+          setIsLoading(true)
+          setLoadProgress(65)
+          setLoadingMessage(t('driver.preparing'))
+          await window.api.bootstrapDriver()
+          setLoadProgress(85)
+        }
+      } else {
+        setLoadProgress(85)
+      }
+
+      if (data.token) { 
+        setToken(data.token); 
+        await refreshAccountInfo(data.token, data.activeAccountId); 
+      }
+      
+      setLoadProgress(100)
       window.api.rendererReady()
+      setTimeout(() => setIsLoading(false), 800)
     }
 
     init()
@@ -335,21 +414,21 @@ const App = () => {
   // --- IPC Subscriptions ---
   useEffect(() => {
     const cleanupUpdate = window.api.onUpdateAvailable((info) => {
-      pushStatus(`Update found: ${info.latest}`)
+      pushStatus(`New version detected: ${info.latest}`, 'warn')
       showModal(t('update.available'), `${t('update.desc')} (${info.latest}). ${t('update.current')}: ${info.current}. ${t('update.ask')}`, [
         { label: t('update.now'), value: 'download', primary: true },
         { label: t('update.later'), value: 'cancel', primary: false }
       ]).then(res => {
         if (res.value === 'download') {
-          pushStatus('Downloading update...')
+          pushStatus('Downloading update package...', 'info')
           window.api.startDownload()
-          showModal(t('update.downloading'), t('update.downloading_desc'), [{ label: t('common.ok'), value: true }])
+          pushToast('Downloading update...', 'info')
         }
       })
     })
 
     const cleanupDownloaded = window.api.onUpdateDownloaded(() => {
-      pushStatus('Update ready to install.')
+      pushStatus('Update package ready for installation.', 'success')
       showModal(t('update.ready'), t('update.ready_desc'), [
         { label: t('update.restart'), value: 'install', primary: true },
         { label: t('update.later'), value: 'cancel', primary: false }
@@ -359,11 +438,13 @@ const App = () => {
     })
 
     const cleanupError = window.api.onUpdateError((err) => {
-      pushStatus(`Update error: ${err}`)
+      pushStatus(`Update manager error: ${err}`, 'error')
+      pushToast('Update failed', 'error')
     })
 
     const cleanupToken = window.api.onTokenStatus((msg) => {
-      pushStatus(`System: ${msg}`)
+      setLoadingMessage(msg)
+      pushStatus(`Web Engine: ${msg}`, 'info')
     })
 
     return () => {
@@ -372,15 +453,31 @@ const App = () => {
       cleanupError()
       cleanupToken()
     }
-  }, [pushStatus, showModal, t])
+  }, [pushStatus, showModal, pushToast, t])
 
   return (
     <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Manrope']">
+      <AnimatePresence>
+        {isLoading && <LoadingOverlay message={loadingMessage} progress={loadProgress} />}
+      </AnimatePresence>
+
+      <ToastContainer>
+        {toasts.map(toast => (
+          <Toast 
+            key={toast.id} 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToasts(prev => prev.filter(t => t.id !== toast.id))} 
+          />
+        ))}
+      </ToastContainer>
+
       <Sidebar 
         currentPage={currentPage} setCurrentPage={setCurrentPage} 
         username={status.username} canGoLive={status.canGoLive} 
         version={appVersion} theme={theme} toggleTheme={toggleTheme}
         language={i18n.language} toggleLanguage={toggleLanguage}
+        isLoading={isLoading}
       />
       
       <main className="flex-1 flex flex-col min-w-0 relative bg-[radial-gradient(circle_at_top_right,rgba(49,251,154,0.03),transparent_40%)]">
@@ -389,13 +486,14 @@ const App = () => {
         <PageContainer>
           <AnimatePresence mode="wait">
             {currentPage === 'home' && (
-              <Dashboard key="home" status={status} streamData={streamData} onNavigate={setCurrentPage} version={appVersion} />
+              <Dashboard key="home" status={status} streamData={streamData} onNavigate={setCurrentPage} version={appVersion} isLoading={isLoading} />
             )}
             {currentPage === 'console' && (
               <Console 
                 key="console"
                 streamData={streamData} startStream={startStream} endStream={endStream} 
                 canGoLive={status.canGoLive} streamTitle={streamTitle} gameCategory={gameCategory}
+                pushToast={pushToast}
               />
             )}
             {currentPage === 'setup' && (
@@ -417,13 +515,23 @@ const App = () => {
                 refreshAccountInfo={refreshAccountInfo} saveConfig={saveConfig}
                 canGoLive={status.canGoLive} status={status}
                 accounts={accounts} selectAccount={selectAccount} deleteAccount={deleteAccount} activeAccountId={activeAccountId}
+                isLoading={isLoading}
               />
             )}
             {currentPage === 'status' && (
               <Pulse key="status" statusLog={statusLog} setStatusLog={setStatusLog} />
             )}
             {currentPage === 'settings' && (
-              <Settings key="settings" settings={settings} setSettings={setSettings} saveConfig={saveConfig} defaultPath={defaultPath} />
+              <Settings 
+                key="settings" 
+                settings={settings} 
+                setSettings={setSettings} 
+                saveConfig={saveConfig} 
+                defaultPath={defaultPath} 
+                systemPaths={systemPaths}
+                version={appVersion}
+                showModal={showModal}
+              />
             )}
           </AnimatePresence>
         </PageContainer>
@@ -434,7 +542,7 @@ const App = () => {
 
       <AnimatePresence>
         {modal.show && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-8 backdrop-blur-md bg-black/60">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[300] flex items-center justify-center p-8 backdrop-blur-md bg-black/60">
             <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} className="glass border border-white/10 w-full max-w-lg rounded-[40px] p-12 space-y-8 shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="space-y-4">
                 <h2 className="text-3xl font-black tracking-tight">{modal.title}</h2>

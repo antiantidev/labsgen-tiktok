@@ -20,6 +20,9 @@ contextBridge.exposeInMainWorld("api", {
   selectFolder: () => ipcRenderer.invoke("select-folder"),
   openPath: (path) => ipcRenderer.invoke("open-path", path),
   getDefaultPath: () => ipcRenderer.invoke("get-default-path"),
+  getAllPaths: () => ipcRenderer.invoke("get-all-paths"),
+  checkDriverExists: () => ipcRenderer.invoke("check-driver-exists"),
+  bootstrapDriver: () => ipcRenderer.invoke("bootstrap-driver"),
   deleteProfile: (accountId) => ipcRenderer.invoke("delete-profile", accountId),
   
   onTokenStatus: (callback) => {
@@ -46,5 +49,6 @@ contextBridge.exposeInMainWorld("api", {
     return () => ipcRenderer.removeListener("update-error", subscription);
   },
   startDownload: () => ipcRenderer.send("start-download"),
-  quitAndInstall: () => ipcRenderer.send("quit-and-install")
+  quitAndInstall: () => ipcRenderer.send("quit-and-install"),
+  checkForUpdates: () => ipcRenderer.invoke("check-for-updates")
 });

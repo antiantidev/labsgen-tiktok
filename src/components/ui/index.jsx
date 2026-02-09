@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check } from 'lucide-react'
+import { Check, X, Info, AlertTriangle, XCircle, ChevronRight } from 'lucide-react'
 
 export const Button = ({ children, onClick, disabled, variant = 'primary', className = '', icon: Icon, loading }) => {
   const variants = {
@@ -86,4 +86,83 @@ export const Checkbox = ({ checked, onChange, label, description }) => (
       {description && <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{description}</span>}
     </div>
   </label>
+)
+
+export const Skeleton = ({ className = "" }) => (
+  <div className={`skeleton ${className}`} />
+)
+
+export const LoadingOverlay = ({ message, progress }) => (
+  <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-background/80 backdrop-blur-md">
+    <div className="relative mb-12">
+      <div className="w-24 h-24 rounded-[40px] bg-primary/10 flex items-center justify-center animate-pulse">
+        <div className="w-14 h-14 rounded-[32px] bg-primary shadow-[0_0_40px_hsl(var(--primary))] animate-bounce" />
+      </div>
+    </div>
+    
+    <div className="w-64 space-y-4">
+      <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden border border-white/5 relative">
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: `${progress || 0}%` }}
+          className="h-full bg-primary shadow-[0_0_15px_hsl(var(--primary))]"
+        />
+      </div>
+      
+      <div className="flex justify-between items-center px-1">
+        <motion.p 
+          key={message}
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80"
+        >
+          {message}
+        </motion.p>
+        <span className="text-[10px] font-black text-muted-foreground tabular-nums">
+          {Math.round(progress || 0)}%
+        </span>
+      </div>
+    </div>
+  </div>
+)
+
+export const Toast = ({ message, type = 'info', onClose }) => {
+  const icons = {
+    success: <Check size={16} className="text-primary" />,
+    error: <XCircle size={16} className="text-rose-500" />,
+    warn: <AlertTriangle size={16} className="text-amber-500" />,
+    info: <Info size={16} className="text-blue-400" />
+  }
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -50, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9, y: -20, transition: { duration: 0.2 } }}
+      className="flex items-center gap-4 p-4 rounded-2xl bg-secondary/90 backdrop-blur-xl border border-white/10 shadow-2xl min-w-[320px] max-w-md pointer-events-auto group mx-auto"
+    >
+      <div className={`p-2 rounded-xl bg-background border border-border shadow-sm`}>
+        {icons[type]}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-bold text-foreground leading-tight text-center px-2">{message}</p>
+      </div>
+      <button 
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        className="p-2 -mr-1 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all shrink-0"
+        aria-label="Close"
+      >
+        <X size={16} />
+      </button>
+    </motion.div>
+  )
+}
+
+export const ToastContainer = ({ children }) => (
+  <div className="fixed top-12 left-1/2 -translate-x-1/2 z-[400] flex flex-col gap-3 pointer-events-none items-center">
+    <AnimatePresence mode="popLayout">
+      {children}
+    </AnimatePresence>
+  </div>
 )

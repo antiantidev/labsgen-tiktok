@@ -96,8 +96,45 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes skeleton-loading {
+  0% { background-color: hsl(var(--muted)); }
+  50% { background-color: hsl(var(--secondary)); }
+  100% { background-color: hsl(var(--muted)); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 .animate-in {
   animation: fadeIn 0.4s ease-out forwards;
+}
+
+.skeleton {
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+  @apply rounded-lg relative overflow-hidden;
+}
+
+.skeleton::after {
+  content: "";
+  @apply absolute inset-0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+.light .skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, 0.03),
+    transparent
+  );
 }
 
 .custom-scrollbar::-webkit-scrollbar {

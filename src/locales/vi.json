@@ -28,7 +28,7 @@
     "live_setup": "Thiết lập Live",
     "token_vault": "Kho Token",
     "system": "Hệ thống",
-    "system_pulse": "Nhịp mạch hệ thống",
+    "system_pulse": "Nhật ký hệ thống",
     "links": "Liên kết",
     "live_center": "Trung tâm Live",
     "support": "Hỗ trợ"
@@ -58,7 +58,15 @@
     "downloading_desc": "Bản cập nhật đang được tải xuống trong nền. Chúng tôi sẽ thông báo cho bạn khi hoàn tất.",
     "ready": "Bản cập nhật đã sẵn sàng",
     "ready_desc": "Bản cập nhật đã được tải xuống. Khởi động lại ứng dụng ngay để áp dụng?",
-    "restart": "Khởi động lại ngay"
+    "restart": "Khởi động lại ngay",
+    "up_to_date": "Hệ thống đã mới nhất",
+    "up_to_date_desc": "Bạn đang sử dụng phiên bản mới nhất của"
+  },
+  "driver": {
+    "missing_title": "Yêu cầu ChromeDriver",
+    "missing_desc": "Công cụ lấy Token qua Web yêu cầu ChromeDriver để hoạt động. Bạn có muốn tải xuống ngay không?",
+    "download_now": "Tải xuống ngay",
+    "preparing": "Đang chuẩn bị ChromeDriver..."
   },
   "console": {
     "title": "Phát sóng",
@@ -142,15 +150,16 @@
     "unknown": "Không xác định"
   },
   "pulse": {
-    "desc": "Theo dõi sức khỏe hệ thống và dòng hoạt động thời gian thực.",
-    "clear_logs": "Xóa nhật ký",
-    "activity_stream": "Dòng hoạt động",
-    "listening": "Đang lắng nghe các sự kiện hệ thống...",
-    "status": {
-      "active": "Hoạt động",
-      "stable": "Ổn định",
-      "optimal": "Tốt",
-      "standby": "Chờ"
-    }
+    "desc": "Theo dõi chi tiết các hoạt động và chẩn đoán lỗi hệ thống.",
+    "clear_logs": "Xóa trắng",
+    "activity_stream": "Dòng sự kiện",
+    "listening": "Đang chờ sự kiện...",
+    "search_placeholder": "Tìm kiếm nhật ký...",
+    "export": "Xuất file .log",
+    "all": "Tất cả",
+    "info": "Thông tin",
+    "success": "Thành công",
+    "warn": "Cảnh báo",
+    "error": "Lỗi"
   }
 }

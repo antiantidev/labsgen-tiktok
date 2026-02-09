@@ -28,10 +28,11 @@
     "live_setup": "Live Setup",
     "token_vault": "Token Vault",
     "system": "System",
-    "system_pulse": "System Pulse",
+    "system_pulse": "System Logs",
     "links": "Links",
     "live_center": "Live Center",
-    "support": "Support"
+    "support": "Support",
+    "settings": "Settings"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -58,7 +59,15 @@
     "downloading_desc": "The update is being downloaded in the background. We will notify you when it is ready.",
     "ready": "Update Ready",
     "ready_desc": "The update has been downloaded. Restart the application now to apply the update?",
-    "restart": "Restart Now"
+    "restart": "Restart Now",
+    "up_to_date": "System Up to Date",
+    "up_to_date_desc": "You are already running the latest version of"
+  },
+  "driver": {
+    "missing_title": "ChromeDriver Required",
+    "missing_desc": "The web capture engine requires ChromeDriver to function. Would you like to download it now?",
+    "download_now": "Download Now",
+    "preparing": "Preparing ChromeDriver..."
   },
   "console": {
     "title": "Broadcast",
@@ -142,15 +151,16 @@
     "unknown": "Unknown"
   },
   "pulse": {
-    "desc": "Real-time health monitoring and activity stream.",
-    "clear_logs": "Clear Logs",
-    "activity_stream": "Activity Stream",
-    "listening": "Listening for system events...",
-    "status": {
-      "active": "Active",
-      "stable": "Stable",
-      "optimal": "Optimal",
-      "standby": "Standby"
-    }
+    "desc": "Track detailed activities and diagnose system errors.",
+    "clear_logs": "Clear",
+    "activity_stream": "Event Stream",
+    "listening": "Waiting for events...",
+    "search_placeholder": "Search logs...",
+    "export": "Export .log",
+    "all": "All",
+    "info": "Info",
+    "success": "Success",
+    "warn": "Warning",
+    "error": "Error"
   }
 }

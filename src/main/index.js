@@ -1,4 +1,4 @@
-const { app, shell, BrowserWindow, ipcMain } = require("electron");
+const { app, shell, BrowserWindow, ipcMain, Menu, Tray, nativeImage } = require("electron");
 const { join } = require("path");
 const { optimizer, is } = require("@electron-toolkit/utils");
 const { autoUpdater } = require("electron-updater");
@@ -6,12 +6,16 @@ const { autoUpdater } = require("electron-updater");
 const configService = require("../../services/configService");
 const { StreamService } = require("../../services/streamlabs");
 const { TokenService } = require("../../services/tokenService");
+const { DriverService } = require("../../services/driverService");
 const seleniumToken = require("../../services/seleniumToken");
 
 const CONFIG_PATH = join(app.getPath("userData"), "config.json");
 const DEFAULT_PROFILES_DIR = join(app.getPath("userData"), "profiles");
 
 const fs = require("fs");
+
+let tray = null;
+let mainWindow = null;
 
 function getProfilesDir() {
   try {
@@ -35,20 +39,60 @@ ensureProfilesDir();
 // Instantiate services
 const streamService = new StreamService();
 const tokenService = new TokenService();
+const driverService = new DriverService(app.getAppPath(), app.getPath("userData"));
 
 // Configure autoUpdater
-autoUpdater.autoDownload = false; // We want to ask the user first
+autoUpdater.autoDownload = false; 
 autoUpdater.autoInstallOnAppQuit = true;
 
+function createTray(win) {
+  const possiblePaths = [
+    join(__dirname, "../../resources/icon.png"),
+    join(app.getAppPath(), "resources", "icon.png"),
+    join(process.resourcesPath, "app.asar.unpacked/resources/icon.png"),
+    join(process.resourcesPath, "resources/icon.png")
+  ];
+  
+  let icon = null;
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      icon = nativeImage.createFromPath(p);
+      if (!icon.isEmpty()) break;
+    }
+  }
+
+  if (!icon || icon.isEmpty()) {
+    icon = nativeImage.createEmpty();
+  }
+
+  tray = new Tray(icon);
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'LabsGen TikTok', enabled: false },
+    { type: 'separator' },
+    { label: 'Show Application', click: () => { win.show(); } },
+    { label: 'Quit', click: () => { 
+      app.isQuitting = true;
+      app.quit(); 
+    } }
+  ]);
+
+  tray.setToolTip('LabsGen TikTok');
+  tray.setContextMenu(contextMenu);
+
+  tray.on('double-click', () => {
+    win.isVisible() ? win.hide() : win.show();
+  });
+}
+
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
     show: false,
     autoHideMenuBar: true,
-    frame: false, // Custom titlebar
+    frame: false, 
     transparent: true,
-    ...(process.platform === "linux" ? {} : {}),
+    backgroundColor: '#00000000',
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false
@@ -92,7 +136,6 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  // Set app user model id for windows
   app.setAppUserModelId("com.labs-gen-tik.app");
 
   app.on("browser-window-created", (_, window) => {
@@ -100,21 +143,15 @@ app.whenReady().then(() => {
   });
 
   const win = createWindow();
+  createTray(win);
 
-  // Check for updates on startup
   if (!is.dev) {
     autoUpdater.checkForUpdatesAndNotify();
   }
-
-  app.on("activate", function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  app.quit();
 });
 
 // IPC Handlers
@@ -143,6 +180,33 @@ ipcMain.handle("open-path", async (_, path) => {
 
 ipcMain.handle("get-default-path", () => DEFAULT_PROFILES_DIR);
 
+ipcMain.handle("get-all-paths", () => {
+  return {
+    app: app.getAppPath(),
+    userData: app.getPath("userData"),
+    config: CONFIG_PATH,
+    temp: app.getPath("temp"),
+    exe: app.getPath("exe"),
+    driver: driverService.getExecutablePath()
+  };
+});
+
+ipcMain.handle("bootstrap-driver", async (event) => {
+  try {
+    const exists = await driverService.checkDriver();
+    if (exists) return { ok: true, alreadyExists: true };
+
+    await driverService.setupDriver((status) => {
+      event.sender.send("token-status", status);
+    });
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+});
+
+ipcMain.handle("check-driver-exists", () => driverService.checkDriver());
+
 ipcMain.handle("set-token", (_, token) => streamService.setToken(token));
 ipcMain.handle("refresh-account", () => streamService.getInfo().then(info => ({ ok: true, info })).catch(err => ({ ok: false, error: err.message })));
 ipcMain.handle("search-games", (_, text) => streamService.search(text).then(categories => ({ ok: true, categories })).catch(err => ({ ok: false, error: err.message })));
@@ -155,19 +219,20 @@ ipcMain.handle("load-web-token", (event, options = {}) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   const profilesDir = getProfilesDir();
   
-  // Resolve profile path if an accountId is provided
   let profilePath = null;
   if (options.accountId) {
     profilePath = join(profilesDir, options.accountId);
   } else {
-    // Generate a temporary or new ID if creating a new profile
     const newId = `profile_${Date.now()}`;
     profilePath = join(profilesDir, newId);
   }
 
   return seleniumToken.loadWebToken(win, (status) => {
     event.sender.send("token-status", status);
-  }, { profilePath });
+  }, { 
+    profilePath,
+    binaryPath: driverService.getExecutablePath()
+  });
 });
 
 ipcMain.handle("delete-profile", (_, accountId) => {
@@ -193,25 +258,50 @@ ipcMain.on("window-maximize", (event) => {
   if (win.isMaximized()) win.unmaximize();
   else win.maximize();
 });
+
 ipcMain.on("window-close", (event) => {
-  BrowserWindow.fromWebContents(event.sender).close();
+  const win = BrowserWindow.fromWebContents(event.sender);
+  const config = configService.loadConfig(CONFIG_PATH);
+  
+  if (config.settings && config.settings.minimizeOnClose) {
+    win.hide();
+  } else {
+    app.isQuitting = true;
+    win.close();
+  }
 });
 
 ipcMain.on("open-external", (_, url) => {
   shell.openExternal(url);
 });
 
-ipcMain.on("renderer-ready", () => {
-  // Can be used to trigger actions when UI is ready
-});
+ipcMain.on("renderer-ready", () => {});
 
-// Auto-update IPCs
 ipcMain.on("start-download", () => {
   autoUpdater.downloadUpdate();
 });
 
 ipcMain.on("quit-and-install", () => {
+  app.isQuitting = true;
   autoUpdater.quitAndInstall();
+});
+
+ipcMain.handle("check-for-updates", async () => {
+  if (!app.isPackaged) {
+    return { ok: true, devMode: true };
+  }
+  try {
+    const result = await autoUpdater.checkForUpdates();
+    if (result && result.updateInfo.version === app.getVersion()) {
+      return { ok: true, upToDate: true };
+    }
+    return { ok: true, upToDate: false, updateInfo: result ? result.updateInfo : null };
+  } catch (err) {
+    if (err.message.includes("No published versions")) {
+      return { ok: true, upToDate: true };
+    }
+    return { ok: false, error: err.message };
+  }
 });
 
 ipcMain.handle("get-app-version", () => app.getVersion());

@@ -11,9 +11,15 @@ const pageVariants = {
 }
 
 const Console = ({ 
-  streamData, startStream, endStream, canGoLive, streamTitle, gameCategory
+  streamData, startStream, endStream, canGoLive, streamTitle, gameCategory, pushToast
 }) => {
   const { t } = useTranslation()
+
+  const copyToClipboard = (text, label) => {
+    if (!text) return
+    navigator.clipboard.writeText(text)
+    if (pushToast) pushToast(`${label} copied to clipboard`, 'success')
+  }
 
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-10">
@@ -42,7 +48,7 @@ const Console = ({
                   <div className="bg-secondary border border-border rounded-2xl px-6 py-4 text-xs font-mono text-foreground overflow-hidden truncate flex items-center">
                     {streamData.url || t('console.not_started')}
                   </div>
-                  <Button variant="secondary" onClick={() => streamData.url && navigator.clipboard.writeText(streamData.url)} className="h-[56px] w-[56px] p-0">
+                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.url, 'RTMP URL')} className="h-[56px] w-[56px] p-0">
                     <Copy size={20} />
                   </Button>
                 </div>
@@ -54,7 +60,7 @@ const Console = ({
                   <div className="bg-secondary border border-border rounded-2xl px-6 py-4 text-xs font-mono text-foreground overflow-hidden flex items-center">
                     {streamData.key ? '••••••••••••••••••••••••••••••••••••' : t('console.not_started')}
                   </div>
-                  <Button variant="secondary" onClick={() => streamData.key && navigator.clipboard.writeText(streamData.key)} className="h-[56px] w-[56px] p-0">
+                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.key, 'Stream Key')} className="h-[56px] w-[56px] p-0">
                     <Copy size={20} />
                   </Button>
                 </div>
