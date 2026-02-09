@@ -51,13 +51,13 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
 
   return (
     <aside className="sidebar-shell w-72 h-screen flex flex-col border-r border-border/60 relative z-50">
-      <div className="py-12 flex flex-col items-center justify-center shrink-0">
+      <div className="py-8 flex flex-col items-center justify-center shrink-0">
         <div className="flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-[0_12px_30px_rgba(34,197,94,0.35)] group-hover:rotate-6 transition-transform duration-500 ring-1 ring-primary/20">
-            <img src={logoUrl} alt="LABGEN TIKTOK" className="w-12 h-12 rounded-xl" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-[0_10px_24px_rgba(34,197,94,0.28)] group-hover:rotate-6 transition-transform duration-500 ring-1 ring-primary/20">
+            <img src={logoUrl} alt="LABGEN TIKTOK" className="w-10 h-10 rounded-xl" />
           </div>
           <div className="flex flex-col">
-            <span className="font-black text-[18px] tracking-tighter leading-none text-foreground uppercase">LABGEN</span>
+            <span className="font-black text-[16px] tracking-tighter leading-none text-foreground uppercase">LABGEN</span>
             <span className="font-bold text-[11px] text-muted-foreground tracking-[0.4em]">TIKTOK</span>
           </div>
         </div>
