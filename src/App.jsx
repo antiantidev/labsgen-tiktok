@@ -49,7 +49,7 @@ const App = () => {
   const [streamData, setStreamData] = useState({ url: '', key: '', id: null, isLive: false })
   const [statusLog, setStatusLog] = useState([])
   const [logPage, setLogPage] = useState(1)
-  const [logPageSize] = useState(100)
+  const [logPageSize] = useState(50)
   const [logTotal, setLogTotal] = useState(0)
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)

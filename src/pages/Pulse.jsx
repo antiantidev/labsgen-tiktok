@@ -94,7 +94,7 @@ const Pulse = ({ statusLog = [], setStatusLog, logPage = 1, logPageSize = 100, l
         ))}
       </div>
 
-      <Card className="flex-1 flex flex-col min-h-0 p-0 overflow-hidden border-border/60">
+      <Card className="flex-1 flex flex-col min-h-0 p-0 overflow-hidden border-border/60 min-h-[360px] max-h-[calc(100vh-360px)]">
         {/* Toolbar */}
         <div className="p-4 border-b border-border light:border-black/5 bg-secondary/20 light:bg-white/70 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
           <div className="flex gap-1.5 p-1 bg-background/50 light:bg-white/70 rounded-2xl border border-border light:border-black/5">
