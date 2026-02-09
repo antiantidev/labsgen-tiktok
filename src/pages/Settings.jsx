@@ -52,9 +52,14 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
 
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-10 pb-20">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-black">{t('settings.title')}</h1>
-        <p className="text-muted-foreground font-medium text-sm">{t('settings.desc')}</p>
+      <div className="flex items-start justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-black">{t('settings.title')}</h1>
+          <p className="text-muted-foreground font-medium text-sm">{t('settings.desc')}</p>
+        </div>
+        <Button className="h-12 px-6 rounded-xl" onClick={() => saveConfig(true)} icon={Save}>
+          {t('setup.save_settings')}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
@@ -232,9 +237,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
             </div>
           </Card>
 
-          <Button className="w-full py-4 h-auto flex-col gap-1 rounded-xl shadow-xl" onClick={() => saveConfig(true)} icon={Save}>
-            <span className="text-[11px] font-black uppercase tracking-widest">{t('setup.save_settings')}</span>
-          </Button>
+          
         </div>
       </div>
     </motion.div>
