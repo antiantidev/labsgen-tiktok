@@ -19,10 +19,31 @@ const fs = require("fs");
 
 let tray = null;
 let mainWindow = null;
+let logSender = null;
 
 // Initialize Database
 const dbService = new DBService(app.getPath("userData"));
-dbService.init();
+const dbReady = dbService.init();
+
+function addSystemLog(level, message) {
+  try {
+    const timestamp = new Date().toISOString();
+    const result = dbService.addSystemLog(level, message, timestamp);
+    const entry = {
+      id: result.lastInsertRowid,
+      level,
+      message,
+      timestamp
+    };
+    if (logSender && !logSender.isDestroyed()) {
+      logSender.send("system-log", entry);
+    }
+    return entry;
+  } catch (err) {
+    console.error("Failed to add system log:", err);
+    return null;
+  }
+}
 
 function getProfilesDir() {
   try {
@@ -108,6 +129,7 @@ function createWindow() {
 
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
+    addSystemLog("info", "Window ready");
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -122,6 +144,7 @@ function createWindow() {
   }
 
   autoUpdater.on("update-available", (info) => {
+    addSystemLog("info", `Update available: ${info.version}`);
     mainWindow.webContents.send("update-available", {
       latest: info.version,
       current: app.getVersion(),
@@ -130,11 +153,13 @@ function createWindow() {
   });
 
   autoUpdater.on("update-downloaded", () => {
+    addSystemLog("success", "Update downloaded");
     mainWindow.webContents.send("update-downloaded");
   });
 
   autoUpdater.on("error", (err) => {
     console.error("Update error:", err);
+    addSystemLog("error", `Update error: ${err.message}`);
     mainWindow.webContents.send("update-error", err.message);
   });
 
@@ -143,6 +168,8 @@ function createWindow() {
 
 app.whenReady().then(() => {
   app.setAppUserModelId("com.labgen-tiktok.app");
+  addSystemLog(dbReady ? "success" : "error", dbReady ? "Database initialized" : "Database init failed");
+  addSystemLog("info", `App ready v${app.getVersion()}`);
 
   app.on("browser-window-created", (_, window) => {
     optimizer.watchWindowShortcuts(window);
@@ -150,8 +177,10 @@ app.whenReady().then(() => {
 
   const win = createWindow();
   createTray(win);
+  logSender = win.webContents;
 
   if (!is.dev) {
+    addSystemLog("info", "Auto update check on launch");
     autoUpdater.checkForUpdatesAndNotify();
   }
 });
@@ -166,6 +195,7 @@ ipcMain.handle("load-config", () => configService.loadConfig(CONFIG_PATH));
 ipcMain.handle("save-config", (_, data) => {
   const result = configService.saveConfig(CONFIG_PATH, data);
   ensureProfilesDir();
+  addSystemLog("success", "Configuration saved");
   return result;
 });
 ipcMain.handle("select-folder", async () => {
@@ -224,6 +254,7 @@ ipcMain.handle("db-save-setting", (_, key, value) => dbService.saveSetting(key, 
 
 ipcMain.handle("sync-categories", async () => {
   try {
+    addSystemLog("info", "Sync categories started");
     dbService.clearCategories();
     const popularKeywords = ["", "a", "e", "i", "o", "u", "live", "game", "music", "talk", "movie", "sport"];
     let totalSynced = 0;
@@ -235,8 +266,13 @@ ipcMain.handle("sync-categories", async () => {
       }
       await new Promise(r => setTimeout(r, 200));
     }
-    return { ok: true, count: dbService.getCategoryCount(), added: totalSynced };
-  } catch (err) { return { ok: false, error: err.message }; }
+    const count = dbService.getCategoryCount();
+    addSystemLog("success", `Sync categories done: ${totalSynced} added (${count} total)`);
+    return { ok: true, count, added: totalSynced };
+  } catch (err) {
+    addSystemLog("error", `Sync categories failed: ${err.message}`);
+    return { ok: false, error: err.message };
+  }
 });
 ipcMain.handle("get-category-count", () => dbService.getCategoryCount());
 ipcMain.handle("get-category-by-name", (_, name) => dbService.getCategoryByName(name));
@@ -255,15 +291,53 @@ ipcMain.handle("search-games", async (_, text) => {
 });
 
 ipcMain.handle("set-token", (_, token) => streamService.setToken(token));
-ipcMain.handle("refresh-account", () => streamService.getInfo().then(info => ({ ok: true, info })).catch(err => ({ ok: false, error: err.message })));
-ipcMain.handle("start-stream", (_, data) => streamService.start(data.title, data.category, data.audienceType).then(result => ({ ok: true, result })).catch(err => ({ ok: false, error: err.message })));
-ipcMain.handle("end-stream", () => streamService.end().then(ok => ({ ok })).catch(err => ({ ok: false, error: err.message })));
-ipcMain.handle("set-stream-id", (_, id) => streamService.setStreamId(id));
+ipcMain.handle("refresh-account", () => {
+  addSystemLog("info", "Account refresh started");
+  return streamService.getInfo()
+    .then(info => {
+      addSystemLog("success", "Account refresh success");
+      return { ok: true, info };
+    })
+    .catch(err => {
+      addSystemLog("error", `Account refresh failed: ${err.message}`);
+      return { ok: false, error: err.message };
+    });
+});
+ipcMain.handle("start-stream", (_, data) => {
+  addSystemLog("info", "Start ingest requested");
+  return streamService.start(data.title, data.category, data.audienceType)
+    .then(result => {
+      addSystemLog("success", "Ingest initialized");
+      return { ok: true, result };
+    })
+    .catch(err => {
+      addSystemLog("error", `Ingest start failed: ${err.message}`);
+      return { ok: false, error: err.message };
+    });
+});
+ipcMain.handle("end-stream", () => {
+  addSystemLog("info", "End ingest requested");
+  return streamService.end()
+    .then(ok => {
+      if (ok) addSystemLog("success", "Ingest ended");
+      return { ok };
+    })
+    .catch(err => {
+      addSystemLog("error", `End ingest failed: ${err.message}`);
+      return { ok: false, error: err.message };
+    });
+});
+ipcMain.handle("set-stream-id", (_, id) => {
+  addSystemLog("info", `Stream ID set: ${id || "none"}`);
+  return streamService.setStreamId(id);
+});
 
 ipcMain.handle("bootstrap-driver", async (event) => {
   try {
+    addSystemLog("info", "ChromeDriver bootstrap started");
     if (await driverService.checkDriver()) return { ok: true, alreadyExists: true };
     await driverService.setupDriver((status) => event.sender.send("token-status", status));
+    addSystemLog("success", "ChromeDriver installed");
     return { ok: true };
   } catch (err) { return { ok: false, error: err.message }; }
 });
@@ -292,8 +366,14 @@ ipcMain.on("window-maximize", (event) => {
 ipcMain.on("window-close", (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   const config = configService.loadConfig(CONFIG_PATH);
-  if (config.settings && config.settings.minimizeOnClose) win.hide();
-  else { app.isQuitting = true; win.close(); }
+  if (config.settings && config.settings.minimizeOnClose) {
+    addSystemLog("info", "Window minimized to tray");
+    win.hide();
+  } else {
+    addSystemLog("info", "App quit requested");
+    app.isQuitting = true;
+    win.close();
+  }
 });
 
 ipcMain.on("open-external", (_, url) => shell.openExternal(url));
@@ -304,10 +384,17 @@ ipcMain.handle("get-app-version", () => app.getVersion());
 ipcMain.handle("check-for-updates", async () => {
   if (!app.isPackaged) return { ok: true, devMode: true };
   try {
+    addSystemLog("info", "Update check started");
     const result = await autoUpdater.checkForUpdates();
     if (result && result.updateInfo.version === app.getVersion()) return { ok: true, upToDate: true };
+    addSystemLog("info", "Update check completed");
     return { ok: true, upToDate: false, updateInfo: result ? result.updateInfo : null };
   } catch (err) {
+    addSystemLog("error", `Update check failed: ${err.message}`);
     return err.message.includes("No published versions") ? { ok: true, upToDate: true } : { ok: false, error: err.message };
   }
 });
+
+ipcMain.handle("system-log-add", (_, { level, message }) => addSystemLog(level, message));
+ipcMain.handle("system-log-get", (_, limit = 500) => dbService.getSystemLogs(limit));
+ipcMain.handle("system-log-clear", () => dbService.clearSystemLogs());

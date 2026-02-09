@@ -57,6 +57,19 @@ class DBService {
     `).run();
   }
 
+  addSystemLog(level, message, timestamp = new Date().toISOString()) {
+    const stmt = this.db.prepare('INSERT INTO system_logs (level, message, timestamp) VALUES (?, ?, ?)');
+    return stmt.run(level, message, timestamp);
+  }
+
+  getSystemLogs(limit = 500) {
+    return this.db.prepare('SELECT * FROM system_logs ORDER BY id DESC LIMIT ?').all(limit);
+  }
+
+  clearSystemLogs() {
+    return this.db.prepare('DELETE FROM system_logs').run();
+  }
+
   saveAccount(acc) {
     const upsert = this.db.prepare(`
       INSERT INTO accounts (id, name, type, token, username, lastUsed)

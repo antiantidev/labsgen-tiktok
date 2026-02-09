@@ -63,4 +63,13 @@ contextBridge.exposeInMainWorld("api", {
   startDownload: () => ipcRenderer.send("start-download"),
   quitAndInstall: () => ipcRenderer.send("quit-and-install"),
   checkForUpdates: () => ipcRenderer.invoke("check-for-updates")
+  ,
+  addSystemLog: (entry) => ipcRenderer.invoke("system-log-add", entry),
+  getSystemLogs: (limit) => ipcRenderer.invoke("system-log-get", limit),
+  clearSystemLogs: () => ipcRenderer.invoke("system-log-clear"),
+  onSystemLog: (callback) => {
+    const subscription = (_, entry) => callback(entry);
+    ipcRenderer.on("system-log", subscription);
+    return () => ipcRenderer.removeListener("system-log", subscription);
+  }
 });

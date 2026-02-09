@@ -72,7 +72,7 @@ const Pulse = ({ statusLog = [], setStatusLog }) => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={exportLogs} icon={Download}>{t('pulse.export')}</Button>
-          <Button variant="danger" onClick={() => setStatusLog([])} icon={Trash2}>{t('pulse.clear')}</Button>
+          <Button variant="danger" onClick={() => { window.api.clearSystemLogs(); setStatusLog([]); }} icon={Trash2}>{t('pulse.clear')}</Button>
         </div>
       </div>
 

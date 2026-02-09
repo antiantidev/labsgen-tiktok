@@ -65,8 +65,9 @@ const App = () => {
   }, [theme])
 
   const pushStatus = useCallback((message, level = 'info') => {
-    const entry = { message, level, time: new Date().toLocaleTimeString(), timestamp: new Date().toISOString(), id: Date.now() }
-    setStatusLog(prev => [entry, ...prev].slice(0, 500))
+    if (window.api && window.api.addSystemLog) {
+      window.api.addSystemLog({ level, message });
+    }
   }, [])
 
   const pushToast = useCallback((message, type = 'info', duration = 4000) => {
@@ -136,16 +137,22 @@ const App = () => {
   }, [streamTitle, gameCategory, mature, token, theme, i18n.language, activeAccountId, settings, isLoading, saveConfig])
 
   const loadLocalToken = async () => {
+    pushStatus('Local token extraction started', 'info')
     const res = await window.api.loadLocalToken()
     if (res.token) { 
       setToken(res.token); const newId = `local_${Date.now()}`
       const newAccount = { id: newId, name: `${t('tokens.local_fetch')} (${new Date().toLocaleDateString()})`, type: 'local', token: res.token, username: 'Checking...', lastUsed: Date.now() }
       await window.api.saveAccount(newAccount); const updatedList = await window.api.getAccounts(); setAccounts(updatedList); setActiveAccountId(newId); await refreshAccountInfo(res.token, newId); 
       pushToast('Local token loaded', 'success')
-    } else if (res.error) pushToast(res.error, 'error')
+      pushStatus('Local token loaded', 'success')
+    } else if (res.error) {
+      pushToast(res.error, 'error')
+      pushStatus(`Local token error: ${res.error}`, 'error')
+    }
   }
 
   const loadWebToken = async (existingAccountId = null) => {
+    pushStatus('Web token capture started', 'info')
     const driverExists = await window.api.checkDriverExists()
     if (!driverExists) {
       const choice = await showModal(t('driver.missing_title'), t('driver.missing_desc'), [{ label: t('common.cancel'), value: 'cancel', primary: false }, { label: t('driver.download_now'), value: 'download', primary: true }])
@@ -166,7 +173,11 @@ const App = () => {
       }
       const updatedList = await window.api.getAccounts(); setAccounts(updatedList); setActiveAccountId(finalId); await refreshAccountInfo(res.token, finalId); 
       pushToast('Authentication successful', 'success')
-    } else if (res.error) pushToast(res.error, 'error')
+      pushStatus('Web token captured', 'success')
+    } else if (res.error) {
+      pushToast(res.error, 'error')
+      pushStatus(`Web token error: ${res.error}`, 'error')
+    }
   }
 
   const deleteAccount = async (accountId) => {
@@ -175,12 +186,13 @@ const App = () => {
       await window.api.deleteProfile(accountId); await window.api.deleteAccount(accountId); const updatedList = await window.api.getAccounts(); setAccounts(updatedList)
       if (activeAccountId === accountId) { setToken(''); setActiveAccountId(null); setStatus({ username: 'Guest', appStatus: 'tokens.unknown', canGoLive: false, badge: 'common.check' }) }
       pushToast('Account removed', 'info')
+      pushStatus(`Account removed: ${accountId}`, 'info')
     }
   }
 
   const selectAccount = (accountId) => {
     const acc = accounts.find(a => a.id === accountId)
-    if (acc) { setActiveAccountId(accountId); setToken(acc.token); refreshAccountInfo(acc.token, accountId); pushToast(`Switched to ${acc.username || acc.name}`, 'success') }
+    if (acc) { setActiveAccountId(accountId); setToken(acc.token); refreshAccountInfo(acc.token, accountId); pushToast(`Switched to ${acc.username || acc.name}`, 'success'); pushStatus(`Switched account: ${acc.username || acc.name}`, 'info') }
   }
 
   const handleSearch = (text) => {
@@ -216,6 +228,16 @@ const App = () => {
       setAppVersion(version); setDefaultPath(defPath); setSystemPaths(allPaths)
       setLoadProgress(30); setLoadingMessage('Accessing local database...')
       let data = await window.api.getSetting('app_state'); if (!data) data = await window.api.loadConfig()
+      const logs = await window.api.getSystemLogs(500)
+      if (logs && logs.length) {
+        setStatusLog(logs.map(l => ({
+          id: l.id,
+          level: l.level,
+          message: l.message,
+          timestamp: l.timestamp,
+          time: new Date(l.timestamp).toLocaleTimeString()
+        })))
+      }
       const dbAccounts = await window.api.getAccounts(); setAccounts(dbAccounts)
       if (data) {
         if (data.settings) setSettings(data.settings)
@@ -252,7 +274,17 @@ const App = () => {
     const cd = window.api.onUpdateDownloaded(() => showModal(t('update.ready'), t('update.ready_desc'), [{ label: t('update.restart'), value: 'install', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'install') window.api.quitAndInstall() }))
     const ce = window.api.onUpdateError(() => pushToast('Update failed', 'error'))
     const ct = window.api.onTokenStatus((m) => { setLoadingMessage(m); pushStatus(`Web: ${m}`, 'info'); })
-    return () => { cu(); cd(); ce(); ct(); }
+    const cl = window.api.onSystemLog((entry) => {
+      if (!entry) return;
+      setStatusLog(prev => [{
+        id: entry.id || Date.now(),
+        level: entry.level || 'info',
+        message: entry.message || '',
+        timestamp: entry.timestamp || new Date().toISOString(),
+        time: new Date(entry.timestamp || Date.now()).toLocaleTimeString()
+      }, ...prev].slice(0, 500))
+    })
+    return () => { cu(); cd(); ce(); ct(); cl(); }
   }, [pushStatus, showModal, pushToast, t])
 
   return (
