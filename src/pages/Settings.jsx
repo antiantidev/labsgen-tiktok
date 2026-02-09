@@ -14,13 +14,20 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
   const { t, i18n } = useTranslation()
   const [checkingUpdate, setCheckingUpdate] = useState(false)
   const [isInstallingDriver, setIsDriverInstalling] = useState(false)
+  const [isUpToDate, setIsUpToDate] = useState(false)
 
   const handleUpdateCheck = async () => {
     setCheckingUpdate(true)
+    const startedAt = Date.now()
     const res = await window.api.checkForUpdates()
+    const elapsed = Date.now() - startedAt
+    if (elapsed < 700) await new Promise(r => setTimeout(r, 700 - elapsed))
     setCheckingUpdate(false)
     if (res.ok && res.upToDate) {
+      setIsUpToDate(true)
       await showModal(t('common.up_to_date'), `${t('common.up_to_date_desc')} LABGEN TIKTOK (v${version})`)
+    } else {
+      setIsUpToDate(false)
     }
   }
 
@@ -181,13 +188,23 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
 
           <Card title={t('settings.update_check')}>
             <div className="space-y-6 text-center">
-              <div className="w-20 h-20 bg-primary/10 rounded-[24px] flex items-center justify-center mx-auto text-primary animate-pulse">
-                <RefreshCw size={32} />
+              <div className={`w-20 h-20 rounded-[24px] flex items-center justify-center mx-auto ${isUpToDate ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
+                {isUpToDate ? (
+                  <CheckCircle2 size={32} />
+                ) : (
+                  <RefreshCw size={32} className={checkingUpdate ? 'animate-spin' : ''} />
+                )}
               </div>
               <div>
                 <h4 className="font-black text-sm uppercase tracking-widest">v{version}</h4>
                 <p className="text-[12px] font-medium text-muted-foreground mt-1">LABGEN TIKTOK for Windows</p>
               </div>
+              {isUpToDate && (
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-success/10 text-success border border-success/20 mx-auto">
+                  <CheckCircle2 size={12} />
+                  {t('common.up_to_date')}
+                </div>
+              )}
               <Button className="w-full h-14 text-xs" loading={checkingUpdate} onClick={handleUpdateCheck}>{t('settings.check_now')}</Button>
             </div>
           </Card>
