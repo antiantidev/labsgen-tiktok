@@ -50,9 +50,13 @@ const driverService = new DriverService(app.getAppPath(), app.getPath("userData"
 
 function createTray(win) {
   const possiblePaths = [
+    join(__dirname, "../../resources/icon.ico"),
     join(__dirname, "../../resources/icon.png"),
+    join(app.getAppPath(), "resources", "icon.ico"),
     join(app.getAppPath(), "resources", "icon.png"),
+    join(process.resourcesPath, "app.asar.unpacked/resources/icon.ico"),
     join(process.resourcesPath, "app.asar.unpacked/resources/icon.png"),
+    join(process.resourcesPath, "resources/icon.ico"),
     join(process.resourcesPath, "resources/icon.png")
   ];
   
