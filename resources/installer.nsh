@@ -65,8 +65,10 @@ Function .onInstSuccess
   FileOpen $2 "$APPDATA\Labsgen Tiktok\installer.json" w
   StrCpy $5 "$\r$\n"
   FileWrite $2 "{"
-  FileWrite $2 "$5  \"language\": \"$0\","
-  FileWrite $2 "$5  \"profilePath\": \"$1\""
+  StrCpy $6 "$5  $\"language$\": $\"$0$\","
+  FileWrite $2 $6
+  StrCpy $6 "$5  $\"profilePath$\": $\"$1$\""
+  FileWrite $2 $6
   FileWrite $2 "$5}"
   FileWrite $2 "$5"
   FileClose $2
