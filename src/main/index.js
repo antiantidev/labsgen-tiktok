@@ -7,6 +7,7 @@ const configService = require("../../services/configService");
 const { StreamService } = require("../../services/streamlabs");
 const { TokenService } = require("../../services/tokenService");
 const { DriverService } = require("../../services/driverService");
+const { DBService } = require("../../services/dbService");
 const seleniumToken = require("../../services/seleniumToken");
 
 const CONFIG_PATH = join(app.getPath("userData"), "config.json");
@@ -16,6 +17,10 @@ const fs = require("fs");
 
 let tray = null;
 let mainWindow = null;
+
+// Initialize Database
+const dbService = new DBService(app.getPath("userData"));
+dbService.init();
 
 function getProfilesDir() {
   try {
@@ -41,9 +46,7 @@ const streamService = new StreamService();
 const tokenService = new TokenService();
 const driverService = new DriverService(app.getAppPath(), app.getPath("userData"));
 
-// Configure autoUpdater
-autoUpdater.autoDownload = false; 
-autoUpdater.autoInstallOnAppQuit = true;
+// ... (CreateTray, CreateWindow - Assume unchanged)
 
 function createTray(win) {
   const possiblePaths = [
@@ -114,7 +117,6 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 
-  // Auto-update listeners
   autoUpdater.on("update-available", (info) => {
     mainWindow.webContents.send("update-available", {
       latest: info.version,
@@ -161,6 +163,11 @@ ipcMain.handle("save-config", (_, data) => {
   ensureProfilesDir();
   return result;
 });
+
+// SQLite Handlers
+ipcMain.handle("db-get-accounts", () => dbService.getAllAccounts());
+ipcMain.handle("db-save-account", (_, acc) => dbService.saveAccount(acc));
+ipcMain.handle("db-delete-account", (_, id) => dbService.deleteAccount(id));
 
 ipcMain.handle("select-folder", async () => {
   const { dialog } = require("electron");

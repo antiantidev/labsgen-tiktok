@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld("api", {
   endStream: () => ipcRenderer.invoke("end-stream"),
   setStreamId: (id) => ipcRenderer.invoke("set-stream-id", id),
   loadLocalToken: () => ipcRenderer.invoke("load-local-token"),
-  loadWebToken: () => ipcRenderer.invoke("load-web-token"),
+  loadWebToken: (options) => ipcRenderer.invoke("load-web-token", options),
   
   windowMinimize: () => ipcRenderer.send("window-minimize"),
   windowMaximize: () => ipcRenderer.send("window-maximize"),
@@ -24,6 +24,11 @@ contextBridge.exposeInMainWorld("api", {
   checkDriverExists: () => ipcRenderer.invoke("check-driver-exists"),
   bootstrapDriver: () => ipcRenderer.invoke("bootstrap-driver"),
   deleteProfile: (accountId) => ipcRenderer.invoke("delete-profile", accountId),
+
+  // Database APIs
+  getAccounts: () => ipcRenderer.invoke("db-get-accounts"),
+  saveAccount: (acc) => ipcRenderer.invoke("db-save-account", acc),
+  deleteAccount: (id) => ipcRenderer.invoke("db-delete-account", id),
   
   onTokenStatus: (callback) => {
     const subscription = (_, status) => callback(status);

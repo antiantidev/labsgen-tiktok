@@ -37,7 +37,7 @@ const App = () => {
     themeColor: '#31fb9a'
   })
 
-  // Account Management State
+  // Account Management State (Powered by SQLite)
   const [accounts, setAccounts] = useState([])
   const [activeAccountId, setActiveAccountId] = useState(null)
   const [token, setToken] = useState('')
@@ -152,10 +152,15 @@ const App = () => {
         })
         pushStatus(`Account verified: ${user?.username}`, 'success')
 
+        // Update account in database if needed
         if (accountId) {
-          setAccounts(prev => prev.map(acc => 
-            acc.id === accountId ? { ...acc, username: user?.username, lastUsed: Date.now() } : acc
-          ))
+          const acc = accounts.find(a => a.id === accountId)
+          if (acc) {
+            const updatedAcc = { ...acc, username: user?.username, lastUsed: Date.now() }
+            await window.api.saveAccount(updatedAcc)
+            const updatedList = await window.api.getAccounts()
+            setAccounts(updatedList)
+          }
         }
 
         if (gameCategory && !gameMaskId) {
@@ -166,14 +171,12 @@ const App = () => {
           }
         }
         return true
-      } else {
-        pushStatus(`API error: ${res.error}`, 'error')
       }
     } catch (err) {
       pushStatus(`Auth exception: ${err.message}`, 'error')
     }
     return false
-  }, [token, gameCategory, gameMaskId, pushStatus, t])
+  }, [token, gameCategory, gameMaskId, accounts, pushStatus, t])
 
   const loadLocalToken = async () => {
     const res = await window.api.loadLocalToken()
@@ -188,11 +191,13 @@ const App = () => {
         username: 'Checking...', 
         lastUsed: Date.now() 
       }
-      setAccounts(prev => [...prev, newAccount])
+      await window.api.saveAccount(newAccount)
+      const updatedList = await window.api.getAccounts()
+      setAccounts(updatedList)
       setActiveAccountId(newId)
       refreshAccountInfo(res.token, newId); 
-      pushStatus('Token imported from local storage.', 'success');
-      pushToast(t('pulse.success') + ': Local token loaded', 'success')
+      pushStatus('Token imported from local storage.', 'success'); 
+      pushToast('Local token loaded', 'success')
     }
     else if (res.error) { 
       pushStatus(`Local fetch failed: ${res.error}`, 'error');
@@ -220,11 +225,14 @@ const App = () => {
           username: 'Authenticating...', 
           lastUsed: Date.now() 
         }
-        setAccounts(prev => [...prev, newAccount])
+        await window.api.saveAccount(newAccount)
       } else {
-        setAccounts(prev => prev.map(acc => acc.id === existingAccountId ? { ...acc, token: res.token, lastUsed: Date.now() } : acc))
+        const acc = accounts.find(a => a.id === existingAccountId)
+        await window.api.saveAccount({ ...acc, token: res.token, lastUsed: Date.now() })
       }
       
+      const updatedList = await window.api.getAccounts()
+      setAccounts(updatedList)
       setActiveAccountId(finalId)
       refreshAccountInfo(res.token, finalId); 
       pushStatus('Token captured from web session.', 'success'); 
@@ -244,13 +252,15 @@ const App = () => {
     
     if (confirmed.value === 'delete') {
       await window.api.deleteProfile(accountId)
-      setAccounts(prev => prev.filter(acc => acc.id !== accountId))
+      await window.api.deleteAccount(accountId)
+      const updatedList = await window.api.getAccounts()
+      setAccounts(updatedList)
       if (activeAccountId === accountId) {
         setToken('')
         setActiveAccountId(null)
         setStatus({ username: 'Guest', appStatus: 'tokens.unknown', canGoLive: false, badge: 'common.check' })
       }
-      pushStatus(`Account ${accountId} removed.`, 'warn')
+      pushStatus(`Account removed.`, 'warn')
       pushToast('Account removed', 'info')
     }
   }
@@ -275,14 +285,12 @@ const App = () => {
       stream_id: streamData.id, 
       theme, 
       language: i18n.language,
-      accounts,
       activeAccountId,
-      settings,
-      lastPage: currentPage
+      settings
     })
     pushStatus('Configuration synchronized to disk.', 'info')
     if (showMessage) pushToast(t('common.save_success'), 'success')
-  }, [streamTitle, gameCategory, mature, token, streamData.id, theme, i18n.language, accounts, activeAccountId, settings, currentPage, pushStatus, pushToast, t])
+  }, [streamTitle, gameCategory, mature, token, streamData.id, theme, i18n.language, activeAccountId, settings, pushStatus, pushToast, t])
 
   useEffect(() => {
     if (!token && !streamTitle && accounts.length === 0 && currentPage === 'home') return
@@ -354,7 +362,7 @@ const App = () => {
       pushStatus('System kernel initialized.', 'info')
       
       const version = await window.api.getAppVersion()
-      setLoadProgress(25)
+      setLoadProgress(20)
       const defPath = await window.api.getDefaultPath()
       setLoadProgress(35)
       const allPaths = await window.api.getAllPaths()
@@ -363,9 +371,14 @@ const App = () => {
       setDefaultPath(defPath)
       setSystemPaths(allPaths)
       
+      setLoadProgress(45)
       const data = await window.api.loadConfig()
+      
+      // Load accounts from SQLite
+      const dbAccounts = await window.api.getAccounts()
+      setAccounts(dbAccounts)
+
       if (data.settings) setSettings(data.settings)
-      if (data.accounts) setAccounts(data.accounts)
       if (data.activeAccountId) setActiveAccountId(data.activeAccountId)
       if (data.lastPage) setCurrentPage(data.lastPage)
       if (data.theme) setTheme(data.theme)

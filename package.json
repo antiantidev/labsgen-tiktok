@@ -1,6 +1,6 @@
 {
   "name": "labs-gen-tik",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "StreamLabs TikTok Stream Key Generator (Windows optimized)",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
@@ -58,6 +58,7 @@
   "dependencies": {
     "@electron-toolkit/utils": "^4.0.0",
     "adm-zip": "^0.5.10",
+    "better-sqlite3": "^12.6.2",
     "chromedriver": "140.0.4",
     "electron-updater": "^6.7.3",
     "framer-motion": "^12.33.0",
@@ -70,6 +71,7 @@
     "semver": "^7.6.0"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
     "@vitejs/plugin-react": "^5.1.3",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "autoprefixer": "^10.4.24",
