@@ -1,6 +1,6 @@
 {
   "name": "labsgen-tiktok",
-  "version": "0.17.1",
+  "version": "0.17.3",
   "description": "TikTok Live Stream Key Generator for OBS from Streamlabs",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
