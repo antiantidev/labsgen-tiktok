@@ -2,6 +2,7 @@ const { Builder } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
 const path = require("path");
+const { createPkce, exchangeCode } = require("./oauth");
 
 const AUTH_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) StreamlabsDesktop/1.17.0 Chrome/122.0.6261.156 Electron/29.3.1 Safari/537.36";
@@ -72,4 +73,30 @@ async function retrieveCodeWithSelenium(authUrl, binaryPath, options = {}) {
   }
 }
 
-module.exports = { retrieveCodeWithSelenium };
+async function loadWebToken(win, onStatus) {
+  try {
+    if (onStatus) onStatus("Initializing secure capture...");
+    const { codeVerifier, codeChallenge } = createPkce();
+    const authUrl = `https://streamlabs.com/api/v5/slobs/auth?code_challenge=${codeChallenge}&code_challenge_method=S256`;
+
+    if (onStatus) onStatus("Launching browser...");
+    const code = await retrieveCodeWithSelenium(authUrl);
+
+    if (!code) {
+      return { token: null, error: "Failed to capture authentication code." };
+    }
+
+    if (onStatus) onStatus("Exchanging code for token...");
+    const token = await exchangeCode(code, codeVerifier);
+
+    if (!token) {
+      return { token: null, error: "Failed to exchange code for token." };
+    }
+
+    return { token, error: null };
+  } catch (err) {
+    return { token: null, error: err.message };
+  }
+}
+
+module.exports = { retrieveCodeWithSelenium, loadWebToken };

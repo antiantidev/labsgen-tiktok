@@ -88,6 +88,10 @@ desktop.ini
 *.patch
 *.diff
 
+# Gemini CLI
+.gemini/
+GEMINI.md
+
 # Electron-Vite specific
 .vite-inspect
 

@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+dist/
+out/
+.vite/
+
+# Drivers & Binaries
+drivers/
+*.exe
+*.dll
+
+# OS/IDE metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs & Temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.gemini/tmp/
+
+# Sensitive Info
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+
+# Large binary files
+*.zip
+*.tar.gz
+*.7z

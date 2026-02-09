@@ -29,6 +29,18 @@ class TokenService {
         "Local Storage",
         "leveldb"
       );
+    } else if (platform === "linux" && os.release().toLowerCase().includes("microsoft")) {
+      // WSL Support
+      try {
+        const { execSync } = require("child_process");
+        const appdata = execSync('cmd.exe /c "echo %APPDATA%"', { encoding: "utf8" }).trim();
+        if (appdata) {
+          const wslPath = execSync(`wslpath "${appdata}"`, { encoding: "utf8" }).trim();
+          dir = path.join(wslPath, "slobs-client", "Local Storage", "leveldb");
+        }
+      } catch (err) {
+        return { token: null, error: "Failed to locate Windows APPDATA from WSL." };
+      }
     } else {
       return {
         token: null,
@@ -36,7 +48,7 @@ class TokenService {
       };
     }
 
-    if (!this.fsImpl.existsSync(dir)) {
+    if (!dir || !this.fsImpl.existsSync(dir)) {
       return { token: null, error: "Streamlabs data folder not found." };
     }
 

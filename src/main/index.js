@@ -1,11 +1,18 @@
 const { app, shell, BrowserWindow, ipcMain } = require("electron");
 const { join } = require("path");
-const { electronApp, optimizer, is } = require("@electron-toolkit/utils");
+const { optimizer, is } = require("@electron-toolkit/utils");
 const { autoUpdater } = require("electron-updater");
 
 const configService = require("../../services/configService");
-const streamlabs = require("../../services/streamlabs");
+const { StreamService } = require("../../services/streamlabs");
+const { TokenService } = require("../../services/tokenService");
 const seleniumToken = require("../../services/seleniumToken");
+
+const CONFIG_PATH = join(app.getPath("userData"), "config.json");
+
+// Instantiate services
+const streamService = new StreamService();
+const tokenService = new TokenService();
 
 // Configure autoUpdater
 autoUpdater.autoDownload = false; // We want to ask the user first
@@ -63,7 +70,8 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  electronApp.setAppId("com.labs-gen-tik.app");
+  // Set app user model id for windows
+  app.setAppUserModelId("com.labs-gen-tik.app");
 
   app.on("browser-window-created", (_, window) => {
     optimizer.watchWindowShortcuts(window);
@@ -88,17 +96,17 @@ app.on("window-all-closed", () => {
 });
 
 // IPC Handlers
-ipcMain.handle("load-config", () => configService.loadConfig());
-ipcMain.handle("save-config", (_, data) => configService.saveConfig(data));
+ipcMain.handle("load-config", () => configService.loadConfig(CONFIG_PATH));
+ipcMain.handle("save-config", (_, data) => configService.saveConfig(CONFIG_PATH, data));
 
-ipcMain.handle("set-token", (_, token) => streamlabs.setToken(token));
-ipcMain.handle("refresh-account", () => streamlabs.refreshAccount());
-ipcMain.handle("search-games", (_, text) => streamlabs.searchGames(text));
-ipcMain.handle("start-stream", (_, data) => streamlabs.startStream(data));
-ipcMain.handle("end-stream", () => streamlabs.endStream());
-ipcMain.handle("set-stream-id", (_, id) => streamlabs.setStreamId(id));
+ipcMain.handle("set-token", (_, token) => streamService.setToken(token));
+ipcMain.handle("refresh-account", () => streamService.getInfo().then(info => ({ ok: true, info })).catch(err => ({ ok: false, error: err.message })));
+ipcMain.handle("search-games", (_, text) => streamService.search(text).then(categories => ({ ok: true, categories })).catch(err => ({ ok: false, error: err.message })));
+ipcMain.handle("start-stream", (_, data) => streamService.start(data.title, data.category, data.audienceType).then(result => ({ ok: true, result })).catch(err => ({ ok: false, error: err.message })));
+ipcMain.handle("end-stream", () => streamService.end().then(ok => ({ ok })).catch(err => ({ ok: false, error: err.message })));
+ipcMain.handle("set-stream-id", (_, id) => streamService.setStreamId(id));
 
-ipcMain.handle("load-local-token", () => seleniumToken.loadLocalToken());
+ipcMain.handle("load-local-token", () => tokenService.loadLocalToken());
 ipcMain.handle("load-web-token", (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   return seleniumToken.loadWebToken(win, (status) => {
