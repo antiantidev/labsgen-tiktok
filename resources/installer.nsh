@@ -63,6 +63,11 @@ Function .onInstSuccess
   ${StrRep} $1 $PROFILE_DIR "\" "/"
   CreateDirectory "$APPDATA\Labsgen Tiktok"
   FileOpen $2 "$APPDATA\Labsgen Tiktok\installer.json" w
-  FileWrite $2 "{`n  \"language\": \"$0\",`n  \"profilePath\": \"$1\"`n}`n"
+  StrCpy $5 "$\r$\n"
+  FileWrite $2 "{"
+  FileWrite $2 "$5  \"language\": \"$0\","
+  FileWrite $2 "$5  \"profilePath\": \"$1\""
+  FileWrite $2 "$5}"
+  FileWrite $2 "$5"
   FileClose $2
 FunctionEnd
