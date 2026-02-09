@@ -1,7 +1,6 @@
-name: Release App
+name: Release
 
 on:
-  workflow_dispatch:
   push:
     tags:
       - "v*"
@@ -12,21 +11,18 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Build and Release
+      - name: Build and Publish
         run: npm run release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
