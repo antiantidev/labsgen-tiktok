@@ -143,7 +143,6 @@ const App = () => {
     }
     const appState = { title: streamTitle, game: finalCategory, audience_type: mature ? '1' : '0', token, stream_id: streamData.id, theme, language: i18n.language, activeAccountId, settings, lastPage: currentPage, game_mask_id: finalMaskId }
     await window.api.saveSetting('app_state', appState)
-    await window.api.saveConfig(appState)
     if (showMessage) pushToast(t('common.save_success'), 'success')
     return true
   }, [streamTitle, gameCategory, gameMaskId, mature, token, streamData.id, theme, i18n.language, activeAccountId, settings, currentPage, pushToast, t])
@@ -252,7 +251,7 @@ const App = () => {
       const version = await window.api.getAppVersion(); const defPath = await window.api.getDefaultPath(); const allPaths = await window.api.getAllPaths()
       setAppVersion(version); setDefaultPath(defPath); setSystemPaths(allPaths)
       setLoadProgress(30); setLoadingMessage('Accessing local database...')
-      let data = await window.api.getSetting('app_state'); if (!data) data = await window.api.loadConfig()
+      let data = await window.api.getSetting('app_state')
       await loadLogs(1)
       const dbAccounts = await window.api.getAccounts(); setAccounts(dbAccounts)
       if (data) {

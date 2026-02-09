@@ -1,8 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("api", {
-  loadConfig: () => ipcRenderer.invoke("load-config"),
-  saveConfig: (data) => ipcRenderer.invoke("save-config", data),
   setToken: (token) => ipcRenderer.invoke("set-token", token),
   refreshAccount: () => ipcRenderer.invoke("refresh-account"),
   searchGames: (text) => ipcRenderer.invoke("search-games", text),

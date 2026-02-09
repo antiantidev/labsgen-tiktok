@@ -4,7 +4,6 @@ const { optimizer, is } = require("@electron-toolkit/utils");
 const { autoUpdater } = require("electron-updater");
 const os = require("os");
 
-const configService = require("../../services/configService");
 const { StreamService } = require("../../services/streamlabs");
 const { TokenService } = require("../../services/tokenService");
 const { DriverService } = require("../../services/driverService");
@@ -12,7 +11,6 @@ const { DBService } = require("../../services/dbService");
 const seleniumToken = require("../../services/seleniumToken");
 const EncryptionService = require("../../services/encryptionService");
 
-const CONFIG_PATH = join(app.getPath("userData"), "config.json");
 const DEFAULT_PROFILES_DIR = join(app.getPath("userData"), "profiles");
 
 const fs = require("fs");
@@ -49,9 +47,8 @@ function addSystemLog(level, message) {
 
 function getProfilesDir() {
   try {
-    const configRaw = fs.existsSync(CONFIG_PATH) ? fs.readFileSync(CONFIG_PATH, "utf8") : "{}";
-    const config = JSON.parse(configRaw);
-    return (config.settings && config.settings.customProfilePath) || DEFAULT_PROFILES_DIR;
+    const state = dbService.getSetting("app_state", {});
+    return (state.settings && state.settings.customProfilePath) || DEFAULT_PROFILES_DIR;
   } catch (e) {
     return DEFAULT_PROFILES_DIR;
   }
@@ -193,13 +190,6 @@ app.on("window-all-closed", () => {
 
 // --- IPC Handlers ---
 
-ipcMain.handle("load-config", () => configService.loadConfig(CONFIG_PATH));
-ipcMain.handle("save-config", (_, data) => {
-  const result = configService.saveConfig(CONFIG_PATH, data);
-  ensureProfilesDir();
-  addSystemLog("success", "Configuration saved");
-  return result;
-});
 ipcMain.handle("select-folder", async () => {
   const { dialog } = require("electron");
   const result = await dialog.showOpenDialog({ properties: ["openDirectory", "createDirectory"] });
@@ -210,7 +200,7 @@ ipcMain.handle("get-default-path", () => DEFAULT_PROFILES_DIR);
 ipcMain.handle("get-all-paths", () => ({
   app: app.getAppPath(),
   userData: app.getPath("userData"),
-  config: CONFIG_PATH,
+  config: dbService.getDbPath(),
   temp: app.getPath("temp"),
   exe: app.getPath("exe"),
   driver: driverService.getExecutablePath()
@@ -367,8 +357,8 @@ ipcMain.on("window-maximize", (event) => {
 });
 ipcMain.on("window-close", (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
-  const config = configService.loadConfig(CONFIG_PATH);
-  if (config.settings && config.settings.minimizeOnClose) {
+  const state = dbService.getSetting("app_state", {});
+  if (state.settings && state.settings.minimizeOnClose) {
     addSystemLog("info", "Window minimized to tray");
     win.hide();
   } else {

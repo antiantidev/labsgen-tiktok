@@ -80,6 +80,10 @@ class DBService {
     this.db.prepare('DELETE FROM system_logs WHERE id IN (SELECT id FROM system_logs ORDER BY id DESC LIMIT -1 OFFSET ?)').run(limit);
   }
 
+  getDbPath() {
+    return this.dbPath;
+  }
+
   saveAccount(acc) {
     const upsert = this.db.prepare(`
       INSERT INTO accounts (id, name, type, token, username, lastUsed)
