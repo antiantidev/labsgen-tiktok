@@ -76,7 +76,12 @@
     "unknown": "Không rõ",
     "no_token": "Chưa có dữ liệu",
     "session_token": "Token phiên",
-    "active": "Phiên hiện tại"
+    "active": "Phiên hiện tại",
+    "driver_missing_title": "Thiếu ChromeDriver",
+    "driver_missing_desc": "Tính năng thu thập qua web đang bị tắt. Vào Thiết lập để tải và cài đặt thành phần cần thiết.",
+    "go_settings": "Mở thiết lập",
+    "empty_accounts": "Chưa có danh tính nào",
+    "register_new": "Đăng ký danh tính mới"
   },
   "setup": {
     "title": "Siêu dữ liệu",

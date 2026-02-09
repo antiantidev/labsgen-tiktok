@@ -37,11 +37,11 @@ const TokenVault = ({
       {isDriverMissing && (
         <AlertBanner 
           variant="warn"
-          title="ChromeDriver Missing"
-          message="The web capture engine is currently disabled. Please go to System Settings to download and install the required binary components."
+          title={t('tokens.driver_missing_title')}
+          message={t('tokens.driver_missing_desc')}
           actions={
             <Button variant="secondary" onClick={() => setCurrentPage('settings')} className="h-10 px-5 rounded-xl text-xs" icon={ArrowRight}>
-              Go to Settings
+              {t('tokens.go_settings')}
             </Button>
           }
         />
@@ -50,7 +50,7 @@ const TokenVault = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-10">
           <Card title={t('tokens.saved_accounts')}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {isLoading && accounts.length === 0 ? (
                 [1, 2, 3, 4].map(i => <Skeleton key={i} className="h-[110px] w-full rounded-xl" />)
               ) : (
@@ -59,9 +59,9 @@ const TokenVault = ({
                     [...accounts].sort((a, b) => (a.type === 'web' ? -1 : 1)).map((acc) => (
                       <div 
                         key={acc.id} 
-                        className={`p-5 rounded-xl border transition-all group relative overflow-hidden flex flex-col justify-center min-h-[110px] ${activeAccountId === acc.id ? 'bg-primary/5 border-primary/30' : 'bg-secondary border-border hover:border-primary/20'}`}
+                        className={`p-5 rounded-xl border transition-all group relative overflow-hidden flex items-center gap-4 min-h-[96px] ${activeAccountId === acc.id ? 'bg-primary/5 border-primary/30' : 'bg-secondary border-border hover:border-primary/20'}`}
                       >
-                        <div className="flex items-start justify-between relative z-10 gap-3">
+                        <div className="flex items-start justify-between relative z-10 gap-3 w-full">
                           <div className="flex items-start gap-3 min-w-0 flex-1 cursor-pointer" onClick={() => selectAccount(acc.id)}>
                             <div className={`p-2.5 rounded-lg relative shrink-0 mt-0.5 ${activeAccountId === acc.id ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground'}`}>
                               <User size={18} />
@@ -106,7 +106,7 @@ const TokenVault = ({
                   ) : (
                     <div className="col-span-full py-10 flex flex-col items-center justify-center text-muted-foreground opacity-20 border-2 border-dashed border-border rounded-xl">
                       <User size={48} />
-                      <span className="text-[11px] font-black uppercase tracking-[0.3em] mt-4">No identities stored</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.3em] mt-4">{t('tokens.empty_accounts')}</span>
                     </div>
                   )}
                 </>
@@ -117,7 +117,7 @@ const TokenVault = ({
           <div className="space-y-5">
             <div className="flex items-center gap-3 px-2">
               <PlusCircle size={16} className="text-primary" />
-              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Register New Identity</h3>
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t('tokens.register_new')}</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

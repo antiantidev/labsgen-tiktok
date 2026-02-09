@@ -93,7 +93,8 @@ const App = () => {
       if (res.ok) {
         const { user, application_status, can_be_live } = res.info || {}
         const statusMap = { 'approved': 'common.approved', 'pending': 'common.pending', 'rejected': 'common.rejected', 'not_applied': 'common.not_applied', 'restricted': 'common.restricted_status', 'forbidden': 'common.restricted_status' }
-        const appStatusKey = statusMap[application_status?.status] || application_status?.status || 'Unknown'
+        let appStatusKey = statusMap[application_status?.status] || application_status?.status
+        if (!appStatusKey || !i18n.exists(appStatusKey)) appStatusKey = 'tokens.unknown'
 
         setStatus({ username: user?.username || t('tokens.unknown'), appStatus: appStatusKey, canGoLive: !!can_be_live, badge: can_be_live ? 'common.ready' : 'common.check' })
         if (accountId && user?.username) {

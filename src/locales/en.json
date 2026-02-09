@@ -76,7 +76,12 @@
     "unknown": "Unknown",
     "no_token": "No data",
     "session_token": "Session token",
-    "active": "Active session"
+    "active": "Active session",
+    "driver_missing_title": "ChromeDriver Missing",
+    "driver_missing_desc": "The web capture engine is disabled. Open Settings to download and install the required components.",
+    "go_settings": "Go to Settings",
+    "empty_accounts": "No identities stored",
+    "register_new": "Register New Identity"
   },
   "setup": {
     "title": "Metadata",
