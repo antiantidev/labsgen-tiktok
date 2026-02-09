@@ -9,6 +9,28 @@ const { TokenService } = require("../../services/tokenService");
 const seleniumToken = require("../../services/seleniumToken");
 
 const CONFIG_PATH = join(app.getPath("userData"), "config.json");
+const DEFAULT_PROFILES_DIR = join(app.getPath("userData"), "profiles");
+
+const fs = require("fs");
+
+function getProfilesDir() {
+  try {
+    const configRaw = fs.existsSync(CONFIG_PATH) ? fs.readFileSync(CONFIG_PATH, "utf8") : "{}";
+    const config = JSON.parse(configRaw);
+    return (config.settings && config.settings.customProfilePath) || DEFAULT_PROFILES_DIR;
+  } catch (e) {
+    return DEFAULT_PROFILES_DIR;
+  }
+}
+
+function ensureProfilesDir() {
+  const dir = getProfilesDir();
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+ensureProfilesDir();
 
 // Instantiate services
 const streamService = new StreamService();
@@ -97,7 +119,29 @@ app.on("window-all-closed", () => {
 
 // IPC Handlers
 ipcMain.handle("load-config", () => configService.loadConfig(CONFIG_PATH));
-ipcMain.handle("save-config", (_, data) => configService.saveConfig(CONFIG_PATH, data));
+ipcMain.handle("save-config", (_, data) => {
+  const result = configService.saveConfig(CONFIG_PATH, data);
+  ensureProfilesDir();
+  return result;
+});
+
+ipcMain.handle("select-folder", async () => {
+  const { dialog } = require("electron");
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory", "createDirectory"]
+  });
+  if (!result.canceled && result.filePaths.length > 0) {
+    return result.filePaths[0];
+  }
+  return null;
+});
+
+ipcMain.handle("open-path", async (_, path) => {
+  if (!path) return false;
+  return await shell.openPath(path);
+});
+
+ipcMain.handle("get-default-path", () => DEFAULT_PROFILES_DIR);
 
 ipcMain.handle("set-token", (_, token) => streamService.setToken(token));
 ipcMain.handle("refresh-account", () => streamService.getInfo().then(info => ({ ok: true, info })).catch(err => ({ ok: false, error: err.message })));
@@ -107,11 +151,38 @@ ipcMain.handle("end-stream", () => streamService.end().then(ok => ({ ok })).catc
 ipcMain.handle("set-stream-id", (_, id) => streamService.setStreamId(id));
 
 ipcMain.handle("load-local-token", () => tokenService.loadLocalToken());
-ipcMain.handle("load-web-token", (event) => {
+ipcMain.handle("load-web-token", (event, options = {}) => {
   const win = BrowserWindow.fromWebContents(event.sender);
+  const profilesDir = getProfilesDir();
+  
+  // Resolve profile path if an accountId is provided
+  let profilePath = null;
+  if (options.accountId) {
+    profilePath = join(profilesDir, options.accountId);
+  } else {
+    // Generate a temporary or new ID if creating a new profile
+    const newId = `profile_${Date.now()}`;
+    profilePath = join(profilesDir, newId);
+  }
+
   return seleniumToken.loadWebToken(win, (status) => {
     event.sender.send("token-status", status);
-  });
+  }, { profilePath });
+});
+
+ipcMain.handle("delete-profile", (_, accountId) => {
+  if (!accountId) return false;
+  const profilesDir = getProfilesDir();
+  const profilePath = join(profilesDir, accountId);
+  try {
+    if (fs.existsSync(profilePath)) {
+      fs.rmSync(profilePath, { recursive: true, force: true });
+    }
+    return true;
+  } catch (err) {
+    console.error("Failed to delete profile:", err);
+    return false;
+  }
 });
 
 ipcMain.on("window-minimize", (event) => {

@@ -17,14 +17,34 @@ contextBridge.exposeInMainWorld("api", {
   windowClose: () => ipcRenderer.send("window-close"),
   openExternal: (url) => ipcRenderer.send("open-external", url),
   rendererReady: () => ipcRenderer.send("renderer-ready"),
+  selectFolder: () => ipcRenderer.invoke("select-folder"),
+  openPath: (path) => ipcRenderer.invoke("open-path", path),
+  getDefaultPath: () => ipcRenderer.invoke("get-default-path"),
+  deleteProfile: (accountId) => ipcRenderer.invoke("delete-profile", accountId),
   
-  onTokenStatus: (callback) => ipcRenderer.on("token-status", (_, status) => callback(status)),
+  onTokenStatus: (callback) => {
+    const subscription = (_, status) => callback(status);
+    ipcRenderer.on("token-status", subscription);
+    return () => ipcRenderer.removeListener("token-status", subscription);
+  },
   
   // Update APIs
   getAppVersion: () => ipcRenderer.invoke("get-app-version"),
-  onUpdateAvailable: (callback) => ipcRenderer.on("update-available", (_, info) => callback(info)),
-  onUpdateDownloaded: (callback) => ipcRenderer.on("update-downloaded", () => callback()),
-  onUpdateError: (callback) => ipcRenderer.on("update-error", (_, err) => callback(err)),
+  onUpdateAvailable: (callback) => {
+    const subscription = (_, info) => callback(info);
+    ipcRenderer.on("update-available", subscription);
+    return () => ipcRenderer.removeListener("update-available", subscription);
+  },
+  onUpdateDownloaded: (callback) => {
+    const subscription = () => callback();
+    ipcRenderer.on("update-downloaded", subscription);
+    return () => ipcRenderer.removeListener("update-downloaded", subscription);
+  },
+  onUpdateError: (callback) => {
+    const subscription = (_, err) => callback(err);
+    ipcRenderer.on("update-error", subscription);
+    return () => ipcRenderer.removeListener("update-error", subscription);
+  },
   startDownload: () => ipcRenderer.send("start-download"),
   quitAndInstall: () => ipcRenderer.send("quit-and-install")
 });

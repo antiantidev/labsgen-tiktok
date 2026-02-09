@@ -26,6 +26,28 @@
     --radius: 0.75rem;
   }
 
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 144.9 80.7% 4.6%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 90%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142.1 70.6% 45.3%;
+  }
+
   * {
     @apply border-border;
   }
@@ -53,7 +75,11 @@
 
 /* Glassmorphism */
 .glass {
-  @apply bg-black/20 backdrop-blur-xl border-white/5;
+  @apply bg-card/60 backdrop-blur-xl border-border;
+}
+
+.light .glass {
+  @apply bg-white/70;
 }
 
 .drag {
@@ -78,8 +104,8 @@
   width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full;
+  @apply bg-muted rounded-full;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-white/20;
+  @apply bg-muted-foreground;
 }

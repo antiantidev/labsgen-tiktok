@@ -5,9 +5,9 @@ import { Check } from 'lucide-react'
 export const Button = ({ children, onClick, disabled, variant = 'primary', className = '', icon: Icon, loading }) => {
   const variants = {
     primary: 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/30',
-    secondary: 'bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground',
-    outline: 'bg-transparent border border-white/10 hover:border-primary/50 hover:text-primary',
-    ghost: 'bg-transparent hover:bg-white/5 text-muted-foreground hover:text-foreground',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-muted transition-colors',
+    outline: 'bg-transparent border border-border hover:border-primary/50 hover:text-primary',
+    ghost: 'bg-transparent hover:bg-secondary text-muted-foreground hover:text-foreground',
     danger: 'bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white',
   }
 
@@ -45,7 +45,7 @@ export const Input = ({ label, icon: Icon, ...props }) => (
     <div className="relative">
       <input 
         {...props}
-        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 ring-primary/20 outline-none transition-all hover:bg-white/10 focus:bg-black/40 text-sm"
+        className="w-full bg-secondary border border-border rounded-2xl px-5 py-3.5 focus:ring-2 ring-primary/20 outline-none transition-all hover:bg-muted focus:bg-background text-sm"
       />
       {Icon && <Icon size={18} className="absolute right-5 top-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />}
     </div>
@@ -53,7 +53,7 @@ export const Input = ({ label, icon: Icon, ...props }) => (
 )
 
 export const Checkbox = ({ checked, onChange, label, description }) => (
-  <label className="flex items-center gap-4 p-5 rounded-3xl bg-white/5 border border-white/5 cursor-pointer hover:border-primary/30 transition-all group select-none">
+  <label className="flex items-center gap-4 p-5 rounded-3xl bg-secondary border border-border cursor-pointer hover:border-primary/30 transition-all group select-none">
     <div className="relative flex items-center justify-center">
       <input 
         type="checkbox" 
@@ -62,7 +62,7 @@ export const Checkbox = ({ checked, onChange, label, description }) => (
         onChange={(e) => onChange(e.target.checked)} 
       />
       <motion.div 
-        animate={checked ? { backgroundColor: 'hsl(var(--primary))', borderColor: 'hsl(var(--primary))' } : { backgroundColor: 'transparent', borderColor: 'rgba(255,255,255,0.1)' }}
+        animate={checked ? { backgroundColor: 'hsl(var(--primary))', borderColor: 'hsl(var(--primary))' } : { backgroundColor: 'transparent', borderColor: 'hsl(var(--border))' }}
         className="w-6 h-6 border-2 rounded-lg flex items-center justify-center transition-colors"
       >
         <AnimatePresence>

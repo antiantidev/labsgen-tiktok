@@ -6,17 +6,23 @@ module.exports = defineConfig({
     plugins: [externalizeDepsPlugin()],
     entry: "src/main/index.js",
     build: {
-      outDir: "dist/main"
+      outDir: "dist/main",
+      watch: {
+        usePolling: true
+      }
     }
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
     entry: "src/preload/index.js",
     build: {
-      outDir: "dist/preload"
+      outDir: "dist/preload",
+      watch: {
+        usePolling: true
+      }
     }
   },
-    renderer: {
+  renderer: {
       root: ".",
       plugins: [react()],
       server: {
