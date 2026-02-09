@@ -1,6 +1,6 @@
 {
   "name": "labs-gen-tik",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "StreamLabs TikTok Stream Key Generator (Electron rewrite)",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
