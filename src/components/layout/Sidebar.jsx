@@ -1,5 +1,5 @@
 import React from 'react'
-import { LayoutDashboard, Terminal, Settings, Database, Key, Activity, ShieldCheck, ShieldAlert } from 'lucide-react'
+import { LayoutDashboard, Radio, Settings, FileText, Users, Sliders, ShieldCheck, ShieldAlert } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../ui'
@@ -42,15 +42,15 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
 
   const menuItems = [
     { id: 'home', icon: LayoutDashboard, label: t('sidebar.dashboard') },
-    { id: 'console', icon: Terminal, label: t('sidebar.console') },
-    { id: 'setup', icon: Activity, label: t('sidebar.setup') },
-    { id: 'tokens', icon: Key, label: t('sidebar.tokens') },
-    { id: 'status', icon: Database, label: t('sidebar.status') },
+    { id: 'console', icon: Radio, label: t('sidebar.console') },
+    { id: 'setup', icon: Sliders, label: t('sidebar.setup') },
+    { id: 'tokens', icon: Users, label: t('sidebar.tokens') },
+    { id: 'status', icon: FileText, label: t('sidebar.status') },
     { id: 'settings', icon: Settings, label: t('sidebar.settings') },
   ]
 
   return (
-    <aside className="w-72 h-screen flex flex-col border-r border-border/60 bg-[linear-gradient(180deg,rgba(12,14,20,0.95)_0%,rgba(10,12,18,0.85)_40%,rgba(10,12,18,0.95)_100%)] light:bg-secondary/20 relative z-50 shadow-[0_25px_60px_rgba(0,0,0,0.45)]">
+    <aside className="sidebar-shell w-72 h-screen flex flex-col border-r border-border/60 relative z-50 shadow-[0_25px_60px_rgba(0,0,0,0.45)] light:shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
       <div className="py-12 flex flex-col items-center justify-center shrink-0">
         <div className="flex items-center gap-4 group cursor-pointer">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-[0_12px_30px_rgba(34,197,94,0.35)] group-hover:rotate-6 transition-transform duration-500 ring-1 ring-primary/20">
