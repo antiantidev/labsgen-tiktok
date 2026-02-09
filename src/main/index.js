@@ -20,6 +20,19 @@ let mainWindow = null;
 let logSender = null;
 const LOG_RETENTION = 5000;
 
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+if (!gotSingleInstanceLock) {
+  app.quit();
+} else {
+  app.on("second-instance", () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+}
+
 // Initialize Database
 const dbService = new DBService(app.getPath("userData"));
 const dbReady = dbService.init();
@@ -94,7 +107,7 @@ function createTray(win) {
 
   tray = new Tray(icon);
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'LABGEN TIKTOK', enabled: false },
+    { label: 'Labsgen Tiktok', enabled: false },
     { type: 'separator' },
     { label: 'Show Application', click: () => { win.show(); } },
     { label: 'Quit', click: () => { 
@@ -103,7 +116,7 @@ function createTray(win) {
     } }
   ]);
 
-  tray.setToolTip('LABGEN TIKTOK');
+  tray.setToolTip('Labsgen Tiktok');
   tray.setContextMenu(contextMenu);
 
   tray.on('double-click', () => {
@@ -166,7 +179,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  app.setAppUserModelId("com.labgen-tiktok.app");
+  app.setAppUserModelId("com.labsgen-tiktok.app");
   addSystemLog(dbReady ? "success" : "error", dbReady ? "Database initialized" : "Database init failed");
   addSystemLog("info", `App ready v${app.getVersion()}`);
 

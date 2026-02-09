@@ -1,13 +1,13 @@
 {
-  "name": "labgen-tiktok",
-  "version": "0.15.3",
-  "description": "LABGEN TIKTOK - StreamLabs TikTok Stream Key Generator",
+  "name": "labsgen-tiktok",
+  "version": "0.15.9",
+  "description": "Labsgen Tiktok - StreamLabs TikTok Stream Key Generator",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/antiantidev/labs-gen-tik.git"
+    "url": "https://github.com/antiantidev/labsgen-tiktok.git"
   },
   "scripts": {
     "start": "electron-vite preview",
@@ -19,8 +19,8 @@
     "test": "node --test"
   },
   "build": {
-    "appId": "com.labgen-tiktok.app",
-    "productName": "LABGEN TIKTOK",
+    "appId": "com.labsgen-tiktok.app",
+    "productName": "Labsgen Tiktok",
     "directories": {
       "output": "dist/installers"
     },
@@ -44,8 +44,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "runAfterFinish": true,
-      "uninstallDisplayName": "LABGEN TIKTOK",
-      "shortcutName": "LABGEN TIKTOK",
+      "uninstallDisplayName": "Labsgen Tiktok",
+      "shortcutName": "Labsgen Tiktok",
       "multiLanguageInstaller": true,
       "displayLanguageSelector": true,
       "installerLanguages": [

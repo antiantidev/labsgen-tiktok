@@ -25,7 +25,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
     setCheckingUpdate(false)
     if (res.ok && res.upToDate) {
       setIsUpToDate(true)
-      await showModal(t('common.up_to_date'), `${t('common.up_to_date_desc')} LABGEN TIKTOK (v${version})`)
+      await showModal(t('common.up_to_date'), `${t('common.up_to_date_desc')} Labsgen Tiktok (v${version})`)
     } else {
       setIsUpToDate(false)
     }
@@ -230,7 +230,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
                 <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">OS Support</span>
                 <span className="text-[12px] font-bold font-mono">Windows 10/11</span>
               </div>
-              <Button variant="outline" className="w-full mt-4 h-12 text-xs" onClick={() => window.api.openExternal("https://github.com/antiantidev/labs-gen-tik")}>
+              <Button variant="outline" className="w-full mt-4 h-12 text-xs" onClick={() => window.api.openExternal("https://github.com/antiantidev/labsgen-tiktok")}>
                 <Cpu size={14} className="mr-2" />
                 {t('settings.github_repo')}
               </Button>

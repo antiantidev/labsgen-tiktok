@@ -1,7 +1,7 @@
-# LABGEN TIKTOK
+# Labsgen Tiktok
 
 <div align="center">
-  <img src="resources/logo.svg" alt="LABGEN TIKTOK Logo" width="120" height="120" />
+  <img src="resources/logo.svg" alt="Labsgen Tiktok Logo" width="120" height="120" />
   <p><strong>Professional StreamLabs TikTok Ingest & Metadata Orchestrator</strong></p>
   <p>
     <img src="https://img.shields.io/badge/Version-0.12.0-primary?style=for-the-badge&logo=electron" alt="Version" />
@@ -14,7 +14,7 @@
 ---
 
 ## 📖 Overview
-**LABGEN TIKTOK** is a professional desktop solution built on Electron that helps streamers optimize the extraction of **Ingest (RTMP URL & Stream Key)** from Streamlabs to broadcast live on TikTok.
+**Labsgen Tiktok** is a professional desktop solution built on Electron that helps streamers optimize the extraction of **Ingest (RTMP URL & Stream Key)** from Streamlabs to broadcast live on TikTok.
 
 The app combines the performance of **SQLite 3**, the security of **Electron safeStorage**, and a modern **Edge-to-Edge** design language to deliver a stable, premium streaming workflow.
 
@@ -45,7 +45,7 @@ The app combines the performance of **SQLite 3**, the security of **Electron saf
 ### Development Setup
 ```bash
 # Clone the repository
-git clone https://github.com/antiantidev/labs-gen-tik.git
+git clone https://github.com/antiantidev/labsgen-tiktok.git
 
 # Install dependencies
 npm install

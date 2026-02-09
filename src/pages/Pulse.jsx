@@ -59,7 +59,7 @@ const Pulse = ({ statusLog = [], setStatusLog, logPage = 1, logPageSize = 100, l
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `labs-gen-tik-${new Date().getTime()}.log`
+    a.download = `labsgen-tiktok-${new Date().getTime()}.log`
     a.click()
   }
 

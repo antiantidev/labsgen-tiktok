@@ -259,12 +259,18 @@ const App = () => {
         if (data.activeAccountId) setActiveAccountId(data.activeAccountId)
         if (data.lastPage) setCurrentPage(data.lastPage)
         if (data.theme) setTheme(data.theme)
-        if (data.language) i18n.changeLanguage(data.language)
+        if (data.language && i18n.exists(data.language)) {
+          i18n.changeLanguage(data.language)
+        } else {
+          i18n.changeLanguage('en')
+        }
         if (data.title) setStreamTitle(data.title)
         if (data.game) setGameCategory(data.game)
         if (data.game_mask_id) setGameMaskId(data.game_mask_id)
         if (data.audience_type) setMature(data.audience_type === '1')
         if (data.token) setToken(data.token)
+      } else {
+        i18n.changeLanguage('en')
       }
       setLoadProgress(60); setLoadingMessage('Verifying system dependencies...')
       if (!(await window.api.checkDriverExists())) {
@@ -287,7 +293,9 @@ const App = () => {
   useEffect(() => {
     const cu = window.api.onUpdateAvailable((i) => showModal(t('update.available'), `${t('update.desc')} (${i.latest}).`, [{ label: t('update.now'), value: 'download', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'download') window.api.startDownload(); }))
     const cd = window.api.onUpdateDownloaded(() => showModal(t('update.ready'), t('update.ready_desc'), [{ label: t('update.restart'), value: 'install', primary: true }, { label: t('update.later'), value: 'cancel', primary: false }]).then(r => { if (r.value === 'install') window.api.quitAndInstall() }))
-    const ce = window.api.onUpdateError(() => pushToast('Update failed', 'error'))
+    const ce = window.api.onUpdateError(() => {
+      pushToast(t('update.fetch_failed'), 'error')
+    })
     const ct = window.api.onTokenStatus((m) => { setLoadingMessage(m); pushStatus(`Web: ${m}`, 'info'); })
     const cl = window.api.onSystemLog((entry) => {
       if (!entry) return;
@@ -303,7 +311,7 @@ const App = () => {
       }
     })
     return () => { cu(); cd(); ce(); ct(); cl(); }
-  }, [pushStatus, showModal, pushToast, t, logPage, logPageSize])
+  }, [pushStatus, showModal, pushToast, t, logPage, logPageSize, manualUpdateCheck])
 
   return (
     <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Plus_Jakarta_Sans']">

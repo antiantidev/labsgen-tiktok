@@ -14,7 +14,7 @@
     "not_applied": "Not applied",
     "restricted_status": "Restricted",
     "up_to_date": "Up to date",
-    "up_to_date_desc": "You are using the latest stable version of LABGEN TIKTOK"
+    "up_to_date_desc": "You are using the latest stable version of Labsgen Tiktok"
   },
   "driver": {
     "missing_title": "Missing system dependency",
@@ -176,11 +176,12 @@
     "downloading_desc": "Downloading the installer from the CDN.",
     "ready": "Ready to install",
     "ready_desc": "Update package verified. Restart to finish.",
-    "restart": "Restart & Update"
+    "restart": "Restart & Update",
+    "fetch_failed": "Unable to fetch the latest version from the server."
   },
   "settings": {
     "title": "Settings",
-    "desc": "Configure how LABGEN TIKTOK runs and manages resources.",
+    "desc": "Configure how Labsgen Tiktok runs and manages resources.",
     "display_mode": "Display mode",
     "switch_light": "Switch to Light",
     "switch_dark": "Switch to Dark",
@@ -210,7 +211,7 @@
     "driver_ready": "ChromeDriver Ready",
     "driver_healthy": "System version is healthy.",
     "driver_reinstall": "Reinstall Driver",
-    "app_platform": "LABGEN TIKTOK for Windows",
+    "app_platform": "Labsgen Tiktok for Windows",
     "github_repo": "GitHub Repository"
   }
 }

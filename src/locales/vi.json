@@ -14,7 +14,7 @@
     "not_applied": "Chưa áp dụng",
     "restricted_status": "Bị hạn chế",
     "up_to_date": "Đã cập nhật",
-    "up_to_date_desc": "Bạn đang dùng phiên bản ổn định mới nhất của LABGEN TIKTOK"
+    "up_to_date_desc": "Bạn đang dùng phiên bản ổn định mới nhất của Labsgen Tiktok"
   },
   "driver": {
     "missing_title": "Thiếu thành phần hệ thống",
@@ -176,11 +176,12 @@
     "downloading_desc": "Đang tải gói cài đặt từ CDN.",
     "ready": "Sẵn sàng cài đặt",
     "ready_desc": "Gói cập nhật đã được xác thực. Khởi động lại để hoàn tất.",
-    "restart": "Khởi động lại & Cập nhật"
+    "restart": "Khởi động lại & Cập nhật",
+    "fetch_failed": "Không thể lấy phiên bản mới nhất từ máy chủ."
   },
   "settings": {
     "title": "Thiết lập",
-    "desc": "Tùy chỉnh vận hành và quản lý tài nguyên của LABGEN TIKTOK.",
+    "desc": "Tùy chỉnh vận hành và quản lý tài nguyên của Labsgen Tiktok.",
     "display_mode": "Chế độ hiển thị",
     "switch_light": "Chuyển sang sáng",
     "switch_dark": "Chuyển sang tối",
@@ -210,7 +211,7 @@
     "driver_ready": "ChromeDriver sẵn sàng",
     "driver_healthy": "Phiên bản hệ thống ổn định.",
     "driver_reinstall": "Cài lại Driver",
-    "app_platform": "LABGEN TIKTOK cho Windows",
+    "app_platform": "Labsgen Tiktok cho Windows",
     "github_repo": "Kho GitHub"
   }
 }

@@ -54,7 +54,7 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
       <div className="py-8 flex flex-col items-center justify-center shrink-0">
         <div className="flex items-center gap-4 group cursor-pointer">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-[0_10px_24px_rgba(34,197,94,0.28)] group-hover:rotate-6 transition-transform duration-500 ring-1 ring-primary/20">
-            <img src={logoUrl} alt="LABGEN TIKTOK" className="w-10 h-10 rounded-xl" />
+            <img src={logoUrl} alt="Labsgen Tiktok" className="w-10 h-10 rounded-xl" />
           </div>
           <div className="flex flex-col">
             <span className="font-black text-[16px] tracking-tighter leading-none text-foreground uppercase">LABGEN</span>
