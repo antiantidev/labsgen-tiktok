@@ -40,7 +40,7 @@ const TokenVault = ({
           title="ChromeDriver Missing"
           message="The web capture engine is currently disabled. Please go to Settings to download the required components."
           actions={
-            <Button variant="secondary" onClick={() => setCurrentPage('settings')} className="h-9 px-4 rounded-xl text-[10px]" icon={ArrowRight}>
+            <Button variant="secondary" onClick={() => setCurrentPage('settings')} className="h-9 px-4 rounded-lg text-[10px]" icon={ArrowRight}>
               Go to Settings
             </Button>
           }
@@ -49,22 +49,21 @@ const TokenVault = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-10">
-          {/* Stored Entities Grid */}
           <Card title={t('tokens.saved_accounts')}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {isLoading && accounts.length === 0 ? (
-                [1, 2, 3, 4].map(i => <Skeleton key={i} className="h-[110px] w-full rounded-3xl" />)
+                [1, 2, 3, 4].map(i => <Skeleton key={i} className="h-[110px] w-full rounded-xl" />)
               ) : (
                 <>
                   {accounts.length > 0 ? (
                     [...accounts].sort((a, b) => (a.type === 'web' ? -1 : 1)).map((acc) => (
                       <div 
                         key={acc.id} 
-                        className={`p-5 rounded-3xl border transition-all group relative overflow-hidden flex flex-col justify-center min-h-[110px] ${activeAccountId === acc.id ? 'bg-primary/5 border-primary/30' : 'bg-secondary border-border hover:border-primary/20'}`}
+                        className={`p-5 rounded-xl border transition-all group relative overflow-hidden flex flex-col justify-center min-h-[110px] ${activeAccountId === acc.id ? 'bg-primary/5 border-primary/30' : 'bg-secondary border-border hover:border-primary/20'}`}
                       >
                         <div className="flex items-start justify-between relative z-10 gap-3">
                           <div className="flex items-start gap-3 min-w-0 flex-1 cursor-pointer" onClick={() => selectAccount(acc.id)}>
-                            <div className={`p-2.5 rounded-2xl relative shrink-0 mt-0.5 ${activeAccountId === acc.id ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground'}`}>
+                            <div className={`p-2.5 rounded-lg relative shrink-0 mt-0.5 ${activeAccountId === acc.id ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground'}`}>
                               <User size={18} />
                               <div className="absolute -top-1 -right-1">
                                 {acc.type === 'local' ? (
@@ -92,20 +91,20 @@ const TokenVault = ({
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-2xl border border-border/50">
+                          <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-xl border border-border/50">
                             {activeAccountId !== acc.id ? (
-                              <button onClick={() => selectAccount(acc.id)} className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><CheckCircle2 size={14} /></button>
+                              <button onClick={() => selectAccount(acc.id)} className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><CheckCircle2 size={14} /></button>
                             ) : (
-                              <div className="p-2 rounded-xl text-primary bg-primary/10"><ShieldCheck size={14} /></div>
+                              <div className="p-2 rounded-lg text-primary bg-primary/10"><ShieldCheck size={14} /></div>
                             )}
-                            <button onClick={() => deleteAccount(acc.id)} className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={14} /></button>
+                            <button onClick={() => deleteAccount(acc.id)} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={14} /></button>
                           </div>
                         </div>
                         {activeAccountId === acc.id && <div className="absolute -right-2 -bottom-2 opacity-10 text-primary pointer-events-none"><ShieldCheck size={64} /></div>}
                       </div>
                     ))
                   ) : (
-                    <div className="col-span-full py-10 flex flex-col items-center justify-center text-muted-foreground opacity-20 border-2 border-dashed border-border rounded-[32px]">
+                    <div className="col-span-full py-10 flex flex-col items-center justify-center text-muted-foreground opacity-20 border-2 border-dashed border-border rounded-xl">
                       <User size={48} />
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] mt-4">No accounts saved</span>
                     </div>
@@ -115,7 +114,6 @@ const TokenVault = ({
             </div>
           </Card>
 
-          {/* New Identity Section - Moved down as requested */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 px-2">
               <PlusCircle size={16} className="text-primary" />
@@ -126,22 +124,22 @@ const TokenVault = ({
               <button 
                 onClick={() => loadWebToken()}
                 disabled={isWebLoading}
-                className="p-6 rounded-[32px] bg-secondary/30 border border-border hover:border-info/40 hover:bg-info/5 transition-all flex items-center gap-5 group"
+                className="p-6 rounded-xl bg-secondary/30 border border-border hover:border-info/40 hover:bg-info/5 transition-all flex items-center gap-5 group text-foreground text-left"
               >
-                <div className="p-4 rounded-2xl bg-info/10 text-info group-hover:scale-110 transition-transform"><Globe size={24} /></div>
-                <div className="flex flex-col items-start text-left">
-                  <span className="text-xs font-black uppercase tracking-widest text-foreground">{t('tokens.web_capture')}</span>
+                <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Globe size={24} /></div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs font-black uppercase tracking-widest">{t('tokens.web_capture')}</span>
                   <span className="text-[9px] font-bold text-muted-foreground">{t('tokens.web_desc')}</span>
                 </div>
               </button>
 
               <button 
                 onClick={() => loadLocalToken()}
-                className="p-6 rounded-[32px] bg-secondary/30 border border-border hover:border-warning/40 hover:bg-warning/5 transition-all flex items-center gap-5 group"
+                className="p-6 rounded-xl bg-secondary/30 border border-border hover:border-warning/40 hover:bg-warning/5 transition-all flex items-center gap-5 group text-foreground text-left"
               >
-                <div className="p-4 rounded-2xl bg-warning/10 text-warning group-hover:scale-110 transition-transform"><HardDrive size={24} /></div>
-                <div className="flex flex-col items-start text-left">
-                  <span className="text-xs font-black uppercase tracking-widest text-foreground">{t('tokens.local_fetch')}</span>
+                <div className="p-4 rounded-lg bg-warning/10 text-warning group-hover:scale-110 transition-transform"><HardDrive size={24} /></div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs font-black uppercase tracking-widest">{t('tokens.local_fetch')}</span>
                   <span className="text-[9px] font-bold text-muted-foreground">{t('tokens.local_desc')}</span>
                 </div>
               </button>
@@ -164,9 +162,9 @@ const TokenVault = ({
                 <div className="pt-2">
                   <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">{t('tokens.permission')}</span>
                   {isLoading ? (
-                    <Skeleton className="h-12 w-full rounded-2xl" />
+                    <Skeleton className="h-12 w-full rounded-xl" />
                   ) : (
-                    <div className={`p-4 rounded-2xl border font-black text-[10px] tracking-widest text-center ${canGoLive ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-destructive/5 border-destructive/20 text-destructive'}`}>
+                    <div className={`p-4 rounded-xl border font-black text-[10px] tracking-widest text-center ${canGoLive ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-destructive/5 border-destructive/20 text-destructive'}`}>
                       {canGoLive ? t('tokens.full_rights') : t('tokens.restricted_rights')}
                     </div>
                   )}

@@ -61,7 +61,7 @@ export const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, vers
       </div>
 
       <div className="mt-auto p-8 space-y-6">
-        <div className="p-6 rounded-[32px] bg-secondary border border-border relative overflow-hidden group shadow-sm">
+        <div className="p-6 rounded-2xl bg-secondary border border-border relative overflow-hidden group shadow-sm">
           <div className="flex items-center gap-4 relative z-10">
             <div className={`p-2.5 rounded-xl ${canGoLive ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
               {canGoLive ? <ShieldCheck size={18} /> : <ShieldAlert size={18} />}

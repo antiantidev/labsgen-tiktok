@@ -17,7 +17,7 @@ export const Button = ({ children, onClick, disabled, variant = 'primary', class
       whileTap={!disabled ? { scale: 0.98 } : {}}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all disabled:opacity-30 ${variants[variant]} ${className}`}
+      className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest transition-all disabled:opacity-30 ${variants[variant]} ${className}`}
     >
       {loading ? (
         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -32,7 +32,7 @@ export const Card = ({ children, title, className = "", onClick }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     onClick={onClick}
-    className={`glass border rounded-3xl p-6 transition-all group ${onClick ? 'cursor-pointer hover:border-primary/30' : ''} ${className}`}
+    className={`glass border rounded-xl p-6 transition-all group ${onClick ? 'cursor-pointer hover:border-primary/30' : ''} ${className}`}
   >
     {title && <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-5 group-hover:text-primary transition-colors">{title}</h3>}
     {children}
@@ -46,8 +46,8 @@ export const AlertBanner = ({ title, message, variant = 'warn', actions }) => {
     info: 'bg-info/10 border-info/20 text-info'
   }
   return (
-    <div className={`p-6 rounded-[32px] border flex items-start gap-5 ${styles[variant]}`}>
-      <div className="p-3 rounded-2xl bg-background/50 border border-current/10 shrink-0">
+    <div className={`p-6 rounded-xl border flex items-start gap-5 ${styles[variant]}`}>
+      <div className="p-3 rounded-lg bg-background/50 border border-current/10 shrink-0">
         <AlertCircle size={24} />
       </div>
       <div className="flex-1 space-y-1">
@@ -65,7 +65,7 @@ export const Input = ({ label, icon: Icon, className = "", ...props }) => (
     <div className="relative">
       <input 
         {...props}
-        className={`w-full bg-secondary border border-border rounded-2xl px-5 py-3.5 focus:ring-2 ring-primary/20 outline-none transition-all hover:bg-muted focus:bg-background text-sm ${className}`}
+        className={`w-full bg-secondary border border-border rounded-xl px-5 py-3.5 focus:ring-2 ring-primary/20 outline-none transition-all hover:bg-muted focus:bg-background text-sm ${className}`}
       />
       {Icon && <Icon size={18} className="absolute right-5 top-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />}
     </div>
@@ -78,7 +78,7 @@ export const Checkbox = ({ checked, onChange, label, description }) => (
       <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       <motion.div 
         animate={checked ? { backgroundColor: 'hsl(var(--primary))', borderColor: 'hsl(var(--primary))' } : { backgroundColor: 'transparent', borderColor: 'hsl(var(--border))' }}
-        className="w-6 h-6 border-2 rounded-lg flex items-center justify-center transition-colors"
+        className="w-6 h-6 border-2 rounded-md flex items-center justify-center transition-colors"
       >
         <AnimatePresence>
           {checked && (
@@ -97,7 +97,7 @@ export const Checkbox = ({ checked, onChange, label, description }) => (
 )
 
 export const Switch = ({ checked, onChange, label, description }) => (
-  <label className="flex items-center justify-between p-4 rounded-2xl bg-secondary/50 border border-border hover:border-primary/30 transition-all cursor-pointer group">
+  <label className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 border border-border hover:border-primary/30 transition-all cursor-pointer group">
     <div className="flex flex-col">
       <span className="text-sm font-bold group-hover:text-primary transition-colors">{label}</span>
       {description && <span className="text-[10px] text-muted-foreground">{description}</span>}
@@ -119,41 +119,17 @@ export const Switch = ({ checked, onChange, label, description }) => (
 )
 
 export const Skeleton = ({ className = "" }) => (
-  <div className={`skeleton ${className}`} />
+  <div className={`skeleton ${className} rounded-lg`} />
 )
 
 export const LoadingOverlay = ({ message, progress }) => (
-
-  <motion.div 
-
-    exit={{ 
-
-      opacity: 0, 
-
-      scale: 1.05, 
-
-      filter: 'blur(20px)',
-
-      transition: { duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] } 
-
-    }}
-
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.05, filter: 'blur(20px)', transition: { duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] } }}
     className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-background backdrop-blur-md"
-
   >
-
-    <motion.div 
-
-      initial={{ y: 0 }}
-
-      exit={{ y: -40, opacity: 0, transition: { duration: 0.6 } }}
-
-      className="flex flex-col items-center"
-
-    >
+    <motion.div initial={{ y: 0 }} exit={{ y: -40, opacity: 0, transition: { duration: 0.6 } }} className="flex flex-col items-center">
       <div className="relative mb-12">
-        <div className="w-24 h-24 rounded-[40px] bg-primary/10 flex items-center justify-center animate-pulse">
-          <div className="w-14 h-14 rounded-[32px] bg-primary shadow-[0_0_40px_hsl(var(--primary))] animate-bounce" />
+        <div className="w-24 h-24 rounded-[32px] bg-primary/10 flex items-center justify-center animate-pulse">
+          <div className="w-14 h-14 rounded-[24px] bg-primary shadow-[0_0_40px_hsl(var(--primary))] animate-bounce" />
         </div>
       </div>
       <div className="w-64 space-y-4">
@@ -184,11 +160,11 @@ export const Toast = ({ message, type = 'info', onClose }) => {
   }
   return (
     <motion.div layout initial={{ opacity: 0, y: -50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, y: -20, transition: { duration: 0.2 } }}
-      className={`flex items-center gap-4 p-4 rounded-2xl backdrop-blur-xl border border-white/10 shadow-2xl min-w-[320px] max-w-md pointer-events-auto group mx-auto ${bgColors[type]}`}
+      className={`flex items-center gap-4 p-4 rounded-xl backdrop-blur-xl border border-white/10 shadow-2xl min-w-[320px] max-w-md pointer-events-auto group mx-auto ${bgColors[type]}`}
     >
-      <div className={`p-2 rounded-xl bg-background/20 border border-white/10 shadow-sm`}>{icons[type]}</div>
+      <div className={`p-2 rounded-lg bg-background/20 border border-white/10 shadow-sm`}>{icons[type]}</div>
       <div className="flex-1 min-w-0"><p className={`text-xs font-black leading-tight text-center px-2 ${type === 'error' ? 'text-destructive-foreground' : 'text-foreground'}`}>{message}</p></div>
-      <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-2 -mr-1 rounded-xl hover:bg-white/10 text-white/60 hover:text-white transition-all shrink-0" aria-label="Close"><X size={16} /></button>
+      <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-2 -mr-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-all shrink-0" aria-label="Close"><X size={16} /></button>
     </motion.div>
   )
 }
