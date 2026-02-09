@@ -102,7 +102,9 @@
     "tips_desc": "Chọn đúng Game Mask ID giúp TikTok phân phối chính xác hơn.",
     "sync_database": "Đồng bộ dữ liệu",
     "syncing": "Đang đồng bộ...",
-    "select": "Chọn"
+    "select": "Chọn",
+    "sync_success": "Đã đồng bộ {{count}} danh mục mới",
+    "save_error": "Lỗi lưu nội bộ"
   },
   "console": {
     "title": "Trạm phát sóng",
@@ -176,6 +178,9 @@
   "settings": {
     "title": "Thiết lập",
     "desc": "Tùy chỉnh vận hành và quản lý tài nguyên của LABGEN TIKTOK.",
+    "display_mode": "Chế độ hiển thị",
+    "switch_light": "Chuyển sang sáng",
+    "switch_dark": "Chuyển sang tối",
     "appearance": "Giao diện",
     "theme_color": "Màu chủ đạo",
     "theme_color_desc": "Tùy chỉnh màu nhấn của giao diện.",
@@ -190,6 +195,15 @@
     "update_check": "Cập nhật",
     "check_now": "Kiểm tra cập nhật",
     "app_info": "Thông tin hệ thống",
-    "dev_mode": "Chế độ chẩn đoán"
+    "dev_mode": "Chế độ chẩn đoán",
+    "driver_missing_title": "Cần ChromeDriver",
+    "driver_missing_desc": "Thiếu ChromeDriver. Chức năng web capture sẽ không hoạt động cho đến khi cài đặt.",
+    "driver_missing_action": "Tải & Cài đặt",
+    "driver_status": "Trạng thái Driver",
+    "driver_ready": "ChromeDriver sẵn sàng",
+    "driver_healthy": "Phiên bản hệ thống ổn định.",
+    "driver_reinstall": "Cài lại Driver",
+    "app_platform": "LABGEN TIKTOK cho Windows",
+    "github_repo": "Kho GitHub"
   }
 }

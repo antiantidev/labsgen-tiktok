@@ -63,11 +63,11 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
           {isDriverMissing && (
             <AlertBanner 
               variant="error"
-              title="Action Required: ChromeDriver"
-              message="The system detected that ChromeDriver is missing. Web Capture login will not function without it."
+              title={t('settings.driver_missing_title')}
+              message={t('settings.driver_missing_desc')}
               actions={
                 <Button variant="primary" onClick={handleInstallDriver} loading={isInstallingDriver} className="h-10 px-6 rounded-xl text-xs" icon={Download}>
-                  Download & Install Now
+                  {t('settings.driver_missing_action')}
                 </Button>
               }
             />
@@ -78,10 +78,10 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   {theme === 'dark' ? <Moon className="text-primary" size={18} /> : <Sun className="text-primary" size={18} />}
-                  <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">Display Mode</span>
+                  <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">{t('settings.display_mode')}</span>
                 </div>
                 <Button variant="secondary" onClick={toggleTheme} className="w-full h-12 rounded-xl text-xs">
-                  {theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
+                  {theme === 'dark' ? t('settings.switch_light') : t('settings.switch_dark')}
                 </Button>
               </div>
 
@@ -95,7 +95,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
                     <button
                       key={lang}
                       onClick={() => i18n.changeLanguage(lang)}
-                      className={`flex-1 h-12 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all border ${i18n.language.startsWith(lang) ? 'bg-primary text-primary-foreground border-primary' : 'bg-secondary border-border hover:border-primary/30'}`}
+                      className={`flex-1 h-12 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all border ${i18n.language.startsWith(lang) ? 'bg-primary text-primary-foreground border-primary' : 'bg-secondary border-border light:bg-white/70 light:border-black/5 hover:border-primary/30'}`}
                     >
                       {lang.toUpperCase()}
                     </button>
@@ -124,7 +124,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
 
           <Card title={t('settings.paths')}>
             <div className="space-y-6">
-              <div className="p-6 rounded-xl bg-secondary/50 border border-border space-y-4">
+              <div className="p-6 rounded-xl bg-secondary/50 border border-border light:bg-white/70 light:border-black/5 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2.5 rounded-lg bg-primary/10 text-primary"><Folder size={18} /></div>
@@ -139,7 +139,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
                   </div>
                 </div>
                 <div 
-                  className="p-4 rounded-xl bg-background border border-border text-[12px] font-mono font-medium text-muted-foreground break-all cursor-pointer hover:text-primary transition-colors"
+                  className="p-4 rounded-xl bg-background border border-border light:bg-white/70 light:border-black/5 text-[12px] font-mono font-medium text-muted-foreground break-all cursor-pointer hover:text-primary transition-colors"
                   onClick={() => window.api.openPath(settings.customProfilePath || defaultPath)}
                 >
                   {settings.customProfilePath || defaultPath}
@@ -156,7 +156,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
                   <div 
                     key={item.label}
                     onClick={() => window.api.openPath(item.path)}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-secondary/30 border border-border hover:border-primary/20 hover:bg-secondary/50 transition-all cursor-pointer group"
+                    className="flex items-center gap-4 p-4 rounded-xl bg-secondary/30 border border-border light:bg-white/70 light:border-black/5 hover:border-primary/20 hover:bg-secondary/50 transition-all cursor-pointer group"
                   >
                     <div className="p-2.5 rounded-lg bg-secondary text-muted-foreground group-hover:text-primary transition-colors"><item.icon size={16} /></div>
                     <div className="flex flex-col min-w-0">
@@ -172,17 +172,17 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
 
         <div className="xl:col-span-4 space-y-10">
           {!isDriverMissing && (
-            <Card title="Driver Status">
+            <Card title={t('settings.driver_status')}>
               <div className="flex items-center gap-4">
                 <div className="p-3.5 rounded-lg bg-primary/10 text-primary">
                   <CheckCircle2 size={24} />
                 </div>
                 <div>
-                  <h4 className="font-black text-[13px] uppercase tracking-wide">ChromeDriver Ready</h4>
-                  <p className="text-[12px] font-medium text-muted-foreground">System version is healthy.</p>
+                  <h4 className="font-black text-[13px] uppercase tracking-wide">{t('settings.driver_ready')}</h4>
+                  <p className="text-[12px] font-medium text-muted-foreground">{t('settings.driver_healthy')}</p>
                 </div>
               </div>
-              <Button variant="outline" onClick={handleInstallDriver} loading={isInstallingDriver} className="w-full mt-6 h-12 text-xs">Reinstall Driver</Button>
+              <Button variant="outline" onClick={handleInstallDriver} loading={isInstallingDriver} className="w-full mt-6 h-12 text-xs">{t('settings.driver_reinstall')}</Button>
             </Card>
           )}
 
@@ -197,7 +197,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
               </div>
               <div>
                 <h4 className="font-black text-sm uppercase tracking-widest">v{version}</h4>
-                <p className="text-[12px] font-medium text-muted-foreground mt-1">LABGEN TIKTOK for Windows</p>
+                <p className="text-[12px] font-medium text-muted-foreground mt-1">{t('settings.app_platform')}</p>
               </div>
               {isUpToDate && (
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-success/10 text-success border border-success/20 mx-auto">
@@ -225,7 +225,7 @@ const Settings = ({ isDriverMissing, setIsDriverMissing, settings, setSettings, 
               </div>
               <Button variant="outline" className="w-full mt-4 h-12 text-xs" onClick={() => window.api.openExternal("https://github.com/antiantidev/labs-gen-tik")}>
                 <Cpu size={14} className="mr-2" />
-                GitHub Repository
+                {t('settings.github_repo')}
               </Button>
             </div>
           </Card>

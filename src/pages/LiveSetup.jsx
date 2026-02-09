@@ -44,7 +44,7 @@ const LiveSetup = ({
     const res = await window.api.syncCategories()
     if (res.ok) {
       setLocalCount(res.count)
-      if (pushToast) pushToast(`Synced ${res.added} new categories`, 'success')
+      if (pushToast) pushToast(t('setup.sync_success', { count: res.added }), 'success')
     } else {
       if (pushToast) pushToast(res.error || t('common.error'), 'error')
     }
@@ -62,7 +62,7 @@ const LiveSetup = ({
       }
     } catch (err) {
       console.error("Save error:", err)
-      if (pushToast) pushToast("Internal Save Error", "error")
+      if (pushToast) pushToast(t('setup.save_error'), "error")
     }
   }
 
@@ -189,7 +189,7 @@ const LiveSetup = ({
               <Button onClick={onSave} icon={Save} className="w-full py-6">
                 {t('setup.save_settings')}
               </Button>
-              <div className="p-6 rounded-[32px] bg-secondary/50 border border-border">
+              <div className="p-6 rounded-[32px] bg-secondary/50 border border-border light:bg-white/70 light:border-black/5">
                 <div className="flex items-center gap-3 mb-4">
                   <Users className="text-primary" size={20} />
                   <span className="text-[10px] font-black uppercase tracking-widest">{t('setup.tips')}</span>

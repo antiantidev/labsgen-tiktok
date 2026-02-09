@@ -102,7 +102,9 @@
     "tips_desc": "Choosing the correct Game Mask ID helps TikTok route your stream accurately.",
     "sync_database": "Sync database",
     "syncing": "Syncing...",
-    "select": "Select"
+    "select": "Select",
+    "sync_success": "Synced {{count}} new categories",
+    "save_error": "Internal save error"
   },
   "console": {
     "title": "Broadcast Hub",
@@ -176,6 +178,9 @@
   "settings": {
     "title": "Settings",
     "desc": "Configure how LABGEN TIKTOK runs and manages resources.",
+    "display_mode": "Display mode",
+    "switch_light": "Switch to Light",
+    "switch_dark": "Switch to Dark",
     "appearance": "Appearance",
     "theme_color": "Primary color",
     "theme_color_desc": "Customize the main UI accent color.",
@@ -190,6 +195,15 @@
     "update_check": "Updates",
     "check_now": "Check for updates",
     "app_info": "System info",
-    "dev_mode": "Diagnostics"
+    "dev_mode": "Diagnostics",
+    "driver_missing_title": "Action Required: ChromeDriver",
+    "driver_missing_desc": "ChromeDriver is missing. Web capture will not work until it is installed.",
+    "driver_missing_action": "Download & Install Now",
+    "driver_status": "Driver Status",
+    "driver_ready": "ChromeDriver Ready",
+    "driver_healthy": "System version is healthy.",
+    "driver_reinstall": "Reinstall Driver",
+    "app_platform": "LABGEN TIKTOK for Windows",
+    "github_repo": "GitHub Repository"
   }
 }
