@@ -12,6 +12,8 @@ const { DBService } = require("../../services/dbService");
 const seleniumToken = require("../../services/seleniumToken");
 const EncryptionService = require("../../services/encryptionService");
 
+autoUpdater.autoDownload = false;
+
 app.setPath("userData", join(app.getPath("appData"), "Labsgen Tiktok"));
 const DEFAULT_PROFILES_DIR = join(app.getPath("userData"), "profiles");
 
@@ -206,7 +208,7 @@ app.whenReady().then(() => {
 
   if (!is.dev) {
     addSystemLog("info", "Auto update check on launch");
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdates();
   }
 });
 
