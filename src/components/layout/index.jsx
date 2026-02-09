@@ -9,7 +9,7 @@ export const Titlebar = () => (
       onClick={() => window.api.windowMinimize()} 
       className="no-drag w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 light:hover:bg-black/5 text-muted-foreground hover:text-foreground transition-colors"
     >
-      <span className="text-2xl mt-[-10px]">_</span>
+      <div className="w-4 h-0.5 rounded-full bg-current" />
     </motion.button>
     <motion.button 
       whileHover={{ scale: 1.1 }} 
@@ -25,7 +25,10 @@ export const Titlebar = () => (
       onClick={() => window.api.windowClose()} 
       className="no-drag w-10 h-10 flex items-center justify-center rounded-2xl text-muted-foreground hover:text-rose-500 transition-all"
     >
-      <span className="text-2xl">×</span>
+      <div className="relative w-4 h-4">
+        <span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-current rounded-full" />
+        <span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-current rounded-full" />
+      </div>
     </motion.button>
   </header>
 )
