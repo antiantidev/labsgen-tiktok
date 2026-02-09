@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: Rounded Square with Primary Color -->
+  <rect width="512" height="512" rx="128" fill="#22C55E"/>
+  
+  <!-- Outer Glow Effect (Optional for SVG depth) -->
+  <rect width="512" height="512" rx="128" fill="url(#paint0_radial)" fill-opacity="0.2"/>
+
+  <!-- Inner Circle: Brand Identity -->
+  <circle cx="256" cy="256" r="100" stroke="#052E16" stroke-width="40"/>
+
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 256) rotate(90) scale(256)">
+      <stop stop-color="white"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

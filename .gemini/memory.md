@@ -1,0 +1,1 @@
+- Luôn trả lời tôi bằng tiếng Việt

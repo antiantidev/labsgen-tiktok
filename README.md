@@ -1,10 +1,10 @@
 # LABGEN TIKTOK
 
 <div align="center">
-  <img src="resources/icon.png" alt="LABGEN TIKTOK Logo" width="120" height="120" />
+  <img src="resources/logo.svg" alt="LABGEN TIKTOK Logo" width="120" height="120" />
   <p><strong>Professional StreamLabs TikTok Ingest & Metadata Orchestrator</strong></p>
   <p>
-    <img src="https://img.shields.io/badge/Version-0.11.0-primary?style=for-the-badge&logo=electron" alt="Version" />
+    <img src="https://img.shields.io/badge/Version-0.12.0-primary?style=for-the-badge&logo=electron" alt="Version" />
     <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform" />
     <img src="https://img.shields.io/badge/Framework-React_19-61DAFB?style=for-the-badge&logo=react" alt="Framework" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=for-the-badge&logo=sqlite" alt="Database" />
@@ -71,8 +71,8 @@ npx electron-builder --win nsis --x64
 - [**Cấu trúc thư mục chi tiết**](./DOCS_STRUCTURE.md)
 - [**Phân tích sâu tính năng**](./DOCS_FEATURES.md)
 
-## 📂 Version History (v0.11.0)
-Ứng dụng hiện tại đang hoạt động trên nhân Kernel ổn định v0.11.0.
+## 📂 Version History (v0.12.0)
+Ứng dụng hiện tại đang hoạt động trên nhân Kernel ổn định v0.12.0.
 
 ## 📄 Bản quyền & Liên hệ
 Dự án được phát triển bởi **Nhat Linh Nguyen**. 
