@@ -4,10 +4,10 @@ import { Check, X, Info, AlertTriangle, XCircle, ChevronRight, AlertCircle } fro
 
 export const Button = ({ children, onClick, disabled, variant = 'primary', className = '', icon: Icon, loading }) => {
   const variants = {
-    primary: 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/30',
-    secondary: 'bg-secondary text-secondary-foreground hover:bg-muted transition-colors',
+    primary: 'bg-[linear-gradient(135deg,hsl(var(--primary)),hsl(var(--primary))_55%,rgba(255,255,255,0.08))] text-primary-foreground shadow-[0_12px_32px_rgba(34,197,94,0.25)] hover:shadow-[0_18px_40px_rgba(34,197,94,0.35)] ring-1 ring-primary/30',
+    secondary: 'bg-secondary/70 text-secondary-foreground border border-white/5 hover:bg-secondary transition-colors',
     outline: 'bg-transparent border border-border hover:border-primary/50 hover:text-primary',
-    ghost: 'bg-transparent hover:bg-secondary text-muted-foreground hover:text-foreground',
+    ghost: 'bg-transparent hover:bg-secondary/70 text-muted-foreground hover:text-foreground',
     danger: 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-destructive-foreground',
   }
 
@@ -17,7 +17,7 @@ export const Button = ({ children, onClick, disabled, variant = 'primary', class
       whileTap={!disabled ? { scale: 0.98 } : {}}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-bold text-[13px] uppercase tracking-wider transition-all disabled:opacity-30 ${variants[variant]} ${className}`}
+      className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-[12px] uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:shadow-none ${variants[variant]} ${className}`}
     >
       {loading ? (
         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -36,22 +36,22 @@ export const Card = ({ children, title, className = "", onClick }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     onClick={onClick}
-    className={`glass border rounded-xl p-6 transition-all group ${onClick ? 'cursor-pointer hover:border-primary/30' : ''} ${className}`}
+    className={`glass border rounded-2xl p-6 transition-all group relative overflow-hidden ${onClick ? 'cursor-pointer hover:border-primary/30' : ''} ${className}`}
   >
-    {title && <h3 className="text-[11px] font-black uppercase tracking-[0.15em] text-muted-foreground mb-5 group-hover:text-primary transition-colors">{title}</h3>}
+    {title && <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 mb-5 group-hover:text-primary transition-colors">{title}</h3>}
     {children}
   </motion.div>
 )
 
 export const AlertBanner = ({ title, message, variant = 'warn', actions }) => {
   const styles = {
-    warn: 'bg-warning/10 border-warning/20 text-warning',
-    error: 'bg-destructive/10 border-destructive/20 text-destructive',
-    info: 'bg-info/10 border-info/20 text-info'
+    warn: 'bg-warning/10 border-warning/30 text-warning',
+    error: 'bg-destructive/10 border-destructive/30 text-destructive',
+    info: 'bg-info/10 border-info/30 text-info'
   }
   return (
-    <div className={`p-6 rounded-xl border flex items-start gap-5 ${styles[variant]}`}>
-      <div className="p-3 rounded-lg bg-background/50 border border-current/10 shrink-0">
+    <div className={`p-6 rounded-2xl border flex items-start gap-5 ${styles[variant]}`}>
+      <div className="p-3 rounded-xl bg-background/50 border border-current/10 shrink-0">
         <AlertCircle size={24} />
       </div>
       <div className="flex-1 space-y-1">
@@ -65,13 +65,13 @@ export const AlertBanner = ({ title, message, variant = 'warn', actions }) => {
 
 export const Input = ({ label, icon: Icon, className = "", ...props }) => (
   <div className="group space-y-2 w-full">
-    {label && <label className="text-[11px] uppercase font-bold text-muted-foreground ml-1 group-focus-within:text-primary transition-colors tracking-wide">{label}</label>}
+    {label && <label className="text-[10px] uppercase font-bold text-muted-foreground/80 ml-1 group-focus-within:text-primary transition-colors tracking-[0.2em]">{label}</label>}
     <div className="relative">
       <input 
         {...props}
-        className={`w-full bg-secondary border border-border rounded-xl px-5 py-3.5 focus:ring-2 ring-primary/20 outline-none transition-all hover:bg-muted focus:bg-background text-sm font-medium ${className}`}
+        className={`w-full bg-secondary/60 border border-border rounded-xl px-5 py-3.5 focus:ring-2 ring-primary/25 focus:border-primary/40 outline-none transition-all hover:bg-muted/80 focus:bg-background text-sm font-medium placeholder:text-muted-foreground/60 ${className}`}
       />
-      {Icon && <Icon size={18} className="absolute right-5 top-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />}
+      {Icon && <Icon size={18} className="absolute right-5 top-3.5 text-muted-foreground/80 group-focus-within:text-primary transition-colors" />}
     </div>
   </div>
 )
@@ -101,7 +101,7 @@ export const Checkbox = ({ checked, onChange, label, description }) => (
 )
 
 export const Switch = ({ checked, onChange, label, description }) => (
-  <label className="flex items-center justify-between p-5 rounded-xl bg-secondary/50 border border-border hover:border-primary/30 transition-all cursor-pointer group">
+  <label className="flex items-center justify-between p-5 rounded-2xl bg-secondary/50 border border-border hover:border-primary/30 transition-all cursor-pointer group">
     <div className="flex flex-col gap-0.5 pr-4">
       <span className="text-[14px] font-bold group-hover:text-primary transition-colors">{label}</span>
       {description && <span className="text-[12px] text-muted-foreground font-medium leading-relaxed">{description}</span>}
@@ -128,7 +128,7 @@ export const Skeleton = ({ className = "" }) => (
 
 export const LoadingOverlay = ({ message, progress }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.05, filter: 'blur(20px)', transition: { duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] } }}
-    className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-background backdrop-blur-md"
+    className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-background/90 backdrop-blur-xl"
   >
     <motion.div initial={{ y: 0 }} exit={{ y: -40, opacity: 0, transition: { duration: 0.6 } }} className="flex flex-col items-center">
       <div className="relative mb-12">
@@ -138,10 +138,10 @@ export const LoadingOverlay = ({ message, progress }) => (
       </div>
       <div className="w-64 space-y-4">
         <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden border border-white/5 relative">
-          <motion.div initial={{ width: 0 }} animate={{ width: `${progress || 0}%` }} className="h-full bg-primary shadow-[0_0_15px_hsl(var(--primary))]" />
+          <motion.div initial={{ width: 0 }} animate={{ width: `${progress || 0}%` }} className="h-full bg-primary shadow-[0_0_20px_hsl(var(--glow))]" />
         </div>
         <div className="flex flex-col items-center gap-1">
-          <motion.p key={message} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-[11px] font-black uppercase tracking-[0.2em] text-primary/80">{message}</motion.p>
+          <motion.p key={message} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/80">{message}</motion.p>
           <span className="text-[12px] font-bold text-muted-foreground tabular-nums">{Math.round(progress || 0)}%</span>
         </div>
       </div>
@@ -164,7 +164,7 @@ export const Toast = ({ message, type = 'info', onClose }) => {
   }
   return (
     <motion.div layout initial={{ opacity: 0, y: -50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, y: -20, transition: { duration: 0.2 } }}
-      className={`flex items-center gap-4 p-4 rounded-xl backdrop-blur-xl border border-white/10 shadow-2xl min-w-[320px] max-w-md pointer-events-auto group mx-auto ${bgColors[type]}`}
+      className={`flex items-center gap-4 p-4 rounded-2xl backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.35)] min-w-[320px] max-w-md pointer-events-auto group mx-auto ${bgColors[type]}`}
     >
       <div className={`p-2 rounded-lg bg-background/20 border border-white/10 shadow-sm`}>{icons[type]}</div>
       <div className="flex-1 min-w-0"><p className={`text-[13px] font-bold leading-snug text-center px-2 ${type === 'error' ? 'text-destructive-foreground' : 'text-foreground'}`}>{message}</p></div>

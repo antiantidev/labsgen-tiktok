@@ -16,7 +16,7 @@ const NavItem = ({ id, icon: Icon, label, active, onClick, disabled }) => (
       {active && (
         <motion.div 
           layoutId="activeSidebarHighlight"
-          className="absolute inset-0 bg-primary/[0.07] z-0"
+          className="absolute inset-0 bg-primary/[0.08] z-0"
           initial={false}
           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
         />
@@ -26,14 +26,14 @@ const NavItem = ({ id, icon: Icon, label, active, onClick, disabled }) => (
     {active && (
       <motion.div 
         layoutId="activeSidebarIndicator"
-        className="absolute right-0 top-0 bottom-0 w-1 bg-primary z-10"
+        className="absolute right-0 top-3 bottom-3 w-1 rounded-full bg-primary z-10 shadow-[0_0_12px_hsl(var(--glow))]"
         initial={false}
         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
       />
     )}
 
     <Icon size={22} className={`relative z-10 transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
-    <span className="relative z-10 text-[12px] font-black uppercase tracking-[0.15em]">{label}</span>
+    <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.22em]">{label}</span>
   </button>
 )
 
@@ -50,10 +50,10 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
   ]
 
   return (
-    <aside className="w-72 h-screen flex flex-col border-r border-border bg-secondary/10 light:bg-secondary/20 relative z-50 shadow-2xl">
+    <aside className="w-72 h-screen flex flex-col border-r border-border/60 bg-[linear-gradient(180deg,rgba(12,14,20,0.95)_0%,rgba(10,12,18,0.85)_40%,rgba(10,12,18,0.95)_100%)] light:bg-secondary/20 relative z-50 shadow-[0_25px_60px_rgba(0,0,0,0.45)]">
       <div className="py-12 flex flex-col items-center justify-center shrink-0">
         <div className="flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-2xl shadow-primary/40 group-hover:rotate-6 transition-transform duration-500">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-[0_12px_30px_rgba(34,197,94,0.35)] group-hover:rotate-6 transition-transform duration-500 ring-1 ring-primary/20">
             <img src={logoUrl} alt="LABGEN TIKTOK" className="w-12 h-12 rounded-xl" />
           </div>
           <div className="flex flex-col">
@@ -77,9 +77,9 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
         </div>
       </nav>
 
-      <div className="mt-auto shrink-0 border-t border-border/50 bg-secondary/5">
+      <div className="mt-auto shrink-0 border-t border-border/50 bg-secondary/10">
         <div className="p-6 space-y-6">
-          <div className="p-5 rounded-xl bg-secondary/50 border border-border relative overflow-hidden group shadow-sm">
+          <div className="p-5 rounded-2xl bg-secondary/60 border border-white/10 relative overflow-hidden group shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
             <div className="flex items-center gap-4 relative z-10">
               <div className={`p-2.5 rounded-lg shadow-inner ${canGoLive ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
                 {canGoLive ? <ShieldCheck size={20} /> : <ShieldAlert size={20} />}
