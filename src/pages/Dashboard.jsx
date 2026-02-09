@@ -181,7 +181,7 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }) => {
                 </span>
               )}
             </div>
-            <Button onClick={() => window.api.openExternal("https://buymeacoffee.com/loukious")} className="w-full py-4 bg-gradient-to-r from-primary to-success rounded-xl" icon={Heart}>
+            <Button onClick={() => window.api.openExternal("https://ko-fi.com/chokernguyen")} className="w-full py-4 bg-gradient-to-r from-primary to-success rounded-xl" icon={Heart}>
               {t('dashboard.support_project')}
             </Button>
           </div>
