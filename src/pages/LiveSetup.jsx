@@ -84,7 +84,7 @@ const LiveSetup = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         <div className="lg:col-span-8 space-y-8">
-          <Card title={t('setup.broadcast_info')} className="relative z-[100]">
+          <Card title={t('setup.broadcast_info')} className="relative z-[100] overflow-visible">
             <div className="space-y-10">
               <Input 
                 label={t('setup.stream_title')} 
