@@ -57,7 +57,7 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
             <img src={logoUrl} alt="Labsgen Tiktok" className="w-10 h-10 rounded-xl" />
           </div>
           <div className="flex flex-col">
-            <span className="font-black text-[16px] tracking-tighter leading-none text-foreground uppercase">LABGEN</span>
+            <span className="font-black text-[16px] tracking-tighter leading-none text-foreground uppercase">LABSGEN</span>
             <span className="font-bold text-[11px] text-muted-foreground tracking-[0.4em]">TIKTOK</span>
           </div>
         </div>

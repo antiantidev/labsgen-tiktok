@@ -17,9 +17,12 @@
     "up_to_date_desc": "Bạn đang dùng phiên bản ổn định mới nhất của Labsgen Tiktok"
   },
   "driver": {
-    "missing_title": "Thiếu thành phần hệ thống",
-    "missing_desc": "Để lấy Token qua trình duyệt, cần ChromeDriver tương thích. Bạn có muốn tải xuống ngay không?",
-    "download_now": "Tải ChromeDriver",
+    "missing_title": "ChromeDriver cần cập nhật",
+    "missing_desc": "ChromeDriver chưa có hoặc đã cũ. Ứng dụng sẽ khớp với phiên bản Chrome đang cài.",
+    "download_now": "Tải driver phù hợp",
+    "chrome_missing_title": "Máy chưa cài Google Chrome",
+    "chrome_missing_desc": "Không tìm thấy Google Chrome trên máy này. Hãy cài Chrome trước, sau đó quay lại và thử lại chức năng thu thập qua trình duyệt.",
+    "chrome_download": "Tải Chrome",
     "preparing": "Đang thiết lập ChromeDriver..."
   },
   "sidebar": {
@@ -35,6 +38,7 @@
     "welcome": "Xin chào,",
     "desc": "Hệ thống đã sẵn sàng tạo thông số phát cho buổi live của bạn.",
     "status_title": "Trạng thái tài khoản",
+    "live_status": "Trạng thái live",
     "quick_start": "Bắt đầu nhanh",
     "get_key": "Lấy thông số RTMP",
     "manage_tokens": "Quản lý tài khoản",
@@ -204,13 +208,13 @@
     "check_now": "Kiểm tra cập nhật",
     "app_info": "Thông tin hệ thống",
     "dev_mode": "Chế độ chẩn đoán",
-    "driver_missing_title": "Cần ChromeDriver",
-    "driver_missing_desc": "Thiếu ChromeDriver. Chức năng web capture sẽ không hoạt động cho đến khi cài đặt.",
-    "driver_missing_action": "Tải & Cài đặt",
+    "driver_missing_title": "ChromeDriver cần cập nhật",
+    "driver_missing_desc": "ChromeDriver chưa có hoặc đã cũ. Web capture sẽ tự khớp với phiên bản Chrome đang cài.",
+    "driver_missing_action": "Tải driver phù hợp",
     "driver_status": "Trạng thái Driver",
     "driver_ready": "ChromeDriver sẵn sàng",
-    "driver_healthy": "Phiên bản hệ thống ổn định.",
-    "driver_reinstall": "Cài lại Driver",
+    "driver_healthy": "Khớp với Chrome đã cài.",
+    "driver_reinstall": "Làm mới driver",
     "app_platform": "Labsgen Tiktok cho Windows",
     "github_repo": "Kho GitHub"
   }

@@ -15,6 +15,8 @@ import TokenVault from './pages/TokenVault'
 import Pulse from './pages/Pulse'
 import Settings from './pages/Settings'
 
+const CHROME_DOWNLOAD_URL = 'https://www.google.com/chrome/'
+
 const App = () => {
   const { t, i18n } = useTranslation()
   const [isLoading, setIsLoading] = useState(true)
@@ -106,6 +108,42 @@ const App = () => {
     return new Promise((resolve) => setModal({ show: true, title, body, buttons, resolve }))
   }, [])
 
+  const showChromeMissingModal = useCallback(async () => {
+    const choice = await showModal(
+      t('driver.chrome_missing_title'),
+      t('driver.chrome_missing_desc'),
+      [
+        { label: t('common.cancel'), value: 'cancel', primary: false },
+        { label: t('driver.chrome_download'), value: 'download', primary: true }
+      ]
+    )
+
+    if (choice.value === 'download') {
+      window.api.openExternal(CHROME_DOWNLOAD_URL)
+    }
+  }, [showModal, t])
+
+  const bootstrapDriver = async () => {
+    setIsLoading(true)
+    setLoadingMessage(t('driver.preparing'))
+    const res = await window.api.bootstrapDriver()
+    setIsLoading(false)
+
+    if (res.ok) {
+      setIsDriverMissing(false)
+      return true
+    }
+
+    if (res.code === 'CHROME_NOT_FOUND') {
+      await showChromeMissingModal()
+      setIsDriverMissing(true)
+      return false
+    }
+
+    pushToast(res.error || t('common.error'), 'error')
+    return false
+  }
+
   const closeModal = useCallback((value) => {
     setModal(prev => { if (prev.resolve) prev.resolve({ value }); return { ...prev, show: false, resolve: null } })
   }, [])
@@ -179,14 +217,36 @@ const App = () => {
   const loadWebToken = async (existingAccountId = null) => {
     pushStatus('Web token capture started', 'info')
     const driverExists = await window.api.checkDriverExists()
+
     if (!driverExists) {
-      const choice = await showModal(t('driver.missing_title'), t('driver.missing_desc'), [{ label: t('common.cancel'), value: 'cancel', primary: false }, { label: t('driver.download_now'), value: 'download', primary: true }])
+      const choice = await showModal(
+        t('driver.missing_title'),
+        t('driver.missing_desc'),
+        [
+          { label: t('common.cancel'), value: 'cancel', primary: false },
+          { label: t('driver.download_now'), value: 'download', primary: true }
+        ]
+      )
       if (choice.value === 'download') {
-        setIsLoading(true); setLoadingMessage(t('driver.preparing'))
-        const res = await window.api.bootstrapDriver(); if (res.ok) setIsDriverMissing(false); setIsLoading(false)
-      } else { setIsDriverMissing(true); return }
+        const bootstrapped = await bootstrapDriver()
+        if (!bootstrapped) {
+          return
+        }
+      } else {
+        setIsDriverMissing(true)
+        return
+      }
     }
-    setIsWebLoading(true); const res = await window.api.loadWebToken({ accountId: existingAccountId }); setIsWebLoading(false)
+
+    setIsWebLoading(true)
+    const res = await window.api.loadWebToken({ accountId: existingAccountId })
+    setIsWebLoading(false)
+
+    if (!res.token && res.code === 'CHROME_NOT_FOUND') {
+      await showChromeMissingModal()
+      setIsDriverMissing(true)
+      return
+    }
     if (res.token) { 
       setToken(res.token); let finalId = existingAccountId
       if (!existingAccountId) {
@@ -274,14 +334,31 @@ const App = () => {
         i18n.changeLanguage('en')
       }
       setLoadProgress(60); setLoadingMessage('Verifying system dependencies...')
-      if (!(await window.api.checkDriverExists())) {
-        setIsDriverMissing(true); setIsLoading(false) 
-        const choice = await showModal(t('driver.missing_title'), t('driver.missing_desc'), [{ label: t('common.cancel'), value: 'cancel', primary: false }, { label: t('driver.download_now'), value: 'download', primary: true }])
+      const driverExists = await window.api.checkDriverExists()
+      if (!driverExists) {
+        setIsDriverMissing(true)
+        const choice = await showModal(
+          t('driver.missing_title'),
+          t('driver.missing_desc'),
+          [
+            { label: t('common.cancel'), value: 'cancel', primary: false },
+            { label: t('driver.download_now'), value: 'download', primary: true }
+          ]
+        )
+
         if (choice.value === 'download') {
-          setIsLoading(true); setLoadingMessage(t('driver.preparing'))
-          const res = await window.api.bootstrapDriver(); if (res.ok) setIsDriverMissing(false); setLoadProgress(85)
+          const bootstrapped = await bootstrapDriver()
+          if (!bootstrapped) {
+            return
+          }
+          setLoadProgress(85)
+        } else {
+          return
         }
-      } else { setIsDriverMissing(false); setLoadProgress(85) }
+      } else {
+        setIsDriverMissing(false)
+        setLoadProgress(85)
+      }
       if (data?.settings?.autoRefresh && (token || data?.token)) {
         setLoadingMessage('Synchronizing account status...')
         await refreshAccountInfo(token || data.token, activeAccountId || data.activeAccountId); 

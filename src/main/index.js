@@ -62,6 +62,13 @@ function addSystemLog(level, message) {
   }
 }
 
+function serializeError(err) {
+  return {
+    error: err.message || "Unknown error",
+    code: err.code || null
+  };
+}
+
 function getProfilesDir() {
   try {
     const state = dbService.getSetting("app_state", {});
@@ -355,19 +362,25 @@ ipcMain.handle("set-stream-id", (_, id) => {
 ipcMain.handle("bootstrap-driver", async (event) => {
   try {
     addSystemLog("info", "ChromeDriver bootstrap started");
-    if (await driverService.checkDriver()) return { ok: true, alreadyExists: true };
-    await driverService.setupDriver((status) => event.sender.send("token-status", status));
-    addSystemLog("success", "ChromeDriver installed");
-    return { ok: true };
-  } catch (err) { return { ok: false, error: err.message }; }
+    const result = await driverService.ensureDriver((status) => event.sender.send("token-status", status));
+    addSystemLog("success", result.alreadyExists ? "ChromeDriver already up to date" : "ChromeDriver installed");
+    return { ok: true, alreadyExists: !!result.alreadyExists };
+  } catch (err) { return { ok: false, ...serializeError(err) }; }
 });
 ipcMain.handle("check-driver-exists", () => driverService.checkDriver());
 ipcMain.handle("load-local-token", () => tokenService.loadLocalToken());
-ipcMain.handle("load-web-token", (event, options = {}) => {
+ipcMain.handle("load-web-token", async (event, options = {}) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   const profilesDir = getProfilesDir();
   const profilePath = options.accountId ? join(profilesDir, options.accountId) : join(profilesDir, `profile_${Date.now()}`);
-  return seleniumToken.loadWebToken(win, (status) => event.sender.send("token-status", status), { 
+
+  try {
+    await driverService.ensureDriver((status) => event.sender.send("token-status", status));
+  } catch (err) {
+    return { token: null, ...serializeError(err) };
+  }
+
+  return seleniumToken.loadWebToken(win, (status) => event.sender.send("token-status", status), {
     profilePath,
     driverPath: driverService.getExecutablePath()
   });

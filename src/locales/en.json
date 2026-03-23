@@ -17,9 +17,12 @@
     "up_to_date_desc": "You are using the latest stable version of Labsgen Tiktok"
   },
   "driver": {
-    "missing_title": "Missing system dependency",
-    "missing_desc": "To capture tokens via the browser, a compatible ChromeDriver is required. Download it now?",
-    "download_now": "Download ChromeDriver",
+    "missing_title": "ChromeDriver Needs Update",
+    "missing_desc": "ChromeDriver is missing or out of date. The app will match it to your installed Chrome version.",
+    "download_now": "Download Matching Driver",
+    "chrome_missing_title": "Google Chrome Is Missing",
+    "chrome_missing_desc": "Google Chrome was not found on this computer. Install Chrome first, then come back and retry browser capture.",
+    "chrome_download": "Download Chrome",
     "preparing": "Setting up ChromeDriver..."
   },
   "sidebar": {
@@ -35,6 +38,7 @@
     "welcome": "Welcome,",
     "desc": "The system is ready to generate broadcast settings for your live session.",
     "status_title": "Account status",
+    "live_status": "Live status",
     "quick_start": "Quick start",
     "get_key": "Get RTMP details",
     "manage_tokens": "Manage accounts",
@@ -204,13 +208,13 @@
     "check_now": "Check for updates",
     "app_info": "System info",
     "dev_mode": "Diagnostics",
-    "driver_missing_title": "Action Required: ChromeDriver",
-    "driver_missing_desc": "ChromeDriver is missing. Web capture will not work until it is installed.",
-    "driver_missing_action": "Download & Install Now",
+    "driver_missing_title": "ChromeDriver Needs Update",
+    "driver_missing_desc": "ChromeDriver is missing or out of date. Web capture will match your installed Chrome version automatically.",
+    "driver_missing_action": "Download Matching Driver",
     "driver_status": "Driver Status",
     "driver_ready": "ChromeDriver Ready",
-    "driver_healthy": "System version is healthy.",
-    "driver_reinstall": "Reinstall Driver",
+    "driver_healthy": "Matches installed Chrome.",
+    "driver_reinstall": "Refresh Driver",
     "app_platform": "Labsgen Tiktok for Windows",
     "github_repo": "GitHub Repository"
   }

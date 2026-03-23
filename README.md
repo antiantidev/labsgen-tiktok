@@ -5,7 +5,7 @@
   <p><strong>TikTok Live Stream Key Generator for OBS from Streamlabs</strong></p>
   <p><em>Windows desktop app for fetching RTMP URL and Stream Key for OBS.</em></p>
   <p>
-    <img src="https://img.shields.io/badge/Version-0.17.9-primary?style=for-the-badge&logo=electron" alt="Version" />
+    <img src="https://img.shields.io/badge/Version-0.17.10-primary?style=for-the-badge&logo=electron" alt="Version" />
     <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform" />
     <img src="https://img.shields.io/badge/Framework-React_19-61DAFB?style=for-the-badge&logo=react" alt="Framework" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=for-the-badge&logo=sqlite" alt="Database" />
@@ -31,7 +31,8 @@ It centralizes the live setup flow:
 - Initialize ingest and copy RTMP details quickly.
 
 Under the hood, it uses SQLite 3 for local storage, Electron safeStorage for encryption,
-and an edge-to-edge UI for a fast streaming workflow.
+and an edge-to-edge UI for a fast streaming workflow. ChromeDriver is matched to the
+installed Google Chrome version so browser capture stays in sync after Chrome updates.
 
 ## Key Features
 
@@ -88,6 +89,10 @@ pnpm install
 # Start in development mode
 pnpm dev
 ```
+
+Notes:
+- Native modules are rebuilt automatically during `pnpm install`.
+- Browser capture will auto-detect installed Chrome and download a matching ChromeDriver.
 
 ### Build for Release
 
