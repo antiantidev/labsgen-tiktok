@@ -1,0 +1,68 @@
+name: Feature Request
+description: Propose an improvement or new feature
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing an improvement.
+        Please focus on problem, value, and expected behavior.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What pain point are you trying to solve?
+      placeholder: Describe the current limitation
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: What should be added or changed?
+      placeholder: Describe your proposal
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any other solutions you considered
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Main process
+        - Preload
+        - Renderer/UI
+        - Build/CI/Release
+        - Docs
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected Impact
+      description: Who benefits and how?
+      placeholder: User impact, workflow impact, maintenance impact
+    validations:
+      required: false
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups / References
+      description: Add screenshots, sketches, or links if relevant
+    validations:
+      required: false

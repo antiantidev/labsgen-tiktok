@@ -1,8 +1,12 @@
 {
   "name": "labsgen-tiktok",
-  "version": "0.17.13",
+  "version": "0.18.0",
   "description": "TikTok Live Stream Key Generator for OBS from Streamlabs",
   "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
   "license": "MIT",
@@ -17,8 +21,12 @@
     "release": "pnpm build && electron-builder --publish always",
     "postinstall": "pnpm exec electron-rebuild -f -w better-sqlite3",
     "preview": "electron-vite preview",
-    "setup:chromedriver": "node ./scripts/download-chromedriver.js",
-    "test": "node --test"
+    "setup:chromedriver": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types ./scripts/download-chromedriver.ts",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --experimental-strip-types",
+    "typecheck": "pnpm run typecheck:main && pnpm run typecheck:preload && pnpm run typecheck:renderer",
+    "typecheck:main": "pnpm exec tsc -p tsconfig.main.json --noEmit",
+    "typecheck:preload": "pnpm exec tsc -p tsconfig.preload.json --noEmit",
+    "typecheck:renderer": "pnpm exec tsc -p tsconfig.renderer.json --noEmit"
   },
   "build": {
     "appId": "com.labsgen-tiktok.app",
@@ -32,9 +40,14 @@
       "dist/preload/**/*",
       "dist/renderer/**/*",
       "package.json",
-      "services/**/*",
+      "node_modules/**/*",
+      "node_modules/.pnpm/**/*",
       "drivers/**/*",
       "index.html"
+    ],
+    "asarUnpack": [
+      "node_modules/better-sqlite3/**/*",
+      "node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3/**/*"
     ],
     "win": {
       "target": [
@@ -89,6 +102,11 @@
     "electron-vite": "^5.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.2",
+    "@types/node": "^24.3.1",
+    "@types/electron": "^1.6.12",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
     "vite": "^7.3.1"
   }
 }

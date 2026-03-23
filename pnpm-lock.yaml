@@ -25,7 +25,7 @@ importers:
         version: 12.38.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       i18next:
         specifier: ^24.2.2
-        version: 24.2.3
+        version: 24.2.3(typescript@5.9.3)
       lucide-react:
         specifier: ^0.563.0
         version: 0.563.0(react@19.2.4)
@@ -40,7 +40,7 @@ importers:
         version: 19.2.4(react@19.2.4)
       react-i18next:
         specifier: ^15.4.0
-        version: 15.7.4(i18next@24.2.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 15.7.4(i18next@24.2.3(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       selenium-webdriver:
         specifier: ^4.40.0
         version: 4.41.0
@@ -51,12 +51,24 @@ importers:
       '@electron/rebuild':
         specifier: ^4.0.3
         version: 4.0.3
+      '@types/electron':
+        specifier: ^1.6.12
+        version: 1.6.12
+      '@types/node':
+        specifier: ^24.3.1
+        version: 24.12.0
+      '@types/react':
+        specifier: ^19.1.13
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.1.9
+        version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^5.1.3
-        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7))
+        version: 5.2.0(vite@7.3.1(@types/node@24.12.0)(jiti@1.21.7))
       '@vitejs/plugin-react-swc':
         specifier: ^3.8.0
-        version: 3.11.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7))
+        version: 3.11.0(vite@7.3.1(@types/node@24.12.0)(jiti@1.21.7))
       autoprefixer:
         specifier: ^10.4.24
         version: 10.4.27(postcss@8.5.8)
@@ -71,16 +83,19 @@ importers:
         version: 26.8.1(electron-builder-squirrel-windows@26.8.1)
       electron-vite:
         specifier: ^5.0.0
-        version: 5.0.0(@swc/core@1.15.21)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7))
+        version: 5.0.0(@swc/core@1.15.21)(vite@7.3.1(@types/node@24.12.0)(jiti@1.21.7))
       postcss:
         specifier: ^8.5.6
         version: 8.5.8
       tailwindcss:
         specifier: ^3.4.19
         version: 3.4.19
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)
+        version: 7.3.1(@types/node@24.12.0)(jiti@1.21.7)
 
 packages:
 
@@ -867,6 +882,10 @@ packages:
   '@types/debug@4.1.13':
     resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
 
+  '@types/electron@1.6.12':
+    resolution: {integrity: sha512-NIJokDkGv9h+MStCL1IuiL1FOHYVkszoWeNxJtSI5dcEKRGbX83JcVYNAgk019qOQgJkHtz9WdP0CDXvrArrGg==}
+    deprecated: This is a stub types definition. electron provides its own type definitions, so you do not need this installed.
+
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -885,11 +904,16 @@ packages:
   '@types/node@24.12.0':
     resolution: {integrity: sha512-GYDxsZi3ChgmckRT9HPU0WEhKLP08ev/Yfcq2AstjrDASOYCSXeyjDsHg4v5t4jOj7cyDX3vmprafKlWIG9MXQ==}
 
-  '@types/node@25.5.0':
-    resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
-
   '@types/plist@3.0.5':
     resolution: {integrity: sha512-E6OCaRmAe4WDmWNsL/9RMqdkkzDCY1etutkflWk4c+AcjDU07Pcz1fQwTX0TQz+Pxqn9i4L1TU3UFpjnrcDgxA==}
+
+  '@types/react-dom@19.2.3':
+    resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
+    peerDependencies:
+      '@types/react': ^19.2.0
+
+  '@types/react@19.2.14':
+    resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
 
   '@types/responselike@1.0.3':
     resolution: {integrity: sha512-H/+L+UkTV33uf49PH5pCAUBVPNj2nDBXTN+qS1dOwyyg24l3CcicicCA7ca+HMvJBZcFgl5r8e+RR6elsb4Lyw==}
@@ -1205,6 +1229,9 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
+
+  csstype@3.2.3:
+    resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -2443,11 +2470,13 @@ packages:
     resolution: {integrity: sha512-34R7HTnG0XIJcBSn5XhDd7nNFPRcXYRZrBB2O2jdKqYODldSzBAqzsWoZYYvduky73toYS/ESqxPvkDf/F0XMg==}
     engines: {node: '>=10'}
 
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
-
-  undici-types@7.18.2:
-    resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
   unique-filename@4.0.0:
     resolution: {integrity: sha512-XSnEewXmQ+veP7xX2dS5Q4yZAvO40cBN2MWkJ7D/6sW4Dg6wYBNwM1Vrnz1FhH5AdeLIlUXRI9e28z1YZi71NQ==}
@@ -3233,24 +3262,30 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.2.0
       '@types/keyv': 3.1.4
-      '@types/node': 25.5.0
+      '@types/node': 24.12.0
       '@types/responselike': 1.0.3
 
   '@types/debug@4.1.13':
     dependencies:
       '@types/ms': 2.1.0
 
+  '@types/electron@1.6.12':
+    dependencies:
+      electron: 40.8.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@types/estree@1.0.8': {}
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 25.5.0
+      '@types/node': 24.12.0
 
   '@types/http-cache-semantics@4.2.0': {}
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 25.5.0
+      '@types/node': 24.12.0
 
   '@types/ms@2.1.0': {}
 
@@ -3258,19 +3293,23 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/node@25.5.0':
-    dependencies:
-      undici-types: 7.18.2
-
   '@types/plist@3.0.5':
     dependencies:
-      '@types/node': 25.5.0
+      '@types/node': 24.12.0
       xmlbuilder: 15.1.1
     optional: true
 
+  '@types/react-dom@19.2.3(@types/react@19.2.14)':
+    dependencies:
+      '@types/react': 19.2.14
+
+  '@types/react@19.2.14':
+    dependencies:
+      csstype: 3.2.3
+
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 25.5.0
+      '@types/node': 24.12.0
 
   '@types/verror@1.10.11':
     optional: true
@@ -3280,15 +3319,15 @@ snapshots:
       '@types/node': 24.12.0
     optional: true
 
-  '@vitejs/plugin-react-swc@3.11.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7))':
+  '@vitejs/plugin-react-swc@3.11.0(vite@7.3.1(@types/node@24.12.0)(jiti@1.21.7))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@swc/core': 1.15.21
-      vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)
+      vite: 7.3.1(@types/node@24.12.0)(jiti@1.21.7)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@vitejs/plugin-react@5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7))':
+  '@vitejs/plugin-react@5.2.0(vite@7.3.1(@types/node@24.12.0)(jiti@1.21.7))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.29.0)
@@ -3296,7 +3335,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-rc.3
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)
+      vite: 7.3.1(@types/node@24.12.0)(jiti@1.21.7)
     transitivePeerDependencies:
       - supports-color
 
@@ -3635,6 +3674,8 @@ snapshots:
 
   cssesc@3.0.0: {}
 
+  csstype@3.2.3: {}
+
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
@@ -3777,7 +3818,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron-vite@5.0.0(@swc/core@1.15.21)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)):
+  electron-vite@5.0.0(@swc/core@1.15.21)(vite@7.3.1(@types/node@24.12.0)(jiti@1.21.7)):
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-arrow-functions': 7.27.1(@babel/core@7.29.0)
@@ -3785,7 +3826,7 @@ snapshots:
       esbuild: 0.25.12
       magic-string: 0.30.21
       picocolors: 1.1.1
-      vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)
+      vite: 7.3.1(@types/node@24.12.0)(jiti@1.21.7)
     optionalDependencies:
       '@swc/core': 1.15.21
     transitivePeerDependencies:
@@ -4162,9 +4203,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  i18next@24.2.3:
+  i18next@24.2.3(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.29.2
+    optionalDependencies:
+      typescript: 5.9.3
 
   iconv-corefoundation@1.1.7:
     dependencies:
@@ -4649,14 +4692,15 @@ snapshots:
       react: 19.2.4
       scheduler: 0.27.0
 
-  react-i18next@15.7.4(i18next@24.2.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-i18next@15.7.4(i18next@24.2.3(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.29.2
       html-parse-stringify: 3.0.1
-      i18next: 24.2.3
+      i18next: 24.2.3(typescript@5.9.3)
       react: 19.2.4
     optionalDependencies:
       react-dom: 19.2.4(react@19.2.4)
+      typescript: 5.9.3
 
   react-refresh@0.18.0: {}
 
@@ -5027,9 +5071,9 @@ snapshots:
   type-fest@0.13.1:
     optional: true
 
-  undici-types@7.16.0: {}
+  typescript@5.9.3: {}
 
-  undici-types@7.18.2: {}
+  undici-types@7.16.0: {}
 
   unique-filename@4.0.0:
     dependencies:
@@ -5064,7 +5108,7 @@ snapshots:
       extsprintf: 1.4.1
     optional: true
 
-  vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7):
+  vite@7.3.1(@types/node@24.12.0)(jiti@1.21.7):
     dependencies:
       esbuild: 0.27.4
       fdir: 6.5.0(picomatch@4.0.3)
@@ -5073,7 +5117,7 @@ snapshots:
       rollup: 4.60.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.5.0
+      '@types/node': 24.12.0
       fsevents: 2.3.3
       jiti: 1.21.7
 

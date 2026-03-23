@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "v*"
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+    with:
+      node_version: "22"
+      pnpm_version: "10.32.1"
+      run_build: true

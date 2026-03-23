@@ -1,0 +1,171 @@
+name: Labels
+
+on:
+  workflow_dispatch:
+  issues:
+    types: [opened, reopened, edited]
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, ready_for_review]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  ensure-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync repository labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const desiredLabels = [
+              { name: "triage", color: "D4C5F9", description: "Needs initial triage" },
+              { name: "needs-info", color: "E99695", description: "More information is required" },
+              { name: "type:bug", color: "D73A4A", description: "Bug fix related work" },
+              { name: "type:feature", color: "A2EEEF", description: "New feature or enhancement" },
+              { name: "type:refactor", color: "C5DEF5", description: "Code structure improvements without behavior change" },
+              { name: "type:docs", color: "0075CA", description: "Documentation updates" },
+              { name: "type:chore", color: "BFDADC", description: "Maintenance and tooling changes" },
+              { name: "scope:main", color: "5319E7", description: "Main process scope" },
+              { name: "scope:preload", color: "1D76DB", description: "Preload process scope" },
+              { name: "scope:renderer", color: "0E8A16", description: "Renderer/UI scope" },
+              { name: "scope:build-ci", color: "F9D0C4", description: "Build, packaging, or CI scope" },
+              { name: "scope:docs", color: "0052CC", description: "Documentation scope" },
+              { name: "priority:high", color: "B60205", description: "High priority" },
+              { name: "priority:medium", color: "FBCA04", description: "Medium priority" },
+              { name: "priority:low", color: "0E8A16", description: "Low priority" },
+              { name: "status:in-progress", color: "FBCA04", description: "Work is in progress" },
+              { name: "status:blocked", color: "B60205", description: "Blocked by dependency or decision" },
+              { name: "status:ready", color: "0E8A16", description: "Ready for implementation/review" }
+            ];
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const existing = await github.paginate(github.rest.issues.listLabelsForRepo, {
+              owner,
+              repo,
+              per_page: 100
+            });
+            const existingByName = new Map(existing.map((l) => [l.name, l]));
+
+            for (const desired of desiredLabels) {
+              const current = existingByName.get(desired.name);
+              if (!current) {
+                await github.rest.issues.createLabel({
+                  owner,
+                  repo,
+                  name: desired.name,
+                  color: desired.color,
+                  description: desired.description
+                });
+                core.info(`Created label: ${desired.name}`);
+                continue;
+              }
+
+              const currentColor = String(current.color || "").toUpperCase();
+              const nextColor = String(desired.color || "").toUpperCase();
+              const currentDesc = current.description || "";
+              const nextDesc = desired.description || "";
+              if (currentColor !== nextColor || currentDesc !== nextDesc) {
+                await github.rest.issues.updateLabel({
+                  owner,
+                  repo,
+                  name: current.name,
+                  new_name: desired.name,
+                  color: desired.color,
+                  description: desired.description
+                });
+                core.info(`Updated label: ${desired.name}`);
+              }
+            }
+
+  auto-label-issue:
+    if: ${{ github.event_name == 'issues' }}
+    runs-on: ubuntu-latest
+    needs: ensure-labels
+    steps:
+      - name: Auto-label issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = issue.number;
+            const content = `${issue.title || ""}\n${issue.body || ""}`.toLowerCase();
+
+            const labels = new Set(["triage"]);
+
+            if (/bug|error|crash|fails?|exception|stack trace/.test(content)) labels.add("type:bug");
+            if (/feature|enhancement|request|improve|proposal/.test(content)) labels.add("type:feature");
+            if (/docs?|readme|guide|instruction/.test(content)) labels.add("scope:docs");
+
+            if (!issue.body || issue.body.trim().length < 40) {
+              labels.add("needs-info");
+            }
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number,
+              labels: Array.from(labels)
+            });
+
+  auto-label-pr:
+    if: ${{ github.event_name == 'pull_request_target' }}
+    runs-on: ubuntu-latest
+    needs: ensure-labels
+    steps:
+      - name: Auto-label pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = pr.number;
+            const labels = new Set(["triage"]);
+
+            const title = (pr.title || "").toLowerCase();
+            if (/^feat(\(|:)|\bfeature\b/.test(title)) labels.add("type:feature");
+            if (/^fix(\(|:)|\bbug\b/.test(title)) labels.add("type:bug");
+            if (/^refactor(\(|:)/.test(title)) labels.add("type:refactor");
+            if (/^docs(\(|:)|\breadme\b/.test(title)) labels.add("type:docs");
+            if (/^chore(\(|:)/.test(title)) labels.add("type:chore");
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number: pr.number,
+              per_page: 100
+            });
+
+            const names = files.map((f) => f.filename);
+            const has = (predicate) => names.some(predicate);
+
+            if (has((n) => n.startsWith("src/main/"))) labels.add("scope:main");
+            if (has((n) => n.startsWith("src/preload/"))) labels.add("scope:preload");
+            if (has((n) => n.startsWith("src/components/") || n.startsWith("src/pages/") || n.startsWith("src/hooks/") || n.startsWith("src/app/") || n.startsWith("src/renderer"))) {
+              labels.add("scope:renderer");
+            }
+            if (has((n) => n.startsWith(".github/") || n.startsWith("scripts/") || n === "package.json" || n === "pnpm-lock.yaml" || n.startsWith("tsconfig") || n === "electron.vite.config.js")) {
+              labels.add("scope:build-ci");
+            }
+            if (has((n) => n.toLowerCase().includes("readme") || n === "CONTRIBUTING.md" || n.startsWith("docs/"))) {
+              labels.add("scope:docs");
+            }
+
+            if (pr.draft) {
+              labels.add("status:in-progress");
+            } else {
+              labels.add("status:ready");
+            }
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number,
+              labels: Array.from(labels)
+            });

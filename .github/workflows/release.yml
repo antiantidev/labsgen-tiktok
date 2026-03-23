@@ -9,7 +9,15 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  validate:
+    uses: ./.github/workflows/validate.yml
+    with:
+      node_version: "22"
+      pnpm_version: "10.32.1"
+      run_build: false
+
+  publish:
+    needs: validate
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -24,7 +32,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "pnpm"
           cache-dependency-path: pnpm-lock.yaml
 

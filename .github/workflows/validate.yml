@@ -1,0 +1,53 @@
+name: Validate
+
+on:
+  workflow_call:
+    inputs:
+      node_version:
+        description: Node.js version
+        required: false
+        default: "22"
+        type: string
+      pnpm_version:
+        description: pnpm version
+        required: false
+        default: "10.32.1"
+        type: string
+      run_build:
+        description: Whether to run build step
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ inputs.pnpm_version }}
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        if: ${{ inputs.run_build }}
+        run: pnpm run build

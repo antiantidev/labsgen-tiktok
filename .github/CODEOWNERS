@@ -1,0 +1,32 @@
+# Default owner for all files
+* @antiantidev
+
+# Main process
+/src/main/** @antiantidev
+
+# Preload bridge
+/src/preload/** @antiantidev
+
+# Renderer/UI
+/src/app/** @antiantidev
+/src/components/** @antiantidev
+/src/pages/** @antiantidev
+/src/hooks/** @antiantidev
+/src/renderer.tsx @antiantidev
+
+# Shared contracts and domain
+/src/shared/** @antiantidev
+
+# Build and CI
+/.github/workflows/** @antiantidev
+/scripts/** @antiantidev
+/package.json @antiantidev
+/pnpm-lock.yaml @antiantidev
+/electron.vite.config.js @antiantidev
+/tsconfig*.json @antiantidev
+
+# Documentation
+/README.md @antiantidev
+/CONTRIBUTING.md @antiantidev
+/.github/PULL_REQUEST_TEMPLATE.md @antiantidev
+/.github/ISSUE_TEMPLATE/** @antiantidev

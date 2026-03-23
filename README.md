@@ -5,7 +5,7 @@
   <p><strong>TikTok Live Stream Key Generator for OBS from Streamlabs</strong></p>
   <p><em>Windows desktop app for fetching RTMP URL and Stream Key for OBS.</em></p>
   <p>
-    <img src="https://img.shields.io/badge/Version-0.17.13-primary?style=for-the-badge&logo=electron" alt="Version" />
+    <img src="https://img.shields.io/badge/Version-0.18.0-primary?style=for-the-badge&logo=electron" alt="Version" />
     <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform" />
     <img src="https://img.shields.io/badge/Framework-React_19-61DAFB?style=for-the-badge&logo=react" alt="Framework" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=for-the-badge&logo=sqlite" alt="Database" />
@@ -59,6 +59,27 @@ installed Google Chrome version so browser capture stays in sync after Chrome up
 - Automation: Selenium WebDriver
 - Infrastructure: electron-vite, electron-builder (NSIS)
 
+## Refactor Status (v0.18.0)
+
+This release includes a major architecture and tooling refactor:
+- Migrated runtime app code from JavaScript to TypeScript (`src/main`, `src/preload`, `src/renderer`, and UI modules).
+- Main process reorganized using a Clean Lite structure:
+  - `src/main/core/*`: bootstrap, config, lifecycle, window, IPC helpers, shared main types.
+  - `src/main/features/*`: feature-level IPC registrations (core, driver, logs, updates).
+  - `src/main/services/*`: infrastructure services (stream, token, driver, sqlite, oauth, selenium, encryption).
+- Replaced legacy dynamic service loading with static typed wiring in main bootstrap.
+- Added reusable GitHub workflow validation (`validate.yml`) and standardized CI/release flow.
+- Added collaboration standards:
+  - `CONTRIBUTING.md`
+  - PR template
+  - Issue templates
+  - CODEOWNERS
+  - auto-label workflow (`labels.yml`)
+
+For implementation details and migration notes, see:
+- `docs/refactor-clean-lite-v0.18.0.md`
+- `CHANGELOG.md`
+
 ## Getting Started
 
 ### For Users
@@ -79,6 +100,10 @@ You can continue if you trust the source.
 
 This repository uses `pnpm`.
 
+Prerequisites:
+- Node.js 22+ (recommended: latest LTS)
+- Corepack enabled (`corepack enable`)
+
 ```bash
 # Clone the repository
 git clone https://github.com/antiantidev/labsgen-tiktok.git
@@ -88,11 +113,18 @@ pnpm install
 
 # Start in development mode
 pnpm dev
+
+# Run TypeScript checks
+pnpm typecheck
+
+# Run tests
+pnpm test
 ```
 
 Notes:
 - Native modules are rebuilt automatically during `pnpm install`.
 - Browser capture will auto-detect installed Chrome and download a matching ChromeDriver.
+- Contribution process and team conventions: see `CONTRIBUTING.md`.
 
 ### Build for Release
 
@@ -105,6 +137,31 @@ pnpm exec electron-builder --win nsis --x64
 
 # Build and publish a GitHub release
 pnpm release
+```
+
+### CI and Release Workflows
+
+GitHub Actions uses four workflows:
+- `ci.yml`: runs on every push (except `v*` tags) and pull request.
+- `validate.yml`: reusable workflow that runs install + typecheck + test (+ optional build).
+- `release.yml`: runs on `v*` tags, calls `validate.yml`, validates tag/version, then publishes.
+- `labels.yml`: syncs repository labels and auto-labels issues/PRs.
+- `CODEOWNERS`: auto-requests reviewers by path ownership.
+
+Release tag rule:
+- Tag must match `package.json` version exactly, in the format `v<version>`.
+- Example: if version is `0.18.0`, release tag must be `v0.18.0`.
+
+Typical release flow:
+```bash
+# 1) bump version in package.json
+# 2) commit changes
+git add .
+git commit -m "release: v0.18.0"
+
+# 3) create and push release tag
+git tag v0.18.0
+git push origin main --tags
 ```
 
 ## License & Contact
