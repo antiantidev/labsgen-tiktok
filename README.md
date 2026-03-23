@@ -40,12 +40,10 @@ Under the hood, it uses **SQLite 3** for fast local storage, **Electron safeStor
 *   🤖 **Auto-Bootstrap:** Smart environment detection and automated ChromeDriver setup.
 
 ## 🖼️ Screenshots
-![Screenshot 01](resources/screenshots/screenshot-01.png)
-![Screenshot 02](resources/screenshots/screenshot-02.png)
-![Screenshot 03](resources/screenshots/screenshot-03.png)
-![Screenshot 04](resources/screenshots/screenshot-04.png)
-![Screenshot 05](resources/screenshots/screenshot-05.png)
-![Screenshot 06](resources/screenshots/screenshot-06.png)
+![LTG 1](resources/screenshots/LTG1.gif)
+![LTG 2](resources/screenshots/LTG2.gif)
+![LTG 3](resources/screenshots/LTG3.gif)
+![LTG 4](resources/screenshots/LTG4.gif)
 
 ## 🛠️ Core Stack
 
