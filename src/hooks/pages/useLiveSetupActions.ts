@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import type { MutableRefObject } from "react"
 import { useAnimation } from "framer-motion"
 import type { TFunction } from "i18next"
 import type { LiveSetupPageProps } from "../../app/types"
 import { useApiBridge } from "../useApiBridge"
+import { useLiveSetupUiStore } from "../../stores"
 
 type UseLiveSetupActionsDeps = Pick<
   LiveSetupPageProps,
@@ -34,8 +35,10 @@ export const useLiveSetupActions = ({
   gameCategory
 }: UseLiveSetupActionsDeps): UseLiveSetupActionsResult => {
   const api = useApiBridge()
-  const [isSyncing, setIsSyncing] = useState(false)
-  const [localCount, setLocalCount] = useState(0)
+  const isSyncing = useLiveSetupUiStore((state) => state.isSyncing)
+  const setIsSyncing = useLiveSetupUiStore((state) => state.setIsSyncing)
+  const localCount = useLiveSetupUiStore((state) => state.localCount)
+  const setLocalCount = useLiveSetupUiStore((state) => state.setLocalCount)
   const controls = useAnimation()
   const dropdownRef = useRef<HTMLDivElement | null>(null)
 

@@ -1,40 +1,25 @@
 import { useEffect } from "react"
-import type { Dispatch, SetStateAction } from "react"
-import type { LogLevel, ModalButton, ToastType, UpdateProgress } from "../shared/domain/app"
-import type { AppLogEntry } from "../app/types"
+import type { LogLevel, ModalButton, ToastType } from "../shared/domain/app"
 import { useApiBridge } from "./useApiBridge"
+import { useCoreStore, useLogsStore } from "../stores"
 
 type UseAppEventListenersDeps = {
   t: (key: string) => string
   showModal: (title: string, body: string, buttons?: ModalButton[]) => Promise<{ value: string }>
   pushToast: (message: string, type?: ToastType, duration?: number) => void
   pushStatus: (message: string, level?: LogLevel) => void
-  logPage: number
-  logPageSize: number
-  setUpdateProgress: Dispatch<SetStateAction<UpdateProgress | null>>
-  setLoadingMessage: Dispatch<SetStateAction<string>>
-  setLogTotal: Dispatch<SetStateAction<number>>
-  setStatusLog: Dispatch<SetStateAction<AppLogEntry[]>>
-}
-
-const normalizeLogLevel = (level?: string): LogLevel => {
-  if (level === "error" || level === "warn" || level === "success") return level
-  return "info"
 }
 
 export const useAppEventListeners = ({
   t,
   showModal,
   pushToast,
-  pushStatus,
-  logPage,
-  logPageSize,
-  setUpdateProgress,
-  setLoadingMessage,
-  setLogTotal,
-  setStatusLog
+  pushStatus
 }: UseAppEventListenersDeps): void => {
   const api = useApiBridge()
+  const setUpdateProgress = useCoreStore((state) => state.setUpdateProgress)
+  const setLoadingMessage = useCoreStore((state) => state.setLoadingMessage)
+  const appendSystemLog = useLogsStore((state) => state.appendSystemLog)
   useEffect(() => {
     const cu = api.onUpdateAvailable((info) =>
       showModal(t("update.available"), `${t("update.desc")} (${info.latest}).`, [
@@ -65,22 +50,7 @@ export const useAppEventListeners = ({
       pushStatus(`Web: ${message}`, "info")
     })
     const cl = api.onSystemLog((entry) => {
-      if (!entry) return
-      setLogTotal((prev) => prev + 1)
-      if (logPage === 1) {
-        setStatusLog((prev) =>
-          [
-            {
-              id: entry.id || Date.now(),
-              level: normalizeLogLevel(entry.level),
-              message: entry.message || "",
-              timestamp: entry.timestamp || new Date().toISOString(),
-              time: new Date(entry.timestamp || Date.now()).toLocaleTimeString()
-            },
-            ...prev
-          ].slice(0, logPageSize)
-        )
-      }
+      appendSystemLog(entry)
     })
     return () => {
       cu()
@@ -91,13 +61,10 @@ export const useAppEventListeners = ({
       cl()
     }
   }, [
-    logPage,
-    logPageSize,
+    appendSystemLog,
     pushStatus,
     pushToast,
     setLoadingMessage,
-    setLogTotal,
-    setStatusLog,
     setUpdateProgress,
     showModal,
     t

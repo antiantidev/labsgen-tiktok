@@ -60,7 +60,7 @@ Publish provider:
 
 Tag must exactly match package version:
 
-- package version `0.18.0` -> tag `v0.18.0`
+- package version `0.19.0` -> tag `v0.19.0`
 
 Mismatch fails release workflow.
 
@@ -95,4 +95,3 @@ This improves triage and tracking for:
 - `scope:*`
 - `priority:*`
 - `status:*`
-

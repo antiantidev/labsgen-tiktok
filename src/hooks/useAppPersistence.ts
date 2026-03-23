@@ -1,27 +1,14 @@
 import { useCallback, useEffect, useRef } from "react"
-import type { Dispatch, SetStateAction } from "react"
-import type { AppSettings, PageId, ThemeMode, ToastType } from "../shared/domain/app"
+import type { ToastType } from "../shared/domain/app"
 import { buildPersistedAppState } from "../shared/domain/appStatePersistence"
 import { APP_SETTING_KEYS } from "../shared/domain/settings"
 import { useApiBridge } from "./useApiBridge"
+import { useAccountsStore, useCoreStore, useStreamStore } from "../stores"
 
 type UseAppPersistenceDeps = {
   t: (key: string) => string
   language: string
-  isLoading: boolean
-  currentPage: PageId
-  streamTitle: string
-  gameCategory: string
-  gameMaskId: string
-  mature: boolean
-  token: string
-  streamId: string | null
-  theme: ThemeMode
-  activeAccountId: string | null
-  settings: AppSettings
   pushToast: (message: string, type?: ToastType, duration?: number) => void
-  setGameCategory: Dispatch<SetStateAction<string>>
-  setGameMaskId: Dispatch<SetStateAction<string>>
 }
 
 type UseAppPersistenceResult = {
@@ -31,22 +18,22 @@ type UseAppPersistenceResult = {
 export const useAppPersistence = ({
   t,
   language,
-  isLoading,
-  currentPage,
-  streamTitle,
-  gameCategory,
-  gameMaskId,
-  mature,
-  token,
-  streamId,
-  theme,
-  activeAccountId,
-  settings,
-  pushToast,
-  setGameCategory,
-  setGameMaskId
+  pushToast
 }: UseAppPersistenceDeps): UseAppPersistenceResult => {
   const api = useApiBridge()
+  const isLoading = useCoreStore((state) => state.isLoading)
+  const currentPage = useCoreStore((state) => state.currentPage)
+  const theme = useCoreStore((state) => state.theme)
+  const settings = useCoreStore((state) => state.settings)
+  const streamTitle = useStreamStore((state) => state.streamTitle)
+  const gameCategory = useStreamStore((state) => state.gameCategory)
+  const gameMaskId = useStreamStore((state) => state.gameMaskId)
+  const mature = useStreamStore((state) => state.mature)
+  const streamId = useStreamStore((state) => state.streamData.id)
+  const setGameCategory = useStreamStore((state) => state.setGameCategory)
+  const setGameMaskId = useStreamStore((state) => state.setGameMaskId)
+  const token = useAccountsStore((state) => state.token)
+  const activeAccountId = useAccountsStore((state) => state.activeAccountId)
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const saveConfig = useCallback(

@@ -1,6 +1,6 @@
-import { useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
 import type { AppSettings, PageId, ThemeMode, UpdateProgress } from "../shared/domain/app"
+import { useCoreStore } from "../stores"
 
 type AppCoreState = {
   isLoading: boolean
@@ -28,25 +28,28 @@ type AppCoreState = {
 }
 
 export const useAppCoreState = (): AppCoreState => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadingMessage, setLoadingMessage] = useState("")
-  const [loadProgress, setLoadProgress] = useState(0)
-  const [isDriverMissing, setIsDriverMissing] = useState(false)
-
-  const [currentPage, setCurrentPage] = useState<PageId>("home")
-  const [theme, setTheme] = useState<ThemeMode>("dark")
-  const [appVersion, setAppVersion] = useState("0.0.0")
-  const [defaultPath, setDefaultPath] = useState("")
-  const [systemPaths, setSystemPaths] = useState<Record<string, string>>({})
-
-  const [settings, setSettings] = useState<AppSettings>({
-    customProfilePath: "",
-    autoRefresh: true,
-    minimizeOnClose: false,
-    captureDelay: 5000
-  })
-
-  const [updateProgress, setUpdateProgress] = useState<UpdateProgress | null>(null)
+  const isLoading = useCoreStore((state) => state.isLoading)
+  const setIsLoading = useCoreStore((state) => state.setIsLoading)
+  const loadingMessage = useCoreStore((state) => state.loadingMessage)
+  const setLoadingMessage = useCoreStore((state) => state.setLoadingMessage)
+  const loadProgress = useCoreStore((state) => state.loadProgress)
+  const setLoadProgress = useCoreStore((state) => state.setLoadProgress)
+  const isDriverMissing = useCoreStore((state) => state.isDriverMissing)
+  const setIsDriverMissing = useCoreStore((state) => state.setIsDriverMissing)
+  const currentPage = useCoreStore((state) => state.currentPage)
+  const setCurrentPage = useCoreStore((state) => state.setCurrentPage)
+  const theme = useCoreStore((state) => state.theme)
+  const setTheme = useCoreStore((state) => state.setTheme)
+  const appVersion = useCoreStore((state) => state.appVersion)
+  const setAppVersion = useCoreStore((state) => state.setAppVersion)
+  const defaultPath = useCoreStore((state) => state.defaultPath)
+  const setDefaultPath = useCoreStore((state) => state.setDefaultPath)
+  const systemPaths = useCoreStore((state) => state.systemPaths)
+  const setSystemPaths = useCoreStore((state) => state.setSystemPaths)
+  const settings = useCoreStore((state) => state.settings)
+  const setSettings = useCoreStore((state) => state.setSettings)
+  const updateProgress = useCoreStore((state) => state.updateProgress)
+  const setUpdateProgress = useCoreStore((state) => state.setUpdateProgress)
 
   return {
     isLoading,

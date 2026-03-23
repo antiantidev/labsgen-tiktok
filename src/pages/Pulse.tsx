@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Terminal, Search, Trash2, Download, AlertTriangle, XCircle, CheckCircle2, BarChart3, ChevronRight, ChevronLeft } from 'lucide-react'
 import { Card, Button, Input } from '../components/ui'
@@ -6,11 +6,14 @@ import { LogBadge } from '../components/blocks'
 import { useTranslation } from 'react-i18next'
 import type { PulseLogLevel, PulsePageProps } from '../app/types'
 import { pageVariants } from '../app/ui/pageMotion'
+import { usePulseUiStore } from '../stores'
 
 const Pulse = ({ statusLog = [], setStatusLog, logPage = 1, logPageSize = 100, logTotal = 0, loadLogs, clearLogs }: PulsePageProps) => {
   const { t } = useTranslation()
-  const [filter, setFilter] = useState<'all' | PulseLogLevel>('all')
-  const [search, setSearch] = useState('')
+  const filter = usePulseUiStore((state) => state.filter) as 'all' | PulseLogLevel
+  const setFilter = usePulseUiStore((state) => state.setFilter)
+  const search = usePulseUiStore((state) => state.search)
+  const setSearch = usePulseUiStore((state) => state.setSearch)
 
   const stats = useMemo(
     () => ({

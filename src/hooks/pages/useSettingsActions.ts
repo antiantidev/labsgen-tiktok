@@ -1,7 +1,7 @@
-import { useState } from "react"
 import type { TFunction } from "i18next"
 import type { SettingsPageProps } from "../../app/types"
 import { useApiBridge } from "../useApiBridge"
+import { useSettingsUiStore } from "../../stores"
 
 type UseSettingsActionsDeps = Pick<
   SettingsPageProps,
@@ -29,9 +29,12 @@ export const useSettingsActions = ({
   setSettings
 }: UseSettingsActionsDeps): UseSettingsActionsResult => {
   const api = useApiBridge()
-  const [checkingUpdate, setCheckingUpdate] = useState(false)
-  const [isInstallingDriver, setIsDriverInstalling] = useState(false)
-  const [isUpToDate, setIsUpToDate] = useState(false)
+  const checkingUpdate = useSettingsUiStore((state) => state.checkingUpdate)
+  const setCheckingUpdate = useSettingsUiStore((state) => state.setCheckingUpdate)
+  const isInstallingDriver = useSettingsUiStore((state) => state.isInstallingDriver)
+  const setIsDriverInstalling = useSettingsUiStore((state) => state.setIsInstallingDriver)
+  const isUpToDate = useSettingsUiStore((state) => state.isUpToDate)
+  const setIsUpToDate = useSettingsUiStore((state) => state.setIsUpToDate)
 
   const handleUpdateCheck = async () => {
     setCheckingUpdate(true)

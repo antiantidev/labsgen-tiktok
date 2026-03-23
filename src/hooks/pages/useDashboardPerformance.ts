@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { useApiBridge } from "../useApiBridge"
+import { useDashboardStore } from "../../stores"
 
 type DashboardPerformanceState = {
   cpuPercent: number | null
@@ -16,13 +17,10 @@ type UseDashboardPerformanceResult = {
 
 export const useDashboardPerformance = (): UseDashboardPerformanceResult => {
   const api = useApiBridge()
-  const [performance, setPerformance] = useState<DashboardPerformanceState>({
-    cpuPercent: null,
-    memPercent: null,
-    memUsedMB: 0,
-    memTotalMB: 0
-  })
-  const [perfLoading, setPerfLoading] = useState(true)
+  const performance = useDashboardStore((state) => state.performance)
+  const setPerformance = useDashboardStore((state) => state.setPerformance)
+  const perfLoading = useDashboardStore((state) => state.perfLoading)
+  const setPerfLoading = useDashboardStore((state) => state.setPerfLoading)
 
   useEffect(() => {
     let isMounted = true
@@ -68,4 +66,3 @@ export const useDashboardPerformance = (): UseDashboardPerformanceResult => {
     memLabel
   }
 }
-

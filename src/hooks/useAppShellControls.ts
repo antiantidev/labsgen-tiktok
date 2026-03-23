@@ -1,12 +1,11 @@
 import { useCallback } from "react"
-import type { Dispatch, SetStateAction } from "react"
-import type { LogLevel, ModalButton, ThemeMode } from "../shared/domain/app"
+import type { LogLevel, ModalButton } from "../shared/domain/app"
 import { CHROME_DOWNLOAD_URL } from "../shared/constants/externalLinks"
 import { useApiBridge } from "./useApiBridge"
+import { useCoreStore } from "../stores"
 
 type UseAppShellControlsDeps = {
   t: (key: string) => string
-  setTheme: Dispatch<SetStateAction<ThemeMode>>
   showModal: (title: string, body: string, buttons?: ModalButton[]) => Promise<{ value: string }>
 }
 
@@ -18,10 +17,10 @@ type UseAppShellControlsResult = {
 
 export const useAppShellControls = ({
   t,
-  setTheme,
   showModal
 }: UseAppShellControlsDeps): UseAppShellControlsResult => {
   const api = useApiBridge()
+  const setTheme = useCoreStore((state) => state.setTheme)
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"))
   }, [setTheme])

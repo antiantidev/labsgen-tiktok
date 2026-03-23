@@ -34,7 +34,6 @@ export const useAppViewState = (): UseAppViewStateResult => {
   const logs = useSystemLogs()
   const shell = useAppShellControls({
     t,
-    setTheme: core.setTheme,
     showModal: ui.showModal
   })
 
@@ -42,10 +41,7 @@ export const useAppViewState = (): UseAppViewStateResult => {
     t,
     showModal: ui.showModal,
     showChromeMissingModal: shell.showChromeMissingModal,
-    pushToast: ui.pushToast,
-    setIsLoading: core.setIsLoading,
-    setLoadingMessage: core.setLoadingMessage,
-    setIsDriverMissing: core.setIsDriverMissing
+    pushToast: ui.pushToast
   })
 
   const accounts = useAccounts({
@@ -68,20 +64,7 @@ export const useAppViewState = (): UseAppViewStateResult => {
   const persistence = useAppPersistence({
     t,
     language: i18n.language,
-    isLoading: core.isLoading,
-    currentPage: core.currentPage,
-    streamTitle: stream.streamTitle,
-    gameCategory: stream.gameCategory,
-    gameMaskId: stream.gameMaskId,
-    mature: stream.mature,
-    token: accounts.token,
-    streamId: stream.streamData.id,
-    theme: core.theme,
-    activeAccountId: accounts.activeAccountId,
-    settings: core.settings,
-    pushToast: ui.pushToast,
-    setGameCategory: stream.setGameCategory,
-    setGameMaskId: stream.setGameMaskId
+    pushToast: ui.pushToast
   })
 
   return {

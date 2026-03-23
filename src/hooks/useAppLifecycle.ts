@@ -47,12 +47,6 @@ export const useAppLifecycle = ({
     t,
     showModal: ui.showModal,
     pushToast: ui.pushToast,
-    pushStatus: shell.pushStatus,
-    logPage: logs.logPage,
-    logPageSize: logs.logPageSize,
-    setUpdateProgress: core.setUpdateProgress,
-    setLoadingMessage: core.setLoadingMessage,
-    setLogTotal: logs.setLogTotal,
-    setStatusLog: logs.setStatusLog
+    pushStatus: shell.pushStatus
   })
 }

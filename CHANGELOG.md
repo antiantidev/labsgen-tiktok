@@ -2,6 +2,33 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.19.0] - 2026-03-24
+
+### Added
+
+- Zustand as renderer state management dependency.
+- Domain stores under `src/stores/*`:
+  - `coreStore`
+  - `uiStore`
+  - `logsStore`
+  - `accountsStore`
+  - `streamStore`
+  - `settingsUiStore`
+  - `liveSetupUiStore`
+  - `dashboardStore`
+  - `pulseUiStore`
+
+### Changed
+
+- Migrated renderer global state and orchestration from hook-local state to Zustand store facades.
+- Refactored lifecycle wiring (`bootstrap`, `event listeners`, `persistence`, `driver readiness`, `shell controls`) to use store-backed state flow.
+- Migrated remaining page-level UI states in Settings/LiveSetup/Dashboard/Pulse to Zustand.
+
+### Notes
+
+- IPC contract and main/preload runtime behavior remain unchanged.
+- Existing page props and route content contracts were kept compatible.
+
 ## [0.18.1] - 2026-03-24
 
 ### Fixed

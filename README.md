@@ -5,7 +5,7 @@
   <p><strong>TikTok Live Stream Key Generator for OBS from Streamlabs</strong></p>
   <p><em>Windows desktop app for fetching RTMP URL and Stream Key for OBS.</em></p>
   <p>
-    <img src="https://img.shields.io/badge/Version-0.18.1-primary?style=for-the-badge&logo=electron" alt="Version" />
+    <img src="https://img.shields.io/badge/Version-0.19.0-primary?style=for-the-badge&logo=electron" alt="Version" />
     <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform" />
     <img src="https://img.shields.io/badge/Framework-React_19-61DAFB?style=for-the-badge&logo=react" alt="Framework" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=for-the-badge&logo=sqlite" alt="Database" />
@@ -166,17 +166,17 @@ GitHub Actions uses four workflows:
 
 Release tag rule:
 - Tag must match `package.json` version exactly, in the format `v<version>`.
-- Example: if version is `0.18.1`, release tag must be `v0.18.1`.
+- Example: if version is `0.19.0`, release tag must be `v0.19.0`.
 
 Typical release flow:
 ```bash
 # 1) bump version in package.json
 # 2) commit changes
 git add .
-git commit -m "release: v0.18.1"
+git commit -m "release: v0.19.0"
 
 # 3) create and push release tag
-git tag v0.18.1
+git tag v0.19.0
 git push origin main --tags
 ```
 

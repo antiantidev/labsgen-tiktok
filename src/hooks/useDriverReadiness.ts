@@ -1,15 +1,13 @@
 import { useCallback } from 'react'
 import type { DriverBootstrapResult } from '../shared/ipc/contracts'
 import { useApiBridge } from './useApiBridge'
+import { useCoreStore } from '../stores'
 
 type DriverReadinessDeps = {
   t: (key: string) => string
   showModal: (title: string, body: string, buttons?: Array<{ label: string; value: string; primary?: boolean }>) => Promise<{ value: string }>
   showChromeMissingModal: () => Promise<void>
   pushToast: (message: string, type?: string, duration?: number) => void
-  setIsLoading: (loading: boolean) => void
-  setLoadingMessage: (message: string) => void
-  setIsDriverMissing: (missing: boolean) => void
 }
 
 type DriverReadinessResult = {
@@ -24,12 +22,12 @@ export const useDriverReadiness = ({
   t,
   showModal,
   showChromeMissingModal,
-  pushToast,
-  setIsLoading,
-  setLoadingMessage,
-  setIsDriverMissing
+  pushToast
 }: DriverReadinessDeps) => {
   const api = useApiBridge()
+  const setIsLoading = useCoreStore((state) => state.setIsLoading)
+  const setLoadingMessage = useCoreStore((state) => state.setLoadingMessage)
+  const setIsDriverMissing = useCoreStore((state) => state.setIsDriverMissing)
 
   return useCallback(async (): Promise<DriverReadinessResult> => {
     const driverExists = await api.checkDriverExists()
@@ -72,7 +70,6 @@ export const useDriverReadiness = ({
     return { ok: false, failed: true }
   }, [
     pushToast,
-    setIsDriverMissing,
     setIsLoading,
     setLoadingMessage,
     showChromeMissingModal,
