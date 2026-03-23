@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate tag matches package version
+        run: node -e "const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json','utf8')); const tag=process.env.GITHUB_REF_NAME; const expected='v'+pkg.version; if(tag!==expected){console.error('Tag/version mismatch. tag='+tag+', package.json='+pkg.version); process.exit(1)}"
+
       - name: Build and Publish
         run: pnpm run release
         env:

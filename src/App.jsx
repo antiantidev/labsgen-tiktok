@@ -14,6 +14,7 @@ import LiveSetup from './pages/LiveSetup'
 import TokenVault from './pages/TokenVault'
 import Pulse from './pages/Pulse'
 import Settings from './pages/Settings'
+import { useDriverReadiness } from './hooks/useDriverReadiness'
 
 const CHROME_DOWNLOAD_URL = 'https://www.google.com/chrome/'
 
@@ -123,26 +124,15 @@ const App = () => {
     }
   }, [showModal, t])
 
-  const bootstrapDriver = async () => {
-    setIsLoading(true)
-    setLoadingMessage(t('driver.preparing'))
-    const res = await window.api.bootstrapDriver()
-    setIsLoading(false)
-
-    if (res.ok) {
-      setIsDriverMissing(false)
-      return true
-    }
-
-    if (res.code === 'CHROME_NOT_FOUND') {
-      await showChromeMissingModal()
-      setIsDriverMissing(true)
-      return false
-    }
-
-    pushToast(res.error || t('common.error'), 'error')
-    return false
-  }
+  const ensureDriverReady = useDriverReadiness({
+    t,
+    showModal,
+    showChromeMissingModal,
+    pushToast,
+    setIsLoading,
+    setLoadingMessage,
+    setIsDriverMissing
+  })
 
   const closeModal = useCallback((value) => {
     setModal(prev => { if (prev.resolve) prev.resolve({ value }); return { ...prev, show: false, resolve: null } })
@@ -216,26 +206,9 @@ const App = () => {
 
   const loadWebToken = async (existingAccountId = null) => {
     pushStatus('Web token capture started', 'info')
-    const driverExists = await window.api.checkDriverExists()
-
-    if (!driverExists) {
-      const choice = await showModal(
-        t('driver.missing_title'),
-        t('driver.missing_desc'),
-        [
-          { label: t('common.cancel'), value: 'cancel', primary: false },
-          { label: t('driver.download_now'), value: 'download', primary: true }
-        ]
-      )
-      if (choice.value === 'download') {
-        const bootstrapped = await bootstrapDriver()
-        if (!bootstrapped) {
-          return
-        }
-      } else {
-        setIsDriverMissing(true)
-        return
-      }
+    const driverStatus = await ensureDriverReady()
+    if (!driverStatus.ok) {
+      return
     }
 
     setIsWebLoading(true)
@@ -334,31 +307,11 @@ const App = () => {
         i18n.changeLanguage('en')
       }
       setLoadProgress(60); setLoadingMessage('Verifying system dependencies...')
-      const driverExists = await window.api.checkDriverExists()
-      if (!driverExists) {
-        setIsDriverMissing(true)
-        const choice = await showModal(
-          t('driver.missing_title'),
-          t('driver.missing_desc'),
-          [
-            { label: t('common.cancel'), value: 'cancel', primary: false },
-            { label: t('driver.download_now'), value: 'download', primary: true }
-          ]
-        )
-
-        if (choice.value === 'download') {
-          const bootstrapped = await bootstrapDriver()
-          if (!bootstrapped) {
-            return
-          }
-          setLoadProgress(85)
-        } else {
-          return
-        }
-      } else {
-        setIsDriverMissing(false)
-        setLoadProgress(85)
+      const driverStatus = await ensureDriverReady()
+      if (!driverStatus.ok) {
+        return
       }
+      setLoadProgress(85)
       if (data?.settings?.autoRefresh && (token || data?.token)) {
         setLoadingMessage('Synchronizing account status...')
         await refreshAccountInfo(token || data.token, activeAccountId || data.activeAccountId); 

@@ -5,22 +5,30 @@ class TokenService {
   constructor(options = {}) {
     this.fsImpl = options.fsImpl || fs;
     this.env = options.env || process.env;
+    this.platform = options.platform || process.platform;
   }
 
   loadLocalToken() {
-    const appdata = this.env.APPDATA;
-    const localappdata = this.env.LOCALAPPDATA;
-    
-    if (!appdata || !localappdata) {
-      return { token: null, error: "Windows Environment Variables (APPDATA/LOCALAPPDATA) not found." };
+    if (this.platform !== "win32") {
+      return { token: null, error: "Unsupported platform. Local token extraction is only available on Windows." };
     }
 
-    const dirs = [
-      path.join(appdata, "slobs-client", "Local Storage", "leveldb"),
-      path.join(localappdata, "Google", "Chrome", "User Data", "Default", "Local Storage", "leveldb"),
-      path.join(localappdata, "BraveSoftware", "Brave-Browser", "User Data", "Default", "Local Storage", "leveldb"),
-      path.join(localappdata, "Microsoft", "Edge", "User Data", "Default", "Local Storage", "leveldb")
-    ];
+    const appdata = this.env.APPDATA;
+    const localappdata = this.env.LOCALAPPDATA;
+
+    const dirs = [];
+    if (appdata) {
+      dirs.push(path.join(appdata, "slobs-client", "Local Storage", "leveldb"));
+    }
+    if (localappdata) {
+      dirs.push(path.join(localappdata, "Google", "Chrome", "User Data", "Default", "Local Storage", "leveldb"));
+      dirs.push(path.join(localappdata, "BraveSoftware", "Brave-Browser", "User Data", "Default", "Local Storage", "leveldb"));
+      dirs.push(path.join(localappdata, "Microsoft", "Edge", "User Data", "Default", "Local Storage", "leveldb"));
+    }
+
+    if (dirs.length === 0) {
+      return { token: null, error: "Windows Environment Variables (APPDATA/LOCALAPPDATA) not found." };
+    }
 
     const tokenRegex = /"apiToken":"([a-f0-9]+)"/gi;
     
@@ -36,6 +44,7 @@ class TokenService {
       for (const file of files) {
         try {
           const raw = this.fsImpl.readFileSync(file, "utf8").replace(/\x00/g, "");
+          tokenRegex.lastIndex = 0;
           let match;
           let last = null;
           while ((match = tokenRegex.exec(raw)) !== null) {
