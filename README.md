@@ -80,6 +80,22 @@ For implementation details and migration notes, see:
 - `docs/refactor-clean-lite-v0.18.0.md`
 - `CHANGELOG.md`
 
+## Documentation
+
+Complete project docs are available in [`docs/README.md`](docs/README.md).
+
+Core references:
+
+- Architecture: [`docs/architecture.md`](docs/architecture.md)
+- Development setup: [`docs/development.md`](docs/development.md)
+- User operations: [`docs/user-guide.md`](docs/user-guide.md)
+- IPC contract: [`docs/ipc-api.md`](docs/ipc-api.md)
+- Data model and persistence: [`docs/data-storage.md`](docs/data-storage.md)
+- Security notes: [`docs/security.md`](docs/security.md)
+- Testing: [`docs/testing.md`](docs/testing.md)
+- CI and release: [`docs/ci-release.md`](docs/ci-release.md)
+- Troubleshooting: [`docs/troubleshooting.md`](docs/troubleshooting.md)
+
 ## Getting Started
 
 ### For Users
