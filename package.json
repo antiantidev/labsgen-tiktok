@@ -2,6 +2,7 @@
   "name": "labsgen-tiktok",
   "version": "0.17.9",
   "description": "TikTok Live Stream Key Generator for OBS from Streamlabs",
+  "packageManager": "pnpm@10.32.1",
   "main": "dist/main/index.js",
   "author": "Nhat Linh Nguyen",
   "license": "MIT",
@@ -13,7 +14,8 @@
     "start": "electron-vite preview",
     "dev": "cross-env CHOKIDAR_USEPOLLING=true electron-vite dev",
     "build": "electron-vite build",
-    "release": "npm run build && electron-builder --publish always",
+    "release": "pnpm build && electron-builder --publish always",
+    "postinstall": "pnpm exec electron-rebuild -f -w better-sqlite3",
     "preview": "electron-vite preview",
     "setup:chromedriver": "node ./scripts/download-chromedriver.js",
     "test": "node --test"
