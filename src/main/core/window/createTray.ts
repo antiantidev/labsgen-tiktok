@@ -18,6 +18,8 @@ export function createTray({ app, win }: CreateTrayDeps): Tray {
     join(app.getAppPath(), "resources", "icon.png"),
     join(process.resourcesPath, "app.asar.unpacked/resources/icon.ico"),
     join(process.resourcesPath, "app.asar.unpacked/resources/icon.png"),
+    join(process.resourcesPath, "icon.ico"),
+    join(process.resourcesPath, "icon.png"),
     join(process.resourcesPath, "resources/icon.ico"),
     join(process.resourcesPath, "resources/icon.png")
   ]
@@ -31,7 +33,8 @@ export function createTray({ app, win }: CreateTrayDeps): Tray {
   }
 
   if (!icon || icon.isEmpty()) {
-    icon = nativeImage.createEmpty()
+    const executableIcon = nativeImage.createFromPath(app.getPath("exe"))
+    icon = executableIcon.isEmpty() ? nativeImage.createEmpty() : executableIcon
   }
 
   const tray = new Tray(icon)

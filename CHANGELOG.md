@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.18.1] - 2026-03-24
+
+### Fixed
+
+- Tray icon loading in packaged installs by:
+  - adding extra runtime icon search fallbacks in `createTray`,
+  - adding executable icon fallback when icon files cannot be resolved.
+- Packaging resource delivery by bundling `resources/icon.ico` and `resources/icon.png` via `extraResources`.
+
+### Changed
+
+- Recreated `resources/icon.ico` from updated `resources/icon.png` for consistent dev/install icon rendering.
+
 ## [0.18.0] - 2026-03-24
 
 ### Added
