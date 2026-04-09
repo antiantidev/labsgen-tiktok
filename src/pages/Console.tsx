@@ -34,91 +34,85 @@ const Console = ({
   }
 
   return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-10">
+    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-6">
       <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-black">{t('console.title')}</h1>
-          <p className="text-muted-foreground font-medium">{t('console.desc')}</p>
+        <div>
+          <h1 className="text-xl font-semibold">{t('console.title')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t('console.desc')}</p>
         </div>
-        <div className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 border transition-all duration-500 ${streamData.isLive ? 'bg-rose-500/10 border-rose-500/20 text-rose-600 shadow-[0_0_20px_rgba(244,63,94,0.15)] light:shadow-[0_0_12px_rgba(244,63,94,0.2)]' : 'bg-secondary border-border text-muted-foreground'}`}>
-          <motion.div 
-            animate={streamData.isLive ? { scale: [1, 1.5, 1], opacity: [1, 0.5, 1] } : {}}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className={`w-2 h-2 rounded-full ${streamData.isLive ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e] light:shadow-[0_0_6px_rgba(244,63,94,0.6)]' : 'bg-muted-foreground'}`} 
-          />
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium ${streamData.isLive ? 'bg-destructive/10 text-destructive' : 'bg-secondary text-muted-foreground'}`}>
+          <div className={`w-1.5 h-1.5 rounded-full ${streamData.isLive ? 'bg-destructive animate-pulse' : 'bg-muted-foreground'}`} />
           {streamData.isLive ? t('console.on_air') : t('console.offline')}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-        <div className="xl:col-span-8 space-y-10">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <div className="xl:col-span-8 space-y-4">
           <Card title={t('console.ingest')}>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{t('console.server_url')}</label>
-                <div className="grid grid-cols-[1fr_auto] gap-3">
-                  <div className="bg-secondary border border-border rounded-xl px-6 py-4 text-[13px] font-mono font-medium text-foreground overflow-hidden truncate flex items-center">
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs text-muted-foreground">{t('console.server_url')}</label>
+                <div className="flex gap-2">
+                  <div className="flex-1 bg-secondary rounded-md px-3 py-2 text-sm font-mono text-foreground truncate">
                     {streamData.url || t('console.not_started')}
                   </div>
-                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.url, t('console.rtmp_url'))} className="h-[56px] w-[56px] p-0" disabled={!streamData.url}>
-                    <Copy size={20} />
+                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.url, t('console.rtmp_url'))} disabled={!streamData.url} className="px-3">
+                    <Copy size={14} />
                   </Button>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{t('console.stream_key')}</label>
-                <div className="grid grid-cols-[1fr_auto] gap-3">
-                  <div className="bg-secondary border border-border rounded-xl px-6 py-4 text-[13px] font-mono font-medium text-foreground overflow-hidden flex items-center">
-                    {streamData.key ? '••••••••••••••••••••••••••••••••••••' : t('console.not_started')}
+              <div className="space-y-1.5">
+                <label className="text-xs text-muted-foreground">{t('console.stream_key')}</label>
+                <div className="flex gap-2">
+                  <div className="flex-1 bg-secondary rounded-md px-3 py-2 text-sm font-mono text-foreground">
+                    {streamData.key ? '••••••••••••••••••••••••' : t('console.not_started')}
                   </div>
-                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.key, t('console.stream_key_label'))} className="h-[56px] w-[56px] p-0" disabled={!streamData.key}>
-                    <Copy size={20} />
+                  <Button variant="secondary" onClick={() => copyToClipboard(streamData.key, t('console.stream_key_label'))} disabled={!streamData.key} className="px-3">
+                    <Copy size={14} />
                   </Button>
                 </div>
               </div>
             </div>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card title={t('console.monitor')}>
-              <div className="flex flex-col items-center justify-center py-6 space-y-4">
-                <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-colors ${streamData.isLive ? 'bg-primary/10 text-primary' : 'bg-secondary text-muted-foreground'}`}>
-                  <Radio size={32} className={streamData.isLive ? 'animate-pulse' : ''} />
-                </div>
-                <div className="text-center">
-                  <div className="text-xs font-black uppercase tracking-widest mb-1">{t('console.health')}</div>
-                  <div className="text-xl font-bold">{streamData.isLive ? t('console.excellent') : t('console.na')}</div>
+              <div className="flex items-center gap-3 py-2">
+                <Radio size={18} className={streamData.isLive ? 'text-success' : 'text-muted-foreground'} />
+                <div>
+                  <div className="text-xs text-muted-foreground">{t('console.health')}</div>
+                  <div className="text-sm font-medium">{streamData.isLive ? t('console.excellent') : t('console.na')}</div>
                 </div>
               </div>
             </Card>
 
             <Card title={t('console.quick_info')}>
-              <div className="space-y-4">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{t('console.platform')}</span>
-                  <span className="text-sm font-bold">{t('console.platform_value')}</span>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground text-xs">{t('console.platform')}</span>
+                  <span className="font-medium text-xs">{t('console.platform_value')}</span>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{t('console.active_setup')}</span>
-                  <span className="text-sm font-bold truncate">{streamTitle || t('console.default_title')}</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground text-xs">{t('console.active_setup')}</span>
+                  <span className="font-medium text-xs truncate max-w-[120px]">{streamTitle || t('console.default_title')}</span>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{t('console.category')}</span>
-                  <span className="text-sm font-bold truncate">{gameCategory || t('console.none')}</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground text-xs">{t('console.category')}</span>
+                  <span className="font-medium text-xs truncate max-w-[120px]">{gameCategory || t('console.none')}</span>
                 </div>
               </div>
             </Card>
           </div>
         </div>
 
-        <div className="xl:col-span-4 space-y-10">
-          <Card title={t('console.live_action')} className="bg-primary/5">
-            <div className="space-y-4">
+        <div className="xl:col-span-4 space-y-4">
+          <Card title={t('console.live_action')}>
+            <div className="space-y-3">
               <Button 
                 onClick={handleGoLive} 
                 disabled={!canGoLive || streamData.isLive} 
-                className="w-full py-6 text-sm shadow-[0_10px_30px_rgba(49,251,154,0.2)]" 
+                className="w-full py-3" 
                 icon={Play}
               >
                 {t('console.go_live')}
@@ -127,27 +121,27 @@ const Console = ({
                 variant="danger" 
                 onClick={endStream} 
                 disabled={!streamData.isLive} 
-                className="w-full py-6 text-sm" 
+                className="w-full py-3" 
                 icon={Square}
               >
                 {t('console.end_session')}
               </Button>
             </div>
             
-            <div className="mt-8 p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 light:border-amber-500/30 space-y-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="text-amber-500" size={20} />
-                <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">{t('console.checklist')}</span>
+            <div className="mt-4 p-3 rounded-md bg-warning/5 border border-warning/10 space-y-2">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="text-warning" size={14} />
+                <span className="text-xs font-medium text-warning">{t('console.checklist')}</span>
               </div>
-              <ul className="space-y-2">
+              <ul className="space-y-1">
                 {[
                   t('console.checklist_items.launch'),
                   t('console.checklist_items.copy'),
                   t('console.checklist_items.verify'),
                   t('console.checklist_items.start')
                 ].map((item, i) => (
-                  <li key={i} className="text-[11px] text-muted-foreground font-bold flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500/40" />
+                  <li key={i} className="text-xs text-muted-foreground flex items-center gap-2">
+                    <div className="w-1 h-1 rounded-full bg-muted-foreground/40" />
                     {item}
                   </li>
                 ))}
@@ -156,12 +150,12 @@ const Console = ({
           </Card>
 
           <Button 
-            variant="secondary" 
+            variant="outline" 
             onClick={() => api.openExternal("https://livecenter.tiktok.com/live_monitor")}
-            className="w-full py-4 h-auto flex-col gap-2 rounded-[32px]"
+            className="w-full"
+            icon={Monitor}
           >
-            <Monitor size={24} />
-            <span className="text-[10px] font-black uppercase">{t('console.open_monitor')}</span>
+            {t('console.open_monitor')}
           </Button>
         </div>
       </div>

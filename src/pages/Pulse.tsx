@@ -44,13 +44,13 @@ const Pulse = ({ statusLog = [], setStatusLog, logPage = 1, logPageSize = 100, l
   }
 
   return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-8 h-full flex flex-col">
+    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-4 h-full flex flex-col">
       <div className="flex items-center justify-between shrink-0">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-black">{t('pulse.title')}</h1>
-          <p className="text-muted-foreground font-medium">{t('pulse.desc')}</p>
+        <div>
+          <h1 className="text-xl font-semibold">{t('pulse.title')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t('pulse.desc')}</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <Button variant="outline" onClick={exportLogs} icon={Download}>
             {t('pulse.export')}
           </Button>
@@ -60,56 +60,54 @@ const Pulse = ({ statusLog = [], setStatusLog, logPage = 1, logPageSize = 100, l
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 shrink-0">
         {[
-          { label: 'Total Logs', value: stats.total, color: 'text-foreground', icon: BarChart3 },
-          { label: 'Success', value: stats.success, color: 'text-primary', icon: CheckCircle2 },
+          { label: 'Total', value: stats.total, color: 'text-foreground', icon: BarChart3 },
+          { label: 'Success', value: stats.success, color: 'text-success', icon: CheckCircle2 },
           { label: 'Warnings', value: stats.warn, color: 'text-warning', icon: AlertTriangle },
           { label: 'Errors', value: stats.error, color: 'text-destructive', icon: XCircle }
         ].map((s, i) => (
-          <div key={i} className="p-4 rounded-3xl bg-secondary/30 border border-border light:bg-white/70 light:border-black/5 flex items-center gap-4">
-            <div className={`p-2.5 rounded-xl bg-secondary ${s.color}`}>
-              <s.icon size={18} />
-            </div>
+          <div key={i} className="flex items-center gap-2.5 p-3 rounded-md border border-border">
+            <s.icon size={14} className={s.color} />
             <div>
-              <div className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{s.label}</div>
-              <div className={`text-xl font-black ${s.color}`}>{s.value}</div>
+              <div className="text-2xs text-muted-foreground">{s.label}</div>
+              <div className={`text-sm font-semibold tabular-nums ${s.color}`}>{s.value}</div>
             </div>
           </div>
         ))}
       </div>
 
-      <Card className="flex-1 flex flex-col min-h-0 p-0 overflow-hidden border-border/60 min-h-[360px] max-h-[calc(100vh-360px)]">
-        <div className="p-4 border-b border-border light:border-black/5 bg-secondary/20 light:bg-white/70 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
-          <div className="flex gap-1.5 p-1 bg-background/50 light:bg-white/70 rounded-2xl border border-border light:border-black/5">
+      <Card className="flex-1 flex flex-col min-h-0 p-0 overflow-hidden min-h-[300px] max-h-[calc(100vh-320px)]">
+        <div className="px-3 py-2 border-b border-border flex flex-col md:flex-row gap-2 justify-between items-center shrink-0">
+          <div className="flex gap-0.5 p-0.5 bg-secondary rounded-md">
             {(['all', 'info', 'success', 'warn', 'error'] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === f ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${filter === f ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 {t(`pulse.filter_${f}`)}
               </button>
             ))}
           </div>
-          <div className="w-full md:w-72">
-            <Input placeholder={t('pulse.search_placeholder')} icon={Search} value={search} onChange={(e) => setSearch(e.target.value)} className="h-10 text-xs" />
+          <div className="w-full md:w-56">
+            <Input placeholder={t('pulse.search_placeholder')} icon={Search} value={search} onChange={(e) => setSearch(e.target.value)} className="h-8 text-xs" />
           </div>
         </div>
 
-        <div className="px-4 py-3 border-b border-border light:border-black/5 bg-secondary/10 light:bg-white/60 flex items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="px-3 py-2 border-b border-border flex items-center justify-between">
+          <span className="text-2xs text-muted-foreground tabular-nums">
             {t('pulse.page')} {logPage} / {Math.max(1, Math.ceil(logTotal / logPageSize))}
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => void loadLogs(Math.max(1, logPage - 1))} disabled={logPage <= 1} className="h-9 px-4 text-[10px]" icon={ChevronLeft}>
+          </span>
+          <div className="flex gap-1">
+            <Button variant="ghost" onClick={() => void loadLogs(Math.max(1, logPage - 1))} disabled={logPage <= 1} className="h-7 px-2 text-xs" icon={ChevronLeft}>
               {t('pulse.prev')}
             </Button>
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => void loadLogs(Math.min(Math.max(1, Math.ceil(logTotal / logPageSize)), logPage + 1))}
               disabled={logPage >= Math.max(1, Math.ceil(logTotal / logPageSize))}
-              className="h-9 px-4 text-[10px]"
+              className="h-7 px-2 text-xs"
               icon={ChevronRight}
             >
               {t('pulse.next')}
@@ -117,44 +115,35 @@ const Pulse = ({ statusLog = [], setStatusLog, logPage = 1, logPageSize = 100, l
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar font-mono text-[12px]">
+        <div className="flex-1 overflow-y-auto font-mono text-xs">
           <table className="w-full border-collapse">
-            <thead className="sticky top-0 z-10 bg-secondary/90 light:bg-white/90 backdrop-blur text-muted-foreground border-b border-border light:border-black/5">
+            <thead className="sticky top-0 z-10 bg-background border-b border-border text-muted-foreground">
               <tr>
-                <th className="px-6 py-4 text-left font-black uppercase tracking-widest w-32">Timestamp</th>
-                <th className="px-6 py-4 text-left font-black uppercase tracking-widest w-28">Level</th>
-                <th className="px-6 py-4 text-left font-black uppercase tracking-widest">Message</th>
+                <th className="px-3 py-2 text-left text-2xs font-medium w-28">Timestamp</th>
+                <th className="px-3 py-2 text-left text-2xs font-medium w-20">Level</th>
+                <th className="px-3 py-2 text-left text-2xs font-medium">Message</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 light:divide-black/5">
+            <tbody className="divide-y divide-border">
               {filteredLogs.length > 0 ? (
                 filteredLogs.map((log) => (
-                  <motion.tr
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                  <tr
                     key={log.id}
-                    className={`hover:bg-primary/5 transition-colors group ${
-                      log.level === 'error' ? 'bg-destructive/5' : log.level === 'warn' ? 'bg-warning/5' : log.level === 'success' ? 'bg-primary/5' : ''
-                    }`}
+                    className="hover:bg-secondary/50 transition-colors"
                   >
-                    <td className="px-6 py-4 text-muted-foreground tabular-nums align-top font-medium">{log.time}</td>
-                    <td className="px-6 py-4 align-top">
+                    <td className="px-3 py-2 text-muted-foreground tabular-nums align-top">{log.time}</td>
+                    <td className="px-3 py-2 align-top">
                       <LogBadge level={log.level} />
                     </td>
-                    <td className="px-6 py-4 text-foreground leading-relaxed break-all font-medium">
-                      <div className="flex items-start gap-2">
-                        <ChevronRight size={14} className="mt-0.5 shrink-0 opacity-20 group-hover:text-primary group-hover:opacity-100 transition-all" />
-                        <span>{log.message}</span>
-                      </div>
-                    </td>
-                  </motion.tr>
+                    <td className="px-3 py-2 text-foreground leading-relaxed break-all">{log.message}</td>
+                  </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={3} className="py-20 text-center">
-                    <div className="flex flex-col items-center gap-4 opacity-20">
-                      <Terminal size={48} />
-                      <span className="font-black uppercase tracking-[0.3em]">{t('pulse.no_logs')}</span>
+                  <td colSpan={3} className="py-12 text-center">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <Terminal size={20} className="opacity-30" />
+                      <span className="text-xs opacity-50">{t('pulse.no_logs')}</span>
                     </div>
                   </td>
                 </tr>

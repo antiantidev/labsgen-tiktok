@@ -20,7 +20,7 @@ const App = () => {
   } = useAppOrchestrator()
 
   return (
-    <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-['Plus_Jakarta_Sans']">
+    <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-sans rounded-xl">
       <AppLoadingGate isLoading={isLoading} message={loadingMessage} progress={loadProgress} />
       <AppToasts toasts={toasts} dismissToast={dismissToast} />
       <AppShell sidebarProps={sidebarProps} routeContentProps={routeContentProps} />

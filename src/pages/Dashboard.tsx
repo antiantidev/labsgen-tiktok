@@ -14,28 +14,28 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }: DashboardPageP
   const { performance, perfLoading, memLabel } = useDashboardPerformance()
 
   return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-8">
-      <div className="flex flex-col gap-2">
+    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-6">
+      <div>
         {isLoading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-10 w-64" />
-            <Skeleton className="h-6 w-96" />
+          <div className="space-y-2">
+            <Skeleton className="h-7 w-48" />
+            <Skeleton className="h-4 w-72" />
           </div>
         ) : (
           <>
-            <h1 className="text-4xl font-black tracking-tight">{t('dashboard.welcome')} <span className="text-primary">{status.username}</span></h1>
-            <p className="text-muted-foreground text-lg font-medium">{t('dashboard.desc')}</p>
+            <h1 className="text-xl font-semibold">{t('dashboard.welcome')} {status.username}</h1>
+            <p className="text-sm text-muted-foreground mt-1">{t('dashboard.desc')}</p>
           </>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard label={t('tokens.live_status')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-primary" : "text-warning"} isLoading={isLoading} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <StatCard label={t('tokens.live_status')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-success" : "text-warning"} isLoading={isLoading} />
         <StatCard label={t('dashboard.live_status')} value={streamData.isLive ? t('dashboard.on_air') : t('dashboard.offline')} icon={Activity} colorClass={streamData.isLive ? "text-destructive" : "text-muted-foreground"} isLoading={isLoading} />
         <StatCard label={t('dashboard.system_health')} value={t('dashboard.optimal')} icon={CheckCircle2} colorClass="text-info" isLoading={isLoading} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <PerformanceCard
           label={t('dashboard.cpu_usage')}
           percent={performance.cpuPercent}
@@ -56,41 +56,48 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }: DashboardPageP
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card title={t('dashboard.quick_start')}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button onClick={() => onNavigate('tokens')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-primary/20 hover:bg-primary/5 transition-all group text-foreground">
-              <div className="p-4 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Users size={32} /></div>
-              <span className="text-sm font-bold uppercase tracking-widest">{t('tokens.title')}</span>
-            </button>
-            <button onClick={() => onNavigate('setup')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-info/20 hover:bg-info/5 transition-all group text-foreground">
-              <div className="p-4 rounded-lg bg-info/10 text-info group-hover:scale-110 transition-transform"><Sliders size={32} /></div>
-              <span className="text-sm font-bold uppercase tracking-widest text-center">{t('setup.title')}</span>
-            </button>
-            <button onClick={() => onNavigate('console')} className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5 hover:border-primary/20 hover:bg-primary/5 transition-all group text-foreground">
-              <div className="p-4 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
-              <span className="text-sm font-bold uppercase tracking-widest">{t('console.title')}</span>
-            </button>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { id: 'tokens' as const, icon: Users, label: t('tokens.title'), color: 'text-foreground' },
+              { id: 'setup' as const, icon: Sliders, label: t('setup.title'), color: 'text-foreground' },
+              { id: 'console' as const, icon: Terminal, label: t('console.title'), color: 'text-foreground' }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onNavigate(item.id)}
+                className="flex flex-col items-center gap-2 p-4 rounded-md border border-border hover:bg-secondary transition-colors"
+              >
+                <item.icon size={18} className={item.color} />
+                <span className="text-xs font-medium text-center">{item.label}</span>
+              </button>
+            ))}
           </div>
         </Card>
 
         <Card title={t('tokens.account_context')}>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5">
-              <span className="text-[11px] text-muted-foreground font-black uppercase tracking-widest">{t('tokens.username')}</span>
-              {isLoading ? <Skeleton className="h-4 w-24" /> : <span className="font-bold">{status.username}</span>}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between py-2 border-b border-border">
+              <span className="text-xs text-muted-foreground">{t('tokens.username')}</span>
+              {isLoading ? <Skeleton className="h-4 w-20" /> : <span className="text-sm font-medium">{status.username}</span>}
             </div>
-            <div className="flex items-center justify-between p-4 rounded-xl bg-secondary border border-border light:bg-white/70 light:border-black/5">
-              <span className="text-[11px] text-muted-foreground font-black uppercase tracking-widest">{t('tokens.permission')}</span>
+            <div className="flex items-center justify-between py-2 border-b border-border">
+              <span className="text-xs text-muted-foreground">{t('tokens.permission')}</span>
               {isLoading ? (
-                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-5 w-16" />
               ) : (
-                <span className={`text-[10px] px-3 py-1 rounded-full font-black ${status.canGoLive ? 'bg-primary text-primary-foreground' : 'bg-destructive/20 text-destructive'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded font-medium ${status.canGoLive ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                   {status.canGoLive ? t('dashboard.authorized') : t('dashboard.restricted_caps')}
                 </span>
               )}
             </div>
-            <Button onClick={() => api.openExternal("https://ko-fi.com/chokernguyen")} className="w-full py-4 bg-gradient-to-r from-primary to-success rounded-xl" icon={Heart}>
+            <Button
+              onClick={() => api.openExternal("https://ko-fi.com/chokernguyen")}
+              variant="outline"
+              className="w-full mt-2"
+              icon={Heart}
+            >
               {t('dashboard.support_project')}
             </Button>
           </div>

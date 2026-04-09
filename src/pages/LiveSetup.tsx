@@ -37,19 +37,19 @@ const LiveSetup = ({
     })
 
   return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-10">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-black">{t('setup.title')}</h1>
-        <p className="text-muted-foreground font-medium">{t('setup.desc')}</p>
+    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold">{t('setup.title')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('setup.desc')}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-8 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8 space-y-4">
           <Card title={t('setup.broadcast_info')} className="relative z-[100] overflow-visible">
-            <div className="space-y-10">
+            <div className="space-y-5">
               <Input label={t('setup.stream_title')} placeholder={t('setup.title_placeholder')} icon={Type} value={streamTitle} onChange={(e) => setStreamTitle(e.target.value)} />
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="relative" ref={dropdownRef}>
                   <motion.div animate={controls}>
                     <Input
@@ -62,20 +62,20 @@ const LiveSetup = ({
                         if (!showSuggestions) setShowSuggestions(true)
                       }}
                       onFocus={() => (suggestions.length > 0 || gameCategory) && setShowSuggestions(true)}
-                      className={gameMaskId ? 'border-primary/50' : isInvalid ? 'border-destructive/60 ring-4 ring-destructive/10' : ''}
+                      className={gameMaskId ? 'border-success/50' : isInvalid ? 'border-destructive/50 ring-2 ring-destructive/10' : ''}
                     />
                   </motion.div>
 
-                  <div className="absolute right-12 top-[46px] pointer-events-none">
+                  <div className="absolute right-10 top-[38px] pointer-events-none">
                     <AnimatePresence mode="wait">
                       {gameMaskId ? (
-                        <motion.div key="success" initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }}>
-                          <CheckCircle2 size={18} className="text-primary" />
+                        <motion.div key="success" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                          <CheckCircle2 size={14} className="text-success" />
                         </motion.div>
                       ) : (
                         isInvalid && (
-                          <motion.div key="error" initial={{ scale: 0, rotate: 45 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }}>
-                            <XCircle size={18} className="text-destructive" />
+                          <motion.div key="error" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                            <XCircle size={14} className="text-destructive" />
                           </motion.div>
                         )
                       )}
@@ -85,43 +85,37 @@ const LiveSetup = ({
                   <AnimatePresence>
                     {showSuggestions && suggestions.length > 0 && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute z-[200] w-full bg-secondary/95 backdrop-blur-xl border border-white/10 light:border-black/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden max-h-[320px] overflow-y-auto custom-scrollbar p-2 mt-6"
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        className="absolute z-[200] w-full bg-background border border-border rounded-md shadow-lg overflow-hidden max-h-[240px] overflow-y-auto mt-1"
                       >
                         {suggestions.map((cat) => (
-                          <div key={cat.game_mask_id} className="relative group/item">
-                            <button
-                              className="w-full px-5 py-4 text-left text-sm font-bold hover:bg-primary/10 hover:text-primary transition-all rounded-2xl flex items-center justify-between"
-                              onClick={() => onSelectCategory(cat)}
-                            >
-                              <span className="truncate pr-4">{cat.full_name}</span>
-                              <span className="opacity-0 group-hover/item:opacity-100 transition-all duration-200 text-[9px] font-black uppercase tracking-widest bg-primary text-primary-foreground px-3 py-1.5 rounded-xl shadow-lg shadow-primary/20 pointer-events-none">
-                                {t('setup.select')}
-                              </span>
-                            </button>
-                          </div>
+                          <button
+                            key={cat.game_mask_id}
+                            className="w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors flex items-center justify-between"
+                            onClick={() => onSelectCategory(cat)}
+                          >
+                            <span className="truncate pr-3">{cat.full_name}</span>
+                          </button>
                         ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 px-2">
-                  <div className="flex items-center gap-2 text-muted-foreground opacity-40 hover:opacity-100 transition-opacity">
-                    <Database size={12} />
-                    <span className="text-[9px] font-black uppercase tracking-widest">
-                      {localCount} {t('setup.cached_categories')}
-                    </span>
-                  </div>
-                  <div className="w-px h-3 bg-border opacity-20" />
+                <div className="flex items-center justify-end gap-3">
+                  <span className="text-2xs text-muted-foreground flex items-center gap-1">
+                    <Database size={10} />
+                    {localCount} {t('setup.cached_categories')}
+                  </span>
+                  <span className="text-border">·</span>
                   <button
                     onClick={handleSync}
                     disabled={isSyncing}
-                    className={`flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-all ${isSyncing ? 'opacity-50' : ''}`}
+                    className="text-2xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                   >
-                    <RefreshCw size={12} className={isSyncing ? 'animate-spin' : ''} />
+                    <RefreshCw size={10} className={isSyncing ? 'animate-spin' : ''} />
                     {isSyncing ? t('setup.syncing') : t('setup.sync_database')}
                   </button>
                 </div>
@@ -130,24 +124,22 @@ const LiveSetup = ({
           </Card>
 
           <Card title={t('setup.audience')} className="relative z-10">
-            <div className="p-5 rounded-3xl bg-secondary/50 border border-border hover:border-primary/20 transition-all">
-              <Checkbox checked={mature} onChange={setMature} label={t('setup.mature_content')} description={t('setup.mature_desc')} />
-            </div>
+            <Checkbox checked={mature} onChange={setMature} label={t('setup.mature_content')} description={t('setup.mature_desc')} />
           </Card>
         </div>
 
-        <div className="lg:col-span-4 space-y-8">
+        <div className="lg:col-span-4 space-y-4">
           <Card title={t('setup.actions')}>
-            <div className="space-y-4">
-              <Button onClick={onSave} icon={Save} className="w-full py-6">
+            <div className="space-y-3">
+              <Button onClick={onSave} icon={Save} className="w-full py-3">
                 {t('setup.save_settings')}
               </Button>
-              <div className="p-6 rounded-[32px] bg-secondary/50 border border-border light:bg-white/70 light:border-black/5">
-                <div className="flex items-center gap-3 mb-4">
-                  <Users className="text-primary" size={20} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{t('setup.tips')}</span>
+              <div className="p-3 rounded-md bg-secondary border border-border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="text-muted-foreground" size={14} />
+                  <span className="text-xs font-medium">{t('setup.tips')}</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed font-medium">{t('setup.tips_desc')}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{t('setup.tips_desc')}</p>
               </div>
             </div>
           </Card>
