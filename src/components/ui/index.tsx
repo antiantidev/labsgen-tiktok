@@ -18,11 +18,11 @@ type ButtonProps = {
 export const Button = ({ children, onClick, disabled, variant = "primary", className = "", icon: Icon, loading, title }: ButtonProps) => {
   const variants: Record<ButtonVariant, string> = {
     primary:
-      "bg-foreground text-background hover:opacity-90",
-    secondary: "bg-secondary text-secondary-foreground border border-border hover:bg-accent",
-    outline: "bg-transparent border border-border text-foreground hover:bg-secondary",
-    ghost: "bg-transparent text-muted-foreground hover:text-foreground hover:bg-secondary",
-    danger: "bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-destructive-foreground"
+      "bg-foreground text-background hover:bg-foreground/90 active:bg-foreground/80 shadow-[0_1px_2px_rgba(0,0,0,0.1)]",
+    secondary: "bg-secondary text-secondary-foreground border border-border hover:bg-accent active:bg-accent/80",
+    outline: "bg-transparent border border-border text-foreground hover:bg-secondary active:bg-secondary/80",
+    ghost: "bg-transparent text-muted-foreground hover:text-foreground hover:bg-secondary active:bg-secondary/80",
+    danger: "bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive hover:text-destructive-foreground active:opacity-90"
   }
 
   return (
@@ -30,7 +30,7 @@ export const Button = ({ children, onClick, disabled, variant = "primary", class
       onClick={onClick}
       disabled={disabled || loading}
       title={title}
-      className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-40 disabled:pointer-events-none ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-md font-medium text-sm transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none select-none ${variants[variant]} ${className}`}
     >
       {loading ? (
         <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -54,10 +54,10 @@ type CardProps = {
 export const Card = ({ children, title, className = "", onClick }: CardProps) => (
   <div
     onClick={onClick}
-    className={`bg-background border border-border rounded-lg p-5 transition-colors ${onClick ? "cursor-pointer hover:border-foreground/20" : ""} ${className}`}
+    className={`bg-background border border-border rounded-lg p-5 transition-all duration-300 ${onClick ? "cursor-pointer hover:border-foreground/20 hover:bg-secondary/20" : ""} ${className}`}
   >
     {title && (
-      <h3 className="text-xs font-medium text-muted-foreground mb-4">
+      <h3 className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest mb-4 select-none">
         {title}
       </h3>
     )}
@@ -79,12 +79,12 @@ export const AlertBanner = ({ title, message, variant = "warn", actions }: Alert
     info: "bg-info/5 border-info/20 text-info"
   }
   return (
-    <div className={`p-4 rounded-md border flex items-start gap-3 ${styles[variant]}`}>
+    <div className={`p-4 rounded-md border flex items-start gap-3.5 ${styles[variant]}`}>
       <AlertCircle size={16} className="mt-0.5 shrink-0" />
       <div className="flex-1 min-w-0">
-        <h4 className="font-medium text-sm leading-none">{title}</h4>
-        <p className="text-xs mt-1 opacity-80 leading-relaxed">{message}</p>
-        {actions && <div className="mt-3 flex gap-2">{actions}</div>}
+        <h4 className="font-semibold text-sm leading-none">{title}</h4>
+        <p className="text-xs mt-1.5 opacity-80 leading-relaxed font-medium">{message}</p>
+        {actions && <div className="mt-4 flex gap-2">{actions}</div>}
       </div>
     </div>
   )
@@ -99,16 +99,16 @@ type InputProps = {
 export const Input = ({ label, icon: Icon, className = "", ...props }: InputProps) => (
   <div className="space-y-1.5 w-full">
     {label && (
-      <label className="text-sm font-medium text-foreground">
+      <label className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest ml-0.5">
         {label}
       </label>
     )}
-    <div className="relative">
+    <div className="relative group">
       <input
         {...props}
-        className={`w-full bg-background border border-border rounded-md px-3 py-2 text-sm transition-colors outline-none focus:ring-2 focus:ring-ring/20 focus:border-foreground/30 hover:border-foreground/20 placeholder:text-muted-foreground ${className}`}
+        className={`w-full bg-background border border-border rounded-md px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-4 focus:ring-foreground/5 focus:border-foreground/20 hover:border-foreground/20 placeholder:text-muted-foreground/60 ${className}`}
       />
-      {Icon && <Icon size={15} className="absolute right-3 top-2.5 text-muted-foreground" />}
+      {Icon && <Icon size={14} className="absolute right-3 top-2.5 text-muted-foreground/40 group-focus-within:text-foreground/60 transition-colors" />}
     </div>
   </div>
 )
@@ -121,20 +121,20 @@ type CheckboxProps = {
 }
 
 export const Checkbox = ({ checked, onChange, label, description }: CheckboxProps) => (
-  <label className="flex items-start gap-3 cursor-pointer group select-none">
+  <label className="flex items-start gap-3.5 cursor-pointer group select-none">
     <div className="relative flex items-center justify-center mt-0.5">
       <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       <div
-        className={`w-4 h-4 border rounded flex items-center justify-center transition-colors ${
-          checked ? "bg-foreground border-foreground" : "border-border hover:border-foreground/40"
+        className={`w-4 h-4 border rounded shadow-sm transition-all duration-200 flex items-center justify-center ${
+          checked ? "bg-foreground border-foreground" : "bg-background border-border group-hover:border-foreground/30"
         }`}
       >
-        {checked && <Check size={10} className="text-background" />}
+        {checked && <Check size={10} className="text-background" strokeWidth={3} />}
       </div>
     </div>
     <div className="flex flex-col">
-      <span className="text-sm font-medium">{label}</span>
-      {description && <span className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</span>}
+      <span className="text-sm font-semibold tracking-tight">{label}</span>
+      {description && <span className="text-xs text-muted-foreground/70 mt-0.5 leading-relaxed font-medium">{description}</span>}
     </div>
   </label>
 )
@@ -148,21 +148,21 @@ type SwitchProps = {
 }
 
 export const Switch = ({ checked, onChange, label, description, icon: Icon }: SwitchProps) => (
-  <label className="flex items-center justify-between p-3 rounded-md border border-border hover:border-foreground/20 transition-colors cursor-pointer group">
-    <div className="flex items-center gap-3 pr-3">
+  <label className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-background hover:bg-secondary/40 transition-all duration-200 cursor-pointer group">
+    <div className="flex items-center gap-3.5 pr-3">
       {Icon && (
-        <Icon size={15} className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+        <Icon size={16} className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
       )}
       <div className="flex flex-col">
-        <span className="text-sm font-medium">{label}</span>
-        {description && <span className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</span>}
+        <span className="text-sm font-semibold tracking-tight">{label}</span>
+        {description && <span className="text-xs text-muted-foreground/60 mt-0.5 leading-relaxed font-medium">{description}</span>}
       </div>
     </div>
     <div className="relative inline-flex items-center shrink-0">
       <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <div className={`w-9 h-5 rounded-full transition-colors ${checked ? "bg-foreground" : "bg-muted"}`}>
+      <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${checked ? "bg-foreground" : "bg-muted shadow-inner"}`}>
         <div
-          className={`absolute top-0.5 w-4 h-4 rounded-full bg-background shadow-sm transition-transform ${checked ? "translate-x-4" : "translate-x-0.5"}`}
+          className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow-sm transition-transform duration-200 ${checked ? "translate-x-4" : "translate-x-0"}`}
         />
       </div>
     </div>
@@ -181,19 +181,24 @@ export const LoadingOverlay = ({ message, progress }: LoadingOverlayProps) => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0, transition: { duration: 0.3 } }}
-    className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-background"
+    className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-background rounded-xl overflow-hidden"
   >
-    <div className="flex flex-col items-center">
-      <div className="mb-8">
-        <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+    <div className="flex flex-col items-center gap-10">
+      <div className="relative">
+        <div className="w-12 h-12 border-2 border-foreground/5 border-t-foreground rounded-full animate-spin" />
       </div>
-      <div className="w-48 space-y-3">
+      <div className="w-60 space-y-4 text-center">
         <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
-          <div className="h-full bg-foreground transition-all duration-300" style={{ width: `${progress || 0}%` }} />
+          <motion.div 
+            className="h-full bg-foreground" 
+            initial={{ width: 0 }}
+            animate={{ width: `${progress || 0}%` }}
+            transition={{ type: "spring", bounce: 0, duration: 0.5 }}
+          />
         </div>
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-xs text-muted-foreground">{message}</p>
-          <span className="text-xs font-mono text-muted-foreground tabular-nums">{Math.round(progress || 0)}%</span>
+        <div className="space-y-1">
+          <p className="text-xs font-bold text-muted-foreground tracking-widest uppercase">{message}</p>
+          <span className="text-xs font-mono text-foreground/40 tabular-nums">{Math.round(progress || 0)}%</span>
         </div>
       </div>
     </div>
@@ -217,19 +222,19 @@ export const Toast = ({ message, type = "info", onClose }: ToastProps) => {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
-      className="flex items-center gap-3 px-4 py-3 rounded-md bg-secondary border border-border shadow-lg min-w-[280px] max-w-sm pointer-events-auto mx-auto"
+      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+      className="flex items-center gap-3.5 px-4 py-3 rounded-lg bg-background border border-border shadow-2xl min-w-[320px] max-w-sm pointer-events-auto mx-auto"
     >
       <div className="shrink-0">{icons[type]}</div>
-      <p className="flex-1 text-sm text-foreground">{message}</p>
+      <p className="flex-1 text-sm font-semibold tracking-tight text-foreground">{message}</p>
       <button
         onClick={(e) => {
           e.stopPropagation()
           onClose()
         }}
-        className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors shrink-0"
+        className="p-1 rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-all shrink-0"
         aria-label="Close"
       >
         <X size={14} />
@@ -239,7 +244,7 @@ export const Toast = ({ message, type = "info", onClose }: ToastProps) => {
 }
 
 export const ToastContainer = ({ children }: { children?: ReactNode }) => (
-  <div className="fixed top-4 left-0 right-0 z-[500] flex flex-col gap-2 pointer-events-none items-center w-full">
+  <div className="fixed bottom-8 left-0 right-0 z-[500] flex flex-col gap-3 pointer-events-none items-center w-full">
     <AnimatePresence mode="popLayout">{children}</AnimatePresence>
   </div>
 )

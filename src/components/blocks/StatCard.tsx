@@ -10,13 +10,19 @@ type StatCardProps = {
 }
 
 export const StatCard = ({ label, value, icon: Icon, colorClass = "text-foreground", isLoading }: StatCardProps) => (
-  <div className="flex items-center gap-3 p-4 border border-border rounded-lg bg-background">
-    <div className={`${colorClass}`}>
-      <Icon size={16} />
+  <div className="flex items-center gap-4 p-5 border border-border rounded-xl bg-foreground/[0.01]">
+    <div className={`p-2.5 rounded-full bg-foreground/5 ${colorClass}`}>
+      <Icon size={18} />
     </div>
     <div className="flex-1 min-w-0">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      {isLoading ? <Skeleton className="h-5 w-16 mt-1" /> : <div className="text-sm font-semibold">{value}</div>}
+      <div className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground/60">{label}</div>
+      {isLoading ? (
+        <Skeleton className="h-6 w-20 mt-1" />
+      ) : (
+        <div className={`text-base font-bold tracking-tight truncate mt-0.5 ${colorClass}`}>
+          {value}
+        </div>
+      )}
     </div>
   </div>
 )

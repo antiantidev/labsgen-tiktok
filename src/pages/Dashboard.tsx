@@ -14,28 +14,28 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }: DashboardPageP
   const { performance, perfLoading, memLabel } = useDashboardPerformance()
 
   return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-6">
-      <div>
+    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-8">
+      <div className="flex flex-col gap-1.5">
         {isLoading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-7 w-48" />
-            <Skeleton className="h-4 w-72" />
+          <div className="space-y-2.5">
+            <Skeleton className="h-7 w-56" />
+            <Skeleton className="h-4 w-80" />
           </div>
         ) : (
           <>
-            <h1 className="text-xl font-semibold">{t('dashboard.welcome')} {status.username}</h1>
-            <p className="text-sm text-muted-foreground mt-1">{t('dashboard.desc')}</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('dashboard.welcome')} {status.username}</h1>
+            <p className="text-sm font-medium text-muted-foreground">{t('dashboard.desc')}</p>
           </>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard label={t('tokens.live_status')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-success" : "text-warning"} isLoading={isLoading} />
         <StatCard label={t('dashboard.live_status')} value={streamData.isLive ? t('dashboard.on_air') : t('dashboard.offline')} icon={Activity} colorClass={streamData.isLive ? "text-destructive" : "text-muted-foreground"} isLoading={isLoading} />
         <StatCard label={t('dashboard.system_health')} value={t('dashboard.optimal')} icon={CheckCircle2} colorClass="text-info" isLoading={isLoading} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <PerformanceCard
           label={t('dashboard.cpu_usage')}
           percent={performance.cpuPercent}
@@ -56,46 +56,48 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }: DashboardPageP
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card title={t('dashboard.quick_start')}>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             {[
-              { id: 'tokens' as const, icon: Users, label: t('tokens.title'), color: 'text-foreground' },
-              { id: 'setup' as const, icon: Sliders, label: t('setup.title'), color: 'text-foreground' },
-              { id: 'console' as const, icon: Terminal, label: t('console.title'), color: 'text-foreground' }
+              { id: 'tokens' as const, icon: Users, label: t('tokens.title') },
+              { id: 'setup' as const, icon: Sliders, label: t('setup.title') },
+              { id: 'console' as const, icon: Terminal, label: t('console.title') }
             ].map((item) => (
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
-                className="flex flex-col items-center gap-2 p-4 rounded-md border border-border hover:bg-secondary transition-colors"
+                className="group flex flex-col items-center gap-3 p-5 rounded-lg border border-border bg-foreground/[0.02] hover:bg-foreground/[0.05] hover:border-foreground/20 transition-all duration-200"
               >
-                <item.icon size={18} className={item.color} />
-                <span className="text-xs font-medium text-center">{item.label}</span>
+                <div className="p-3 rounded-full bg-foreground text-background group-hover:scale-110 transition-transform duration-200">
+                  <item.icon size={20} />
+                </div>
+                <span className="text-xs font-bold tracking-tight text-center">{item.label}</span>
               </button>
             ))}
           </div>
         </Card>
 
         <Card title={t('tokens.account_context')}>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b border-border">
-              <span className="text-xs text-muted-foreground">{t('tokens.username')}</span>
-              {isLoading ? <Skeleton className="h-4 w-20" /> : <span className="text-sm font-medium">{status.username}</span>}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-4 border-b border-border/50">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('tokens.username')}</span>
+              {isLoading ? <Skeleton className="h-5 w-24" /> : <span className="text-sm font-bold tracking-tight">{status.username}</span>}
             </div>
-            <div className="flex items-center justify-between py-2 border-b border-border">
-              <span className="text-xs text-muted-foreground">{t('tokens.permission')}</span>
+            <div className="flex items-center justify-between pb-4 border-b border-border/50">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('tokens.permission')}</span>
               {isLoading ? (
-                <Skeleton className="h-5 w-16" />
+                <Skeleton className="h-6 w-20" />
               ) : (
-                <span className={`text-xs px-2 py-0.5 rounded font-medium ${status.canGoLive ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
+                <div className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-tight ${status.canGoLive ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                   {status.canGoLive ? t('dashboard.authorized') : t('dashboard.restricted_caps')}
-                </span>
+                </div>
               )}
             </div>
             <Button
               onClick={() => api.openExternal("https://ko-fi.com/chokernguyen")}
               variant="outline"
-              className="w-full mt-2"
+              className="w-full mt-4 h-11"
               icon={Heart}
             >
               {t('dashboard.support_project')}

@@ -20,10 +20,13 @@ const NavItem = ({ id, icon: Icon, label, active, onClick, disabled }: NavItemPr
   <button
     onClick={() => !disabled && onClick(id)}
     disabled={disabled}
-    className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-md text-sm transition-colors relative ${disabled ? "opacity-40 pointer-events-none" : ""} ${active ? "bg-secondary text-foreground font-medium" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`}
+    className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm transition-all duration-200 select-none ${disabled ? "opacity-30 pointer-events-none" : ""} ${active ? "bg-foreground/5 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"}`}
   >
-    <Icon size={15} className="shrink-0" />
-    <span>{label}</span>
+    <Icon size={16} className={`shrink-0 transition-colors ${active ? "text-foreground" : "text-muted-foreground/60"}`} />
+    <span className="truncate">{label}</span>
+    {active && (
+      <div className="absolute left-0 w-0.5 h-3.5 bg-foreground rounded-full" />
+    )}
   </button>
 )
 
@@ -50,43 +53,41 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
   ]
 
   return (
-    <aside className="w-56 h-screen flex flex-col border-r border-border bg-background relative z-50">
-      <div className="px-4 h-12 flex items-center gap-2.5 border-b border-border shrink-0 drag">
-        <img src={logoUrl} alt="Labsgen Tiktok" className="w-5 h-5 rounded no-drag" />
-        <div className="flex flex-col no-drag">
-          <span className="font-semibold text-sm leading-none text-foreground">Labsgen</span>
-        </div>
+    <aside className="w-56 h-screen flex flex-col border-r border-border bg-secondary/30 shrink-0 relative z-50">
+      <div className="px-5 h-10 flex items-center gap-2.5 border-b border-border/50 shrink-0 drag">
+        <img src={logoUrl} alt="Labsgen Tiktok" className="w-5 h-5 rounded-sm p-0.5 bg-foreground/5 no-drag" />
+        <span className="font-bold text-xs tracking-tight text-foreground/80 no-drag select-none uppercase">Labsgen</span>
       </div>
 
-      <nav className="flex-1 px-2 py-3">
-        <div className="space-y-0.5">
-          {menuItems.map((item) => (
-            <NavItem key={item.id} {...item} active={currentPage === item.id} onClick={setCurrentPage} disabled={isLoading} />
-          ))}
-        </div>
+      <nav className="flex-1 px-3 py-6 overflow-y-auto space-y-1">
+        {menuItems.map((item) => (
+          <NavItem key={item.id} {...item} active={currentPage === item.id} onClick={setCurrentPage} disabled={isLoading} />
+        ))}
       </nav>
 
-      <div className="px-3 py-3 border-t border-border space-y-2">
-        <div className="flex items-center gap-2.5 px-1">
-          <div className={`w-2 h-2 rounded-full shrink-0 ${canGoLive ? "bg-success" : "bg-destructive"}`} />
+      <div className="p-4 border-t border-border/50 space-y-4">
+        <div className="flex items-center gap-3 px-1">
+          <div className="relative shrink-0">
+            <div className={`w-2 h-2 rounded-full ${canGoLive ? "bg-success" : "bg-destructive"}`} />
+            {canGoLive && <div className="absolute inset-0 bg-success rounded-full animate-ping opacity-20" />}
+          </div>
           <div className="flex flex-col min-w-0 flex-1">
             {isLoading ? (
               <Skeleton className="h-3 w-16" />
             ) : (
-              <span className="text-xs font-medium text-foreground truncate">{username}</span>
+              <span className="text-[11px] font-bold text-foreground truncate tracking-wide">{username}</span>
             )}
           </div>
-          {canGoLive ? <ShieldCheck size={13} className="text-success shrink-0" /> : <ShieldAlert size={13} className="text-destructive shrink-0" />}
         </div>
 
         <div className="flex items-center justify-between px-1">
-          <span className="text-2xs text-muted-foreground font-mono">v{version}</span>
+          <span className="text-[9px] text-muted-foreground/40 font-mono font-medium tabular-nums select-none">v{version}</span>
           <button
             onClick={() => api.openExternal("https://ko-fi.com/chokernguyen")}
-            className="inline-flex items-center gap-1 text-2xs text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-1 text-[9px] font-bold text-muted-foreground/40 hover:text-foreground transition-all duration-200 uppercase tracking-widest"
           >
-            <Heart size={10} />
-            <span>{t("dashboard.support_project")}</span>
+            <Heart size={10} className="text-destructive/40" />
+            <span>Support</span>
           </button>
         </div>
       </div>

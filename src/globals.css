@@ -6,45 +6,60 @@
 
 @layer base {
   :root {
-    /* Vercel/Linear Dark Mode — default */
-    --background: 0 0% 7%;
+    /* Geist Dark Scale — Minimal Soft Monochrome */
+    --background: 0 0% 0%;
     --foreground: 0 0% 93%;
+    
     --primary: 0 0% 100%;
     --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 11%;
-    --secondary-foreground: 0 0% 93%;
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 0 0% 14%;
-    --accent-foreground: 0 0% 93%;
+    
+    --secondary: 0 0% 7%;      /* Geist Accents-1 / #111 */
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 0 0% 7%;
+    --muted-foreground: 0 0% 55%; /* Geist Accents-5 / #888 */
+    
+    --accent: 0 0% 7%;
+    --accent-foreground: 0 0% 100%;
+    
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
+    
     --info: 217 91% 60%;
     --warning: 38 92% 50%;
     --success: 142 71% 45%;
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
+    
+    --border: 0 0% 13%;        /* Geist Accents-2 / #222 */
+    --input: 0 0% 13%;
     --ring: 0 0% 40%;
-    --radius: 0.375rem;
+    
+    --radius: 0.5rem;          /* 8px — Soft standard radius */
   }
 
   .light {
     --background: 0 0% 100%;
-    --foreground: 0 0% 9%;
-    --primary: 0 0% 9%;
+    --foreground: 0 0% 0%;
+    
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 9%;
+    
+    --secondary: 0 0% 98%;    /* Geist Accents-1 / #fafafa */
+    --secondary-foreground: 0 0% 0%;
+    
+    --muted: 0 0% 98%;
+    --muted-foreground: 0 0% 40%; /* Geist Accents-5 / #666 */
+    
+    --accent: 0 0% 96%;       /* Geist Accents-2 / #f5f5f5 */
+    --accent-foreground: 0 0% 0%;
+    
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+    
     --info: 217 91% 60%;
     --warning: 38 92% 50%;
     --success: 142 71% 45%;
-    --border: 0 0% 90%;
+    
+    --border: 0 0% 90%;       /* Geist Accents-2 / #eaeaea */
     --input: 0 0% 90%;
     --ring: 0 0% 70%;
   }
@@ -56,7 +71,10 @@
 }
 
 @layer base {
-  * { @apply border-border; }
+  * { 
+    @apply border-border; 
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
 
   html, body {
     background: transparent !important;
@@ -68,14 +86,20 @@
   }
 
   body {
+    @apply text-foreground;
+    background-color: transparent;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1, "cv02", "cv03", "cv04", "cv11";
     user-select: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    color: hsl(var(--foreground));
   }
+
+  /* Universal Softness */
+  .rounded-lg { border-radius: var(--radius); }
+  .rounded-md { border-radius: calc(var(--radius) - 2px); }
+  .rounded-xl { border-radius: calc(var(--radius) + 4px); }
 }
 
 ::-webkit-scrollbar { width: 6px; }
