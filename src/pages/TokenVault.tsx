@@ -144,7 +144,7 @@ const TokenVault = ({
                 {isLoading ? <Skeleton className="h-5 w-24 mt-1" /> : <div className="text-sm font-bold tracking-tight truncate">{status.username === 'Guest' ? t('tokens.guest') : status.username}</div>}
               </div>
               <div className="space-y-1 pt-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('tokens.account_status')}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('tokens.live_status')}</span>
                 {isLoading ? <Skeleton className="h-5 w-20 mt-1" /> : <div className="text-sm font-semibold tracking-tight">{t(status.appStatus)}</div>}
               </div>
               <div className="pt-2">

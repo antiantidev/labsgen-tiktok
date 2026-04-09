@@ -87,7 +87,7 @@ const Sidebar = ({ currentPage, setCurrentPage, username, canGoLive, version, is
             className="inline-flex items-center gap-1 text-[9px] font-bold text-muted-foreground/40 hover:text-foreground transition-all duration-200 uppercase tracking-widest"
           >
             <Heart size={10} className="text-destructive/40" />
-            <span>Support</span>
+            <span>{t("dashboard.support_project")}</span>
           </button>
         </div>
       </div>

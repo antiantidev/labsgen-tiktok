@@ -13,9 +13,10 @@ type ButtonProps = {
   icon?: LucideIcon
   loading?: boolean
   title?: string
+  type?: "button" | "submit" | "reset"
 }
 
-export const Button = ({ children, onClick, disabled, variant = "primary", className = "", icon: Icon, loading, title }: ButtonProps) => {
+export const Button = ({ children, onClick, disabled, variant = "primary", className = "", icon: Icon, loading, title, type = "button" }: ButtonProps) => {
   const variants: Record<ButtonVariant, string> = {
     primary:
       "bg-foreground text-background hover:bg-foreground/90 active:bg-foreground/80 shadow-[0_1px_2px_rgba(0,0,0,0.1)]",
@@ -27,6 +28,7 @@ export const Button = ({ children, onClick, disabled, variant = "primary", class
 
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled || loading}
       title={title}

@@ -71,6 +71,7 @@
     "username": "Tên tài khoản",
     "guest": "Ẩn danh",
     "live_status": "Trạng thái live",
+    "delete": "Xóa",
     "permission": "Quyền Ingest",
     "full_rights": "Toàn quyền phát",
     "restricted_rights": "Quyền phát hạn chế",

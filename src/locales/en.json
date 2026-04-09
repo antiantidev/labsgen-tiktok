@@ -71,6 +71,7 @@
     "username": "Username",
     "guest": "Guest",
     "live_status": "Live status",
+    "delete": "Delete",
     "permission": "Ingest permission",
     "full_rights": "Full broadcast access",
     "restricted_rights": "Limited broadcast access",

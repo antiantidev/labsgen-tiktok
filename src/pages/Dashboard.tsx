@@ -30,7 +30,7 @@ const Dashboard = ({ status, streamData, onNavigate, isLoading }: DashboardPageP
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard label={t('tokens.live_status')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-success" : "text-warning"} isLoading={isLoading} />
+        <StatCard label={t('dashboard.status_title')} value={t(status.badge)} icon={ShieldCheck} colorClass={status.canGoLive ? "text-success" : "text-warning"} isLoading={isLoading} />
         <StatCard label={t('dashboard.live_status')} value={streamData.isLive ? t('dashboard.on_air') : t('dashboard.offline')} icon={Activity} colorClass={streamData.isLive ? "text-destructive" : "text-muted-foreground"} isLoading={isLoading} />
         <StatCard label={t('dashboard.system_health')} value={t('dashboard.optimal')} icon={CheckCircle2} colorClass="text-info" isLoading={isLoading} />
       </div>
