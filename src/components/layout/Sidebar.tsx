@@ -20,7 +20,7 @@ const NavItem = ({ id, icon: Icon, label, active, onClick, disabled }: NavItemPr
   <button
     onClick={() => !disabled && onClick(id)}
     disabled={disabled}
-    className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm transition-all duration-200 select-none ${disabled ? "opacity-30 pointer-events-none" : ""} ${active ? "bg-foreground/5 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"}`}
+    className={`relative w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm transition-all duration-200 select-none ${disabled ? "opacity-30 pointer-events-none" : ""} ${active ? "bg-foreground/5 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"}`}
   >
     <Icon size={16} className={`shrink-0 transition-colors ${active ? "text-foreground" : "text-muted-foreground/60"}`} />
     <span className="truncate">{label}</span>
